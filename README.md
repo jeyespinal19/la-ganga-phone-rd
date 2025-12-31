@@ -20,7 +20,8 @@
 - **Modo Oscuro/Claro**: Interfaz adaptable a tus preferencias
 - **Responsive Design**: Optimizado para móviles, tablets y desktop
 - **PWA Ready**: Instala la app en tu dispositivo
-- **Notificaciones**: (Próximamente) Alertas cuando te superen en una puja
+- **Notificaciones**: Alertas push cuando te superen en una puja o subastas próximas a terminar
+- **Autenticación**: Registro e inicio de sesión seguro con Supabase Auth
 
 ### 🛠️ Para Administradores
 - **Panel de Control**: Dashboard completo con analytics
@@ -99,30 +100,33 @@ La-Ganga-Phone-RD-main/
 
 ## 🗄️ Base de Datos (Supabase)
 
-### Tablas Necesarias
+La aplicación utiliza un esquema completo en Supabase con RLS (Row Level Security) para proteger los datos.
+
+### Tablas Principales
 
 **products**
+Almacena las subastas activas e históricas.
 ```sql
 CREATE TABLE products (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   brand TEXT NOT NULL,
   specs TEXT,
-  current_bid DECIMAL NOT NULL,
+  current_bid DECIMAL NOT NULL DEFAULT 0,
   reserve_price DECIMAL,
   image_details TEXT,
   ends_at TIMESTAMP WITH TIME ZONE NOT NULL,
-  status TEXT DEFAULT 'active',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'closed', 'cancelled'))
 );
 ```
 
 **bids**
+Historial de todas las pujas realizadas.
 ```sql
 CREATE TABLE bids (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   product_id UUID REFERENCES products(id) ON DELETE CASCADE,
-  user_id UUID,
+  user_id UUID REFERENCES auth.users(id),
   user_name TEXT NOT NULL,
   amount DECIMAL NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -130,38 +134,25 @@ CREATE TABLE bids (
 ```
 
 **profiles**
+Perfiles de usuario extendidos.
 ```sql
 CREATE TABLE profiles (
-  id UUID PRIMARY KEY,
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
   name TEXT NOT NULL,
   email TEXT NOT NULL,
-  phone TEXT,
-  role TEXT DEFAULT 'user',
-  status TEXT DEFAULT 'active',
-  avatar_seed TEXT,
-  last_seen TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  role TEXT DEFAULT 'user' CHECK (role IN ('admin', 'user', 'vip')),
+  status TEXT DEFAULT 'active'
 );
 ```
 
-### Triggers Necesarios
+### Automatización y Seguridad
 
-```sql
--- Trigger para actualizar current_bid cuando hay nueva puja
-CREATE OR REPLACE FUNCTION update_current_bid()
-RETURNS TRIGGER AS $$
-BEGIN
-  UPDATE products 
-  SET current_bid = NEW.amount 
-  WHERE id = NEW.product_id;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+- **Triggers**: Actualización automática de `current_bid` en la tabla `products` cuando se inserta una nueva puja en `bids`.
+- **RLS Policies**: Solo administradores pueden crear/editar productos. Todos los usuarios pueden ver productos y pujas. Los usuarios pueden editar sus propios perfiles.
+- **pg_cron**: (Opcional) Tarea programada para cerrar subastas automáticamente cuando expira el tiempo.
 
-CREATE TRIGGER on_new_bid
-  AFTER INSERT ON bids
-  FOR EACH ROW
-  EXECUTE FUNCTION update_current_bid();
-```
+Para una configuración completa, consulta [supabase/setup.sql](file:///c:/jey%20celulares/La-Ganga-Phone-RD-main/supabase/setup.sql).
+
 
 ## 🌐 Deployment en Vercel
 

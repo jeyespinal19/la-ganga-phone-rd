@@ -6,8 +6,10 @@ import { ProductDetail } from './components/ProductDetail';
 import { UserProfile } from './components/UserProfile';
 import { AdminDashboard } from './components/AdminDashboard';
 import { Toast } from './components/Toast';
+import { Login } from './components/Login';
 import { Category, AuctionItem, UserBid, User, ActivityLog } from './types';
 import { auctionService } from './services/auctionService';
+import { useAuth } from './contexts/AuthContext';
 
 // Helper for sorting by time
 const parseTimeLeftForSort = (timeStr: string): number => {
@@ -34,7 +36,8 @@ const parseTimeLeftForSort = (timeStr: string): number => {
 type SortOption = 'default' | 'price-asc' | 'price-desc' | 'time-asc';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'home' | 'profile' | 'admin' | 'product-detail'>('home');
+  const { user, profile, isAdmin } = useAuth();
+  const [currentView, setCurrentView] = useState<'home' | 'profile' | 'admin' | 'product-detail' | 'login'>('home');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('Todos');
@@ -165,9 +168,16 @@ const App: React.FC = () => {
       return;
     }
 
+    // Check if user is authenticated
+    if (!user) {
+      setToast({ visible: true, message: 'Debes iniciar sesión para pujar', type: 'error' });
+      setCurrentView('login');
+      return;
+    }
+
     // Call Supabase Service
-    const userId = '130a0e98-c116-4348-933e-001004169729'; // Using ID of 'Carlos Rodriguez' from mock/db for now
-    const userName = 'Tú';
+    const userId = user.id;
+    const userName = profile?.name || 'Usuario';
 
     const result = await auctionService.placeBid(item.id, proposedBidAmount, userId, userName);
 
@@ -262,10 +272,22 @@ const App: React.FC = () => {
   const selectedItem = items.find(i => i.id === selectedItemId);
 
   const renderContent = () => {
+    if (currentView === 'login') {
+      return <Login onBack={() => setCurrentView('home')} />;
+    }
     if (currentView === 'profile') {
+      if (!user) {
+        setCurrentView('login');
+        return null;
+      }
       return <UserProfile userBids={userBids} allItems={items} onBack={() => setCurrentView('home')} />;
     }
     if (currentView === 'admin') {
+      if (!isAdmin) {
+        setToast({ visible: true, message: 'No tienes permisos de administrador', type: 'error' });
+        setCurrentView('home');
+        return null;
+      }
       return (
         <AdminDashboard
           items={items}
