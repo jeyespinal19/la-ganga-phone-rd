@@ -14,6 +14,20 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
     const [fadeOut, setFadeOut] = useState(false);
 
     useEffect(() => {
+        // Debug Alert
+        const url = import.meta.env.VITE_SUPABASE_URL;
+        const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+        if (!url || !key) {
+            alert(`ERROR IMPORTANTE:\nFaltan variables de entorno.\nURL: ${url ? 'OK' : 'MISSING'}\nKEY: ${key ? 'OK' : 'MISSING'}`);
+        } else {
+            // Check for common issues like quotes
+            if (key.startsWith('"') || key.startsWith("'")) {
+                alert('ADVERTENCIA: La clave API parece tener comillas extra. Revisa .env.local');
+            }
+            console.log('Env Vars Loaded correctly');
+        }
+
         const fadeTimer = setTimeout(() => {
             setFadeOut(true);
         }, duration - 500);
