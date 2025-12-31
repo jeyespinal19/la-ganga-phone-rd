@@ -38,39 +38,10 @@
     }
   </script>
   <style>
-    :root {
-      /* Default Dark Mode */
-      --app-bg: #050b14;
-      --app-card: #0f172a;
-      --app-text: #f8fafc;
-      --app-muted: #94a3b8;
-      --app-border: #1e293b;
-      /* gray-800 */
-      --app-image-bg: #111827;
-      /* gray-900 */
-      --app-badge-bg: #1e293b;
-    }
-
-    :root.light {
-      /* Light Mode Overrides */
-      --app-bg: #f3f4f6;
-      /* gray-100 */
-      --app-card: #ffffff;
-      --app-text: #111827;
-      /* gray-900 */
-      --app-muted: #64748b;
-      /* slate-500 */
-      --app-border: #e5e7eb;
-      /* gray-200 */
-      --app-image-bg: #f1f5f9;
-      /* slate-100 */
-      --app-badge-bg: #e2e8f0;
-      /* slate-200 */
-    }
-
+    /* Basic Styles */
     body {
-      background-color: var(--app-bg);
-      color: var(--app-text);
+      background-color: #ffffff;
+      color: #111827;
       font-family: 'Outfit', sans-serif;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
@@ -91,15 +62,6 @@
 
     ::-webkit-scrollbar-thumb:hover {
       background: var(--app-muted);
-    }
-
-    /* Elegant Background System */
-    .bg-main-wrapper {
-      position: fixed;
-      inset: 0;
-      z-index: -10;
-      background-color: #050b14;
-      overflow: hidden;
     }
 
     .bg-grid {
@@ -169,11 +131,6 @@
 </head>
 
 <body>
-  <div class="bg-main-wrapper" aria-hidden="true">
-    <div class="bg-grid"></div>
-    <div class="glow-blob glow-cyan"></div>
-    <div class="glow-blob glow-magenta"></div>
-  </div>
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>

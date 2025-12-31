@@ -335,54 +335,66 @@ const App: React.FC = () => {
 
     return (
       <>
-        <div className="flex flex-col gap-8 mb-12">
-          <div className="flex flex-col lg:flex-row gap-6 justify-between lg:items-center">
-            <div className="relative flex-1 group max-w-2xl">
-              <div className="absolute inset-0 bg-app-neon-cyan blur-2xl opacity-5 group-focus-within:opacity-15 transition-opacity" />
-              <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-white/30 group-focus-within:text-app-neon-cyan transition-colors" />
+        <div className="flex flex-col gap-0 -mx-4 sm:mx-0 sticky top-0 z-50 bg-white">
+          {/* Mobile Style Search Bar */}
+          <div className="px-4 py-3 bg-white flex items-center gap-3">
+            <div className="flex-1 relative flex items-center">
+              <div className="absolute left-4 text-gray-400">
+                <Search className="w-5 h-5" />
               </div>
               <input
                 type="text"
-                className="block w-full pl-12 pr-6 py-5 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl leading-5 text-white placeholder-white/20 focus:outline-none focus:bg-black/60 focus:border-app-neon-cyan/50 focus:ring-1 focus:ring-app-neon-cyan/50 font-bold transition-all shadow-2xl"
-                placeholder="Busca tu próximo equipo..."
+                className="w-full bg-gray-100 border-none rounded-full py-2.5 pl-11 pr-12 text-sm focus:ring-2 focus:ring-black/5"
+                placeholder="accesorios de pecera"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="relative group">
-                <SlidersHorizontal className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/30 group-hover:text-app-neon-cyan transition-colors pointer-events-none z-10" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="appearance-none bg-black/40 backdrop-blur-xl border border-white/10 text-white font-black uppercase tracking-widest text-[10px] py-4 pl-11 pr-10 rounded-2xl focus:outline-none focus:border-app-neon-cyan cursor-pointer hover:bg-black/60 transition-all shadow-xl"
-                >
-                  <option value="default">Relevancia</option>
-                  <option value="price-asc">Precio: ↑</option>
-                  <option value="price-desc">Precio: ↓</option>
-                  <option value="time-asc">Pronto Final</option>
-                </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20 group-hover:text-app-neon-cyan transition-colors">
-                  <ChevronDown className="w-4 h-4" />
-                </div>
-              </div>
+              <button className="absolute right-12 text-gray-500 hover:text-black p-2">
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
+              </button>
+              <button className="absolute right-2 bg-black text-white p-2 rounded-full">
+                <Search className="w-4 h-4" strokeWidth={3} />
+              </button>
             </div>
           </div>
-          <div className="flex flex-wrap gap-3">
-            {categories.map((cat) => (cat !== null && (
+
+          {/* Scrollable Categories Tab */}
+          <div className="flex overflow-x-auto no-scrollbar px-4 py-2 border-b border-gray-100 gap-6 bg-white">
+            {['Inicio', 'Hogar', 'Hombre', 'Oficina', 'Industrial', 'Deporte', 'Mascotas'].map((cat, i) => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 border
-                  ${selectedCategory === cat
-                    ? 'bg-app-neon-cyan text-black border-app-neon-cyan shadow-[0_0_25px_rgba(0,229,255,0.4)] scale-105'
-                    : 'bg-white/5 text-white/40 border-white/5 hover:border-white/20 hover:text-white hover:bg-white/10'
+                className={`whitespace-nowrap pb-1 text-base font-bold transition-all relative ${(selectedCategory === cat || (cat === 'Inicio' && selectedCategory === 'Todos'))
+                  ? 'text-black'
+                  : 'text-gray-400'
                   }`}
+                onClick={() => setSelectedCategory(cat === 'Inicio' ? 'Todos' : cat as Category)}
               >
                 {cat}
+                {(selectedCategory === cat || (cat === 'Inicio' && selectedCategory === 'Todos')) && (
+                  <div className="absolute -bottom-1 left-0 right-0 h-1 bg-black rounded-full" />
+                )}
               </button>
-            )))}
+            ))}
+          </div>
+
+          {/* Promo Bar */}
+          <div className="flex items-center gap-4 px-4 py-2 bg-white text-[11px] font-bold text-green-700">
+            <div className="flex items-center gap-1">
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="3">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span>Envío gratis</span>
+            </div>
+            <div className="text-gray-300">|</div>
+            <div className="flex items-center gap-1">
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="3">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span>Reembolso por 30 días</span>
+            </div>
           </div>
         </div>
 
@@ -420,16 +432,47 @@ const App: React.FC = () => {
       {showSplash && (
         <SplashScreen onComplete={() => setShowSplash(false)} duration={3000} />
       )}
-      <div className="min-h-screen bg-app-bg text-app-text font-sans pb-10 transition-colors duration-300">
-        <Navbar
-          currentView={currentView === 'profile' || currentView === 'admin' ? currentView : 'home'}
-          onNavigate={(view) => setCurrentView(view)}
-          isDarkMode={isDarkMode}
-          toggleTheme={toggleTheme}
-        />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="min-h-screen bg-white text-gray-900 font-sans pb-20 transition-colors duration-300">
+        {currentView !== 'home' && (
+          <Navbar
+            currentView={currentView === 'profile' || currentView === 'admin' ? currentView : 'home'}
+            onNavigate={(view) => setCurrentView(view)}
+            isDarkMode={isDarkMode}
+            toggleTheme={toggleTheme}
+          />
+        )}
+        <main className={`max-w-7xl mx-auto bg-gray-50 min-h-screen ${currentView === 'home' ? 'px-0 pt-0' : 'px-4 sm:px-6 lg:px-8 pt-8'}`}>
           {renderContent()}
         </main>
+
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around py-2 px-6 safe-area-bottom lg:hidden">
+          <button onClick={() => setCurrentView('home')} className="flex flex-col items-center gap-1 text-red-600">
+            <div className="bg-red-600 w-8 h-8 rounded-2xl flex items-center justify-center text-white">
+              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
+            </div>
+            <span className="text-[10px] font-bold">Inicio</span>
+          </button>
+          <button className="flex flex-col items-center gap-1 text-gray-500">
+            <Search className="w-6 h-6" />
+            <span className="text-[10px] font-bold">Categorías</span>
+          </button>
+          <button onClick={() => setCurrentView('profile')} className="flex flex-col items-center gap-1 text-gray-500">
+            <div className="relative">
+              <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+              </svg>
+              <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[8px] w-4 h-4 flex items-center justify-center rounded-full border-2 border-white">5</span>
+            </div>
+            <span className="text-[10px] font-bold">Tú</span>
+          </button>
+          <button className="flex flex-col items-center gap-1 text-gray-500">
+            <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+            <span className="text-[10px] font-bold">Carrito</span>
+          </button>
+        </div>
         <Toast
           message={toast.message}
           isVisible={toast.visible}
