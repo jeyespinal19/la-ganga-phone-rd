@@ -97,7 +97,7 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, isWinning = fa
   return (
     <div
       onClick={() => onClick && onClick(item)}
-      className={`bg-app-card rounded-xl overflow-hidden border flex flex-col transition-all duration-300 group relative cursor-pointer
+      className={`glass rounded-xl overflow-hidden border flex flex-col transition-all duration-300 group relative cursor-pointer
       ${hasEnded
           ? 'border-red-900/30 opacity-75'
           : isWinning
@@ -151,7 +151,7 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, isWinning = fa
       <div className="p-2.5 sm:p-4 flex flex-col flex-grow relative z-10">
         <div className="flex justify-between items-start mb-2 gap-1">
           <div className="min-w-0">
-            <h3 className="text-app-text font-bold text-xs sm:text-sm leading-tight mb-0.5 truncate pr-1">
+            <h3 className="text-app-text font-bold text-xs sm:text-sm leading-tight mb-0.5 truncate pr-1 neon-underline">
               {item.name}
             </h3>
             {item.specs && (
