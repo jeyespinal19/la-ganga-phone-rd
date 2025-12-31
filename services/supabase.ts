@@ -12,4 +12,7 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     console.log('✅ Supabase credentials loaded successfully');
 }
 
+console.log('Supabase URL:', SUPABASE_URL);
+console.log('Supabase KEY (first 10):', SUPABASE_ANON_KEY.substring(0, 10));
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
