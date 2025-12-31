@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, User, ShoppingCart, LayoutDashboard, Settings } from 'lucide-react';
+import { X, User, ShoppingCart, LayoutDashboard, Settings, Package } from 'lucide-react';
 
 interface SideMenuProps {
     isOpen: boolean;
@@ -56,6 +56,15 @@ export const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, onNavigate,
                                 >
                                     <ShoppingCart className="w-5 h-5" />
                                     <span>Carrito</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={() => { onNavigate('orders'); onClose(); }}
+                                    className="w-full flex items-center gap-3 px-6 py-3 hover:bg-gray-50 text-gray-700 transition-colors"
+                                >
+                                    <Package className="w-5 h-5" />
+                                    <span>Mis Pedidos</span>
                                 </button>
                             </li>
 

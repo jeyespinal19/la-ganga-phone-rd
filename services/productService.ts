@@ -1,6 +1,6 @@
 
 import { supabase } from './supabase';
-import { Product, User } from '../types';
+import { Product, User, Order } from '../types';
 
 // Mock users for fallback or just general usage
 const MOCK_USERS: User[] = [
@@ -26,6 +26,7 @@ class ProductService {
         brand: item.brand,
         specs: item.specs || '',
         price: Number(item.current_bid), // Using current_bid as Price
+        stock: item.stock || 0,
         imageDetails: item.image_details,
         originalPrice: item.reserve_price ? Number(item.reserve_price) : undefined
       }));
@@ -65,6 +66,7 @@ class ProductService {
       specs: item.specs,
       current_bid: item.price, // Saving Price to current_bid column
       reserve_price: item.originalPrice,
+      stock: item.stock,
       image_details: item.imageDetails,
       status: 'active'
     });
@@ -80,6 +82,7 @@ class ProductService {
       if (updates.brand !== undefined) updateData.brand = updates.brand;
       if (updates.specs !== undefined) updateData.specs = updates.specs;
       if (updates.price !== undefined) updateData.current_bid = updates.price;
+      if (updates.stock !== undefined) updateData.stock = updates.stock;
       if (updates.originalPrice !== undefined) updateData.reserve_price = updates.originalPrice;
       if (updates.imageDetails !== undefined) updateData.image_details = updates.imageDetails;
 
@@ -132,6 +135,12 @@ class ProductService {
 
       if (itemsError) throw itemsError;
 
+      // 3. Decrement Stock
+      // Note: In a real app, this should be a stored procedure or transaction to ensure atomicity
+      for (const item of items) {
+        await supabase.rpc('decrement_stock', { row_id: item.id, quantity: item.quantity });
+      }
+
       return orderData.id;
 
     } catch (err) {
@@ -139,6 +148,43 @@ class ProductService {
       throw err;
     }
   }
-}
+  async getOrders(userId: string) {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*, order_items(*)')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data as any;
+  }
 
+  async createPaymentIntent(orderId: string, amount: number) {
+    const { data, error } = await supabase.functions.invoke('create-payment-intent', {
+      body: { orderId, amount, currency: 'dop' }
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  // --- Admin Methods ---
+
+  async getAllOrders() {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*, order_items(*), profiles(name, email)')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data as any;
+  }
+
+  async updateOrderStatus(orderId: string, status: string) {
+    const { error } = await supabase
+      .from('orders')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', orderId);
+    if (error) throw error;
+    return true;
+  }
+
+}
 export const productService = new ProductService();

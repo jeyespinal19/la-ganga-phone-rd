@@ -10,9 +10,17 @@ import {
   DollarSign,
   Edit,
   X,
-  Upload
+  Upload,
+  ShoppingBag,
+  Clock,
+  CheckCircle2,
+  Truck as TruckIcon,
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
-import { Product, User } from '../types';
+import { Product, User, Order } from '../types';
+import { formatCurrency } from '../utils/format';
+import { productService } from '../services/productService';
 
 interface AdminDashboardProps {
   items: Product[];
@@ -24,7 +32,7 @@ interface AdminDashboardProps {
   onBack: () => void;
 }
 
-type Tab = 'overview' | 'products' | 'users';
+type Tab = 'overview' | 'products' | 'users' | 'orders';
 
 const ROW_HEIGHT = 80;
 
@@ -37,9 +45,38 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onDeleteUser,
   onBack
 }) => {
-  const [activeTab, setActiveTab] = useState<Tab>('products'); // Default to products
+  const [activeTab, setActiveTab] = useState<Tab>('products');
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === 'orders') {
+      fetchOrders();
+    }
+  }, [activeTab]);
+
+  const fetchOrders = async () => {
+    setOrdersLoading(true);
+    try {
+      const data = await productService.getAllOrders();
+      setOrders(data);
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const handleUpdateStatus = async (orderId: string, status: string) => {
+    try {
+      await productService.updateOrderStatus(orderId, status);
+      fetchOrders();
+    } catch (err) {
+      console.error('Error updating status:', err);
+    }
+  };
 
   // Form State
   const [newItem, setNewItem] = useState({
@@ -76,6 +113,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       brand: item.brand,
       specs: item.specs,
       price: item.price.toString(),
+      stock: item.stock ? item.stock.toString() : '0',
       originalPrice: item.originalPrice ? item.originalPrice.toString() : ''
     });
     setImagePreview(item.imageDetails);
@@ -93,6 +131,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       brand: newItem.brand,
       specs: newItem.specs,
       price: Number(newItem.price),
+      stock: Number((newItem as any).stock || 0),
       originalPrice: newItem.originalPrice ? Number(newItem.originalPrice) : undefined,
       imageDetails: imagePreview || '1' // Fallback
     };
@@ -201,27 +240,107 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
 
         <nav className="space-y-1">
-          <button onClick={() => setActiveTab('products')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-colors ${activeTab === 'products' ? 'bg-black text-white' : 'text-gray-500 hover:bg-gray-100'}`}>
+          <button onClick={() => setActiveTab('products')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'products' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-gray-500 hover:bg-gray-100'}`}>
             <Package className="w-5 h-5" /> Productos
           </button>
-          <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-colors ${activeTab === 'users' ? 'bg-black text-white' : 'text-gray-500 hover:bg-gray-100'}`}>
+          <button onClick={() => setActiveTab('orders')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'orders' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-gray-500 hover:bg-gray-100'}`}>
+            <ShoppingBag className="w-5 h-5" /> Pedidos
+          </button>
+          <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'users' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-gray-500 hover:bg-gray-100'}`}>
             <Users className="w-5 h-5" /> Usuarios
           </button>
         </nav>
 
-        <button onClick={onBack} className="mt-8 text-sm text-gray-500 font-bold hover:text-black">
+        <button onClick={onBack} className="mt-8 text-sm text-gray-400 font-bold hover:text-black transition-colors px-4">
           ← Volver a la Tienda
         </button>
       </aside>
 
       {/* Main */}
       <main className="flex-1">
-        {activeTab === 'products' ? renderProducts() : (
-          <div className="p-12 text-center text-gray-400">
-            <Users className="w-12 h-12 mx-auto mb-4 opacity-20" />
-            <p>Gestión de usuarios próximamente</p>
-          </div>
-        )}
+        {activeTab === 'products' ? renderProducts() :
+          activeTab === 'orders' ? (
+            <div className="space-y-6 animate-in fade-in duration-500">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h2 className="text-2xl font-black text-gray-900 tracking-tight">Gestión de Pedidos</h2>
+                  <p className="text-sm text-gray-500">Monitorea y actualiza el estado de las compras</p>
+                </div>
+                <button
+                  onClick={fetchOrders}
+                  className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
+                  disabled={ordersLoading}
+                >
+                  <Clock className={`w-5 h-5 text-gray-500 ${ordersLoading ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
+
+              {ordersLoading && orders.length === 0 ? (
+                <div className="bg-white rounded-3xl p-12 flex flex-col items-center justify-center border border-gray-100 shadow-sm">
+                  <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
+                  <p className="text-gray-500 font-medium">Cargando pedidos...</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4">
+                  {orders.map((order: any) => (
+                    <div key={order.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                      <div className="p-5 flex flex-col md:flex-row justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">#{order.id.slice(0, 8)}</span>
+                            <span className="text-xs text-gray-400 font-medium">
+                              {new Date(order.created_at).toLocaleString('es-DO')}
+                            </span>
+                          </div>
+                          <h3 className="font-bold text-gray-900 mb-1">{order.shipping_address?.name || 'Cliente sin nombre'}</h3>
+                          <p className="text-sm text-gray-500 flex items-center gap-1.5">
+                            <AlertCircle className="w-3.5 h-3.5" />
+                            {order.shipping_address?.address}, {order.shipping_address?.city}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col md:items-end justify-between gap-3">
+                          <div className="text-right">
+                            <span className="block text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Total del Pedido</span>
+                            <span className="text-lg font-black text-gray-900">{formatCurrency(order.total)}</span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <select
+                              value={order.status}
+                              onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
+                              className={`text-xs font-black px-4 py-2 rounded-xl border-none ring-1 ring-inset outline-none cursor-pointer transition-all ${order.status === 'paid' ? 'bg-green-50 text-green-700 ring-green-100' :
+                                order.status === 'shipped' ? 'bg-blue-50 text-blue-700 ring-blue-100' :
+                                  order.status === 'cancelled' ? 'bg-red-50 text-red-700 ring-red-100' :
+                                    'bg-orange-50 text-orange-700 ring-orange-100'
+                                }`}
+                            >
+                              <option value="pending">Pendiente</option>
+                              <option value="paid">Pagado</option>
+                              <option value="shipped">Enviado</option>
+                              <option value="delivered">Entregado</option>
+                              <option value="cancelled">Cancelado</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {orders.length === 0 && !ordersLoading && (
+                    <div className="bg-white rounded-3xl p-12 text-center border border-gray-100">
+                      <ShoppingBag className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+                      <p className="text-gray-400 font-bold">No hay pedidos registrados aún</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="p-12 text-center text-gray-400">
+              <Users className="w-12 h-12 mx-auto mb-4 opacity-20" />
+              <p>Gestión de usuarios próximamente</p>
+            </div>
+          )}
       </main>
 
       {/* Add/Edit Modal */}
@@ -251,6 +370,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-black/5 outline-none"
                     value={newItem.price} onChange={e => setNewItem({ ...newItem, price: e.target.value })} />
                 </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Stock</label>
+                <input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-black/5 outline-none"
+                  value={(newItem as any).stock || ''} onChange={e => setNewItem({ ...newItem, stock: Number(e.target.value) } as any)} />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Descripción</label>

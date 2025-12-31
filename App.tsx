@@ -11,6 +11,7 @@ import { Login } from './components/Login';
 import { SplashScreen } from './components/SplashScreen';
 import { Cart } from './components/Cart';
 import { Checkout } from './components/Checkout';
+import OrderHistory from './components/OrderHistory';
 import { Category, Product, User, CartItem } from './types';
 import { productService } from './services/productService';
 import { PromoBanner } from './components/PromoBanner';
@@ -21,7 +22,7 @@ type SortOption = 'default' | 'price-asc' | 'price-desc';
 
 const App: React.FC = () => {
   const { user, profile, isAdmin, signOut } = useAuth();
-  const [currentView, setCurrentView] = useState<'home' | 'profile' | 'admin' | 'product-detail' | 'login' | 'cart' | 'checkout'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'profile' | 'admin' | 'product-detail' | 'login' | 'cart' | 'checkout' | 'orders'>('home');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('Todos');
@@ -37,8 +38,21 @@ const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
   const [toast, setToast] = useState<{ visible: boolean; message: string; type?: 'success' | 'error' }>({ visible: false, message: '', type: 'success' });
+
+  // Handle Dark Mode Class & Persistence
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
 
   // --- Initialization ---
 
@@ -214,8 +228,39 @@ const App: React.FC = () => {
             setToast({ visible: true, message: 'Producto eliminado', type: 'success' });
           }}
           onCheckout={() => {
-            setToast({ visible: true, message: 'Checkout próximamente...' });
+            if (!user) {
+              setToast({ visible: true, message: 'Inicia sesión para comprar', type: 'error' });
+              setCurrentView('login');
+              return;
+            }
+            setCurrentView('checkout');
           }}
+          onBack={() => setCurrentView('home')}
+        />
+      );
+    }
+
+    if (currentView === 'checkout') {
+      const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      const shipping = subtotal > 2000 ? 0 : 250;
+      return (
+        <Checkout
+          cartItems={cart}
+          total={subtotal + shipping}
+          onSuccess={() => {
+            setCart([]);
+            localStorage.removeItem('cart');
+            setToast({ visible: true, message: '¡Pedido realizado con éxito!', type: 'success' });
+            setCurrentView('home');
+          }}
+          onBack={() => setCurrentView('cart')}
+        />
+      );
+    }
+
+    if (currentView === 'orders') {
+      return (
+        <OrderHistory
           onBack={() => setCurrentView('home')}
         />
       );
@@ -223,48 +268,65 @@ const App: React.FC = () => {
 
     return (
       <>
-        <div className="flex flex-col gap-0 -mx-4 sm:mx-0 bg-white">
+        <div className="flex flex-col gap-0 -mx-4 sm:mx-0 bg-transparent">
           {/* Header */}
-          <div className="bg-white">
-            <div className="flex items-center justify-between px-4 pt-3 pb-2 bg-white">
-              <h1 className="text-xl font-black italic tracking-tighter">
-                <span className="text-orange-500">La Ganga</span>
-                <span className="text-blue-600 ml-1">Phone RD</span>
-              </h1>
+          <div className="sticky top-0 z-30 glass shadow-sm px-4 pt-3 pb-3">
+            <div className="flex items-center justify-between bg-transparent">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold animate-float">G</div>
+                <h1 className="text-lg font-black italic tracking-tighter leading-none">
+                  <span className="text-app-text">La Ganga</span>
+                  <div className="text-[10px] text-blue-600 -mt-1 font-bold tracking-widest uppercase">Phone RD</div>
+                </h1>
+              </div>
               <div className="flex items-center gap-3">
-                <button className="relative p-1" onClick={() => setCurrentView('cart')}>
-                  <ShoppingCart className="text-gray-700 w-6 h-6" />
+                <button
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-600 dark:text-gray-300 transition-all hover:scale-110 active:scale-95"
+                >
+                  {isDarkMode ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                    </svg>
+                  )}
+                </button>
+                <button className="relative p-1 transition-transform active:scale-90" onClick={() => setCurrentView('cart')}>
+                  <ShoppingCart className="text-app-text w-6 h-6" />
                   {cart.length > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 bg-orange-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black animate-pulse">
                       {cart.length}
                     </span>
                   )}
                 </button>
                 <button
-                  className="relative p-1"
+                  className="p-1 transition-transform active:scale-90"
                   onClick={() => setIsMenuOpen(true)}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-app-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
               </div>
             </div>
+          </div>
 
-            {/* Search */}
-            <div className="px-4 pb-3 bg-white border-b border-gray-100">
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <Search className="w-5 h-5" />
-                </div>
-                <input
-                  type="text"
-                  className="w-full bg-gray-100 border-none rounded-2xl py-2.5 pl-10 pr-10 text-sm focus:ring-2 focus:ring-orange-500/20 text-gray-800 placeholder-gray-400"
-                  placeholder="Buscar productos..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+          {/* Search */}
+          <div className="px-4 py-3 bg-app-bg border-b border-app-border">
+            <div className="relative group">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-app-muted transition-colors group-focus-within:text-blue-500">
+                <Search className="w-5 h-5" />
               </div>
+              <input
+                type="text"
+                className="w-full bg-app-card border border-app-border rounded-2xl py-3 pl-12 pr-10 text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 text-app-text placeholder-app-muted transition-all shadow-sm"
+                placeholder="Buscar productos y marcas..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
           </div>
 
@@ -290,7 +352,7 @@ const App: React.FC = () => {
           <PromoBanner />
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 bg-white pb-24">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 bg-white">
           {filteredItems.length > 0 ? (
             filteredItems.map((item) => (
               <ProductCard
@@ -317,35 +379,12 @@ const App: React.FC = () => {
       {showSplash && (
         <SplashScreen onComplete={() => setShowSplash(false)} duration={3000} />
       )}
-      <div className="min-h-screen bg-white text-gray-900 font-sans pb-20 transition-colors duration-300">
-        <main className={`max-w-7xl mx-auto bg-white min-h-screen ${currentView === 'home' ? 'px-0 pt-0' : 'px-4 sm:px-6 lg:px-8 pt-8'}`}>
+      <div className="min-h-screen bg-app-bg text-app-text font-sans transition-colors duration-400">
+        <main className={`max-w-7xl mx-auto min-h-screen ${currentView === 'home' ? 'px-0 pt-0' : 'px-4 sm:px-6 lg:px-8 pt-8'}`}>
           {renderContent()}
         </main>
 
-        {/* Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around py-2 px-6 safe-area-bottom lg:hidden z-40">
-          <button onClick={() => setCurrentView('home')} className={`flex flex-col items-center gap-1 ${currentView === 'home' ? 'text-red-600' : 'text-gray-400'}`}>
-            <Home className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Inicio</span>
-          </button>
-          <button className="flex flex-col items-center gap-1 text-gray-400">
-            <Tag className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Ofertas</span>
-          </button>
-          <button onClick={() => setCurrentView('profile')} className={`flex flex-col items-center gap-1 ${currentView === 'profile' ? 'text-red-600' : 'text-gray-400'}`}>
-            <UserIcon className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Tú</span>
-          </button>
-          <button onClick={() => setCurrentView('cart')} className={`flex flex-col items-center gap-1 relative ${currentView === 'cart' ? 'text-red-600' : 'text-gray-400'}`}>
-            <ShoppingCart className="w-6 h-6" />
-            {cart.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[8px] w-4 h-4 flex items-center justify-center rounded-full">
-                {cart.length}
-              </span>
-            )}
-            <span className="text-[10px] font-bold">Carrito</span>
-          </button>
-        </div>
+
 
         <Toast
           message={toast.message}

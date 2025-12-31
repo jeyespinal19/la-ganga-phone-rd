@@ -20,7 +20,7 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, onAddToCart, o
   return (
     <div
       onClick={() => onClick && onClick(item)}
-      className="bg-white border-none flex flex-col group relative cursor-pointer"
+      className="shop-card flex flex-col group relative cursor-pointer p-3"
     >
       {/* Image Container */}
       <div className="relative aspect-[4/5] w-full bg-gray-50 overflow-hidden flex items-center justify-center rounded-xl mb-3">
@@ -39,6 +39,13 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, onAddToCart, o
         {item.originalPrice && (
           <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
             -{Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%
+          </div>
+        )}
+
+        {/* Out of Stock Overlay */}
+        {item.stock <= 0 && (
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10">
+            <span className="bg-black text-white text-xs font-bold px-3 py-1 rounded-full">AGOTADO</span>
           </div>
         )}
       </div>
@@ -83,16 +90,20 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, onAddToCart, o
           </div>
 
           <button
+            disabled={item.stock <= 0}
             onClick={(e) => {
               e.stopPropagation();
               onAddToCart(item);
             }}
-            className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 active:scale-95 transition-all"
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${item.stock > 0 ? 'bg-black text-white hover:bg-gray-800 active:scale-95' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
           >
             <ShoppingCart className="w-4 h-4" />
           </button>
         </div>
       </div>
+
+      {/* Subtle Shadow on Hover Effect (handled via CSS class shop-card) */}
+      <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-black/5 group-hover:ring-app-accent/20 pointer-events-none" />
     </div>
   );
 };

@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS products (
     current_bid DECIMAL NOT NULL DEFAULT 0,
     reserve_price DECIMAL,
     image_details TEXT,
+    stock INTEGER NOT NULL DEFAULT 0,
     ends_at TIMESTAMP WITH TIME ZONE NOT NULL,
     status TEXT DEFAULT 'active' CHECK (status IN ('active', 'closed', 'cancelled')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -163,6 +164,20 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to decrement stock safely
+CREATE OR REPLACE FUNCTION decrement_stock(row_id UUID, quantity INTEGER)
+RETURNS void AS $$
+BEGIN
+    UPDATE products
+    SET stock = stock - quantity
+    WHERE id = row_id AND stock >= quantity;
+    
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Insufficient stock for product %', row_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
 
 -- ============================================
 -- TRIGGERS

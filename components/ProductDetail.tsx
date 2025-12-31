@@ -70,34 +70,55 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ item, onBack, onAd
 
             {/* Quantity & Actions */}
             <div className="flex flex-col gap-4 mb-8 border-b border-gray-100 pb-8">
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-bold text-gray-700">Cantidad</span>
-                <div className="flex items-center gap-3 bg-gray-50 rounded-full px-3 py-1">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1 hover:text-black text-gray-400">
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="text-lg font-bold w-4 text-center">{quantity}</span>
-                  <button onClick={() => setQuantity(quantity + 1)} className="p-1 hover:text-black text-gray-600">
-                    <Plus className="w-4 h-4" />
+              {item.stock > 0 ? (
+                <>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm font-bold text-gray-700">Cantidad</span>
+                    <div className="flex items-center gap-3 bg-gray-50 rounded-full px-3 py-1">
+                      <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1 hover:text-black text-gray-400">
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="text-lg font-bold w-4 text-center">{quantity}</span>
+                      <button
+                        onClick={() => setQuantity(Math.min(item.stock, quantity + 1))}
+                        className={`p-1 ${quantity >= item.stock ? 'text-gray-300 cursor-not-allowed' : 'hover:text-black text-gray-600'}`}
+                        disabled={quantity >= item.stock}
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <span className="text-xs text-gray-500 font-medium">
+                      ({item.stock} disponibles)
+                    </span>
+                  </div>
+
+                  <div className="flex gap-3 mt-4">
+                    <button
+                      onClick={handleAddToCart}
+                      className="flex-1 bg-black text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-xl shadow-black/10"
+                    >
+                      <ShoppingCart className="w-5 h-5" />
+                      Agregar al Carrito
+                    </button>
+                    <button
+                      onClick={() => onShare(item)}
+                      className="p-4 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                    >
+                      <Share2 className="w-6 h-6" />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="bg-gray-100 rounded-xl p-4 text-center">
+                  <span className="text-gray-500 font-bold block mb-2">Este producto está actualmente agotado.</span>
+                  <button
+                    onClick={() => onBack()}
+                    className="text-black text-sm font-bold underline"
+                  >
+                    Ver otros productos
                   </button>
                 </div>
-              </div>
-
-              <div className="flex gap-3 mt-4">
-                <button
-                  onClick={handleAddToCart}
-                  className="flex-1 bg-black text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-xl shadow-black/10"
-                >
-                  <ShoppingCart className="w-5 h-5" />
-                  Agregar al Carrito
-                </button>
-                <button
-                  onClick={() => onShare(item)}
-                  className="p-4 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
-                >
-                  <Share2 className="w-6 h-6" />
-                </button>
-              </div>
+              )}
             </div>
 
             {/* Benefits */}

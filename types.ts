@@ -6,6 +6,7 @@ export interface Product {
   specs: string;
   price: number;
   imageDetails: string;
+  stock: number;
   originalPrice?: number; // Optional: for showing "scratch" price
 }
 
@@ -25,4 +26,21 @@ export interface User {
 
 export interface CartItem extends Product {
   quantity: number;
+}
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  product_id: string;
+  quantity: number;
+  price: number;
+}
+export interface Order {
+  id: string;
+  user_id: string;
+  total: number;
+  status: 'pending' | 'paid' | 'shipped' | 'cancelled';
+  shipping_address: any;
+  created_at: string;
+  items: OrderItem[];
+  stripe_payment_intent_id?: string;
 }
