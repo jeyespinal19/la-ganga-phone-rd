@@ -195,8 +195,9 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, isWinning = fa
             <span>Vendedor estrella</span>
           </div>
         </div>
-        );
+      </div>
+      );
 };
 
-        // Memoize to prevent unnecessary re-renders
-        export const ProductCard = React.memo(ProductCardComponent);
+      // Memoize to prevent unnecessary re-renders
+      export const ProductCard = React.memo(ProductCardComponent);
