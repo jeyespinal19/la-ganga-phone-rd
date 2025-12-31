@@ -10,8 +10,9 @@ import { Toast } from './components/Toast';
 import { NotificationSettings } from './components/NotificationSettings';
 import { Login } from './components/Login';
 import { SplashScreen } from './components/SplashScreen';
-import { Category, AuctionItem, UserBid, User, ActivityLog } from './types';;
+import { Category, AuctionItem, UserBid, User, ActivityLog } from './types';
 import { auctionService } from './services/auctionService';
+import { PromoBanner } from './components/PromoBanner';
 import { useAuth } from './contexts/AuthContext';
 
 // Helper for sorting by time
@@ -396,9 +397,11 @@ const App: React.FC = () => {
               <span>Reembolso por 30 días</span>
             </div>
           </div>
+
+          <PromoBanner />
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 bg-white">
           {stableItemIds.length > 0 ? (
             stableItemIds.map((id) => {
               const item = items.find(i => i.id === id);
@@ -441,7 +444,7 @@ const App: React.FC = () => {
             toggleTheme={toggleTheme}
           />
         )}
-        <main className={`max-w-7xl mx-auto bg-gray-50 min-h-screen ${currentView === 'home' ? 'px-0 pt-0' : 'px-4 sm:px-6 lg:px-8 pt-8'}`}>
+        <main className={`max-w-7xl mx-auto bg-white min-h-screen ${currentView === 'home' ? 'px-0 pt-0' : 'px-4 sm:px-6 lg:px-8 pt-8'}`}>
           {renderContent()}
         </main>
 

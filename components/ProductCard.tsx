@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Zap, Clock, Share2, Trophy } from 'lucide-react';
+import { Share2, Trophy } from 'lucide-react';
 import { AuctionItem } from '../types';
 
 interface ProductCardProps {
@@ -135,9 +135,16 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, isWinning = fa
           </span>
         </div>
 
-        <h3 className="text-gray-800 font-medium text-xs leading-tight mb-2 line-clamp-2">
+        <h3 className="text-gray-800 font-medium text-xs leading-tight mb-1 line-clamp-2">
           {item.name} {item.specs}
         </h3>
+
+        {/* Time Left Badge */}
+        {!hasEnded && (
+          <div className={`text-[9px] font-bold mb-1 ${isEndingSoon ? 'text-red-500' : 'text-gray-400'}`}>
+            {timeDisplay}
+          </div>
+        )}
 
         {/* Dynamic Badge (Social Proof) */}
         {!hasEnded && (
