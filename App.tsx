@@ -6,7 +6,7 @@ import { ProductDetail } from './components/ProductDetail';
 import { UserProfile } from './components/UserProfile';
 import { AdminDashboard } from './components/AdminDashboard';
 import { Toast } from './components/Toast';
-import { Login } from './components/Login';
+import { NotificationSettings } from './components/NotificationSettings';
 import { Category, AuctionItem, UserBid, User, ActivityLog } from './types';
 import { auctionService } from './services/auctionService';
 import { useAuth } from './contexts/AuthContext';
@@ -303,6 +303,9 @@ const App: React.FC = () => {
           onBack={() => setCurrentView('home')}
         />
       );
+    }
+    if (currentView === 'settings') {
+      return <NotificationSettings onBack={() => setCurrentView('home')} />;
     }
     if (currentView === 'product-detail' && selectedItem) {
       return (
