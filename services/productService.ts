@@ -99,6 +99,46 @@ class ProductService {
   async deleteProduct(id: string) {
     await supabase.from('products').delete().eq('id', id);
   }
+
+  // --- Orders ---
+
+  async createOrder(userId: string, total: number, shippingAddress: any, items: { id: string, price: number, quantity: number }[]) {
+    try {
+      // 1. Create Order
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          user_id: userId,
+          total: total,
+          status: 'pending',
+          shipping_address: shippingAddress
+        })
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // 2. Create Order Items
+      const orderItems = items.map(item => ({
+        order_id: orderData.id,
+        product_id: item.id,
+        quantity: item.quantity,
+        price: item.price
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      return orderData.id;
+
+    } catch (err) {
+      console.error('Create order error:', err);
+      throw err;
+    }
+  }
 }
 
 export const productService = new ProductService();

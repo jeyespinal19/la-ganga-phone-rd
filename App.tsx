@@ -10,6 +10,7 @@ import { Toast } from './components/Toast';
 import { Login } from './components/Login';
 import { SplashScreen } from './components/SplashScreen';
 import { Cart } from './components/Cart';
+import { Checkout } from './components/Checkout';
 import { Category, Product, User, CartItem } from './types';
 import { productService } from './services/productService';
 import { PromoBanner } from './components/PromoBanner';
@@ -20,7 +21,7 @@ type SortOption = 'default' | 'price-asc' | 'price-desc';
 
 const App: React.FC = () => {
   const { user, profile, isAdmin, signOut } = useAuth();
-  const [currentView, setCurrentView] = useState<'home' | 'profile' | 'admin' | 'product-detail' | 'login' | 'cart'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'profile' | 'admin' | 'product-detail' | 'login' | 'cart' | 'checkout'>('home');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('Todos');

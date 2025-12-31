@@ -1,3 +1,4 @@
+
 -- ============================================
 -- La Ganga Phone RD - Database Setup Script
 -- ============================================
@@ -64,6 +65,27 @@ CREATE TABLE IF NOT EXISTS notification_preferences (
     UNIQUE(user_id)
 );
 
+-- Orders Table
+CREATE TABLE IF NOT EXISTS orders (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    total DECIMAL NOT NULL,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'shipped', 'delivered', 'cancelled')),
+    shipping_address JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Order Items Table
+CREATE TABLE IF NOT EXISTS order_items (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+    product_id UUID REFERENCES products(id) ON DELETE SET NULL,
+    quantity INTEGER NOT NULL DEFAULT 1,
+    price DECIMAL NOT NULL, -- Price at time of purchase
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- ============================================
 -- INDEXES
 -- ============================================
@@ -81,6 +103,10 @@ CREATE INDEX IF NOT EXISTS idx_bids_created_at ON bids(created_at DESC);
 -- Profiles indexes
 CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
+
+-- Orders indexes
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
 
 -- ============================================
 -- FUNCTIONS
@@ -170,6 +196,13 @@ CREATE TRIGGER on_auth_user_created
     FOR EACH ROW
     EXECUTE FUNCTION handle_new_user();
 
+-- Trigger to update updated_at on orders
+DROP TRIGGER IF EXISTS update_orders_updated_at ON orders;
+CREATE TRIGGER update_orders_updated_at
+    BEFORE UPDATE ON orders
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
 -- ============================================
 -- ROW LEVEL SECURITY (RLS)
 -- ============================================
@@ -179,6 +212,8 @@ ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bids ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notification_preferences ENABLE ROW LEVEL SECURITY;
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 
 -- Products Policies
 -- Anyone can view active products
@@ -263,6 +298,52 @@ CREATE POLICY "Users can update own notification preferences"
     ON notification_preferences FOR UPDATE
     USING (auth.uid() = user_id);
 
+-- Orders Policies
+-- Users can view their own orders
+CREATE POLICY "Users can view own orders"
+    ON orders FOR SELECT
+    USING (auth.uid() = user_id);
+
+-- Users can create their own orders
+CREATE POLICY "Users can create own orders"
+    ON orders FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
+
+-- Admins can view all orders
+CREATE POLICY "Admins can view all orders"
+    ON orders FOR SELECT
+    USING (
+        EXISTS (
+            SELECT 1 FROM profiles
+            WHERE profiles.id = auth.uid()
+            AND profiles.role = 'admin'
+        )
+    );
+
+-- Order Items Policies
+-- Users can view their own order items (via order_id check is complex in RLS simple policy, usually handled by join or ensuring order access first. For simplicity: allow view if user created order)
+-- A simpler approach for order_items: Allow select if the linked order belongs to user.
+CREATE POLICY "Users can view own order items"
+    ON order_items FOR SELECT
+    USING (
+        EXISTS (
+            SELECT 1 FROM orders
+            WHERE orders.id = order_items.order_id
+            AND orders.user_id = auth.uid()
+        )
+    );
+
+-- Users can create order items (usually part of order creation)
+CREATE POLICY "Users can create order items"
+    ON order_items FOR INSERT
+    WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM orders
+            WHERE orders.id = order_items.order_id
+            AND orders.user_id = auth.uid()
+        )
+    );
+
 -- ============================================
 -- SCHEDULED JOBS (Supabase pg_cron)
 -- ============================================
@@ -292,6 +373,8 @@ COMMENT ON TABLE products IS 'Auction items/products';
 COMMENT ON TABLE bids IS 'Bid history for all products';
 COMMENT ON TABLE profiles IS 'Extended user profile information';
 COMMENT ON TABLE notification_preferences IS 'User notification preferences';
+COMMENT ON TABLE orders IS 'User orders';
+COMMENT ON TABLE order_items IS 'Items within an order';
 
 COMMENT ON FUNCTION update_current_bid() IS 'Automatically updates product current_bid when new bid is placed';
 COMMENT ON FUNCTION close_expired_auctions() IS 'Closes auctions that have passed their end time';
