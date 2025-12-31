@@ -7,7 +7,9 @@ import { UserProfile } from './components/UserProfile';
 import { AdminDashboard } from './components/AdminDashboard';
 import { Toast } from './components/Toast';
 import { NotificationSettings } from './components/NotificationSettings';
-import { Category, AuctionItem, UserBid, User, ActivityLog } from './types';
+import { Login } from './components/Login';
+import { SplashScreen } from './components/SplashScreen';
+import { Category, AuctionItem, UserBid, User, ActivityLog } from './types';;
 import { auctionService } from './services/auctionService';
 import { useAuth } from './contexts/AuthContext';
 
@@ -42,6 +44,8 @@ const App: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('Todos');
   const [sortBy, setSortBy] = useState<SortOption>('default');
+  const [showSplash, setShowSplash] = useState(false);
+  const previousUserRef = useRef<typeof user>(null);
 
   // Data State (Fetched from Supabase)
   const [items, setItems] = useState<AuctionItem[]>([]);
@@ -132,6 +136,16 @@ const App: React.FC = () => {
     else document.documentElement.classList.add('light');
   }, [isDarkMode]);
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
+
+  // 4. Detect login and show splash screen
+  useEffect(() => {
+    if (user && !previousUserRef.current) {
+      // User just logged in
+      setShowSplash(true);
+      setCurrentView('home');
+    }
+    previousUserRef.current = user;
+  }, [user]);
 
 
   // --- Sorting Logic ---
@@ -397,23 +411,28 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-app-bg text-app-text font-sans pb-10 transition-colors duration-300">
-      <Navbar
-        currentView={currentView === 'profile' || currentView === 'admin' ? currentView : 'home'}
-        onNavigate={(view) => setCurrentView(view)}
-        isDarkMode={isDarkMode}
-        toggleTheme={toggleTheme}
-      />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        {renderContent()}
-      </main>
-      <Toast
-        message={toast.message}
-        isVisible={toast.visible}
-        onClose={() => setToast({ ...toast, visible: false })}
-        type={toast.type}
-      />
-    </div>
+    <>
+      {showSplash && (
+        <SplashScreen onComplete={() => setShowSplash(false)} duration={3000} />
+      )}
+      <div className="min-h-screen bg-app-bg text-app-text font-sans pb-10 transition-colors duration-300">
+        <Navbar
+          currentView={currentView === 'profile' || currentView === 'admin' ? currentView : 'home'}
+          onNavigate={(view) => setCurrentView(view)}
+          isDarkMode={isDarkMode}
+          toggleTheme={toggleTheme}
+        />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          {renderContent()}
+        </main>
+        <Toast
+          message={toast.message}
+          isVisible={toast.visible}
+          onClose={() => setToast({ ...toast, visible: false })}
+          type={toast.type}
+        />
+      </div>
+    </>
   );
 };
 
