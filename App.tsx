@@ -13,6 +13,7 @@ import { SplashScreen } from './components/SplashScreen';
 import { Category, AuctionItem, UserBid, User, ActivityLog } from './types';
 import { auctionService } from './services/auctionService';
 import { PromoBanner } from './components/PromoBanner';
+import { SideMenu } from './components/SideMenu';
 import { useAuth } from './contexts/AuthContext';
 
 // Helper for sorting by time
@@ -40,13 +41,14 @@ const parseTimeLeftForSort = (timeStr: string): number => {
 type SortOption = 'default' | 'price-asc' | 'price-desc' | 'time-asc';
 
 const App: React.FC = () => {
-  const { user, profile, isAdmin } = useAuth();
+  const { user, profile, isAdmin, signOut } = useAuth();
   const [currentView, setCurrentView] = useState<'home' | 'profile' | 'admin' | 'product-detail' | 'login'>('home');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('Todos');
   const [sortBy, setSortBy] = useState<SortOption>('default');
   const [showSplash, setShowSplash] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const previousUserRef = useRef<typeof user>(null);
 
   // Data State (Fetched from Supabase)
@@ -349,7 +351,10 @@ const App: React.FC = () => {
                 <span className="text-blue-600 ml-1">Phone RD</span>
               </h1>
               <div className="flex items-center gap-3">
-                <button className="relative p-1">
+                <button
+                  className="relative p-1"
+                  onClick={() => setIsMenuOpen(true)}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
@@ -496,6 +501,14 @@ const App: React.FC = () => {
           isVisible={toast.visible}
           onClose={() => setToast({ ...toast, visible: false })}
           type={toast.type}
+        />
+        <SideMenu
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          onNavigate={(view) => setCurrentView(view)}
+          onLogout={signOut}
+          isAdmin={isAdmin}
+          user={user}
         />
       </div>
     </>
