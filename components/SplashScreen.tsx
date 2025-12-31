@@ -38,36 +38,36 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
         >
             {/* Animated background circles */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-2xl animate-pulse delay-150" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-app-neon-cyan/10 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-app-neon-magenta/5 rounded-full blur-2xl animate-pulse delay-150" />
             </div>
 
             {/* Main content */}
-            <div className="relative flex flex-col items-center gap-6 animate-[fadeInScale_0.8s_ease-out]">
+            <div className="relative flex flex-col items-center gap-8 animate-[fadeInScale_1s_ease-out]">
                 {/* Logo icon */}
-                <div className="relative">
-                    <div className="absolute inset-0 bg-blue-500 rounded-2xl blur-xl opacity-50 animate-pulse" />
-                    <div className="relative bg-gradient-to-br from-blue-500 to-blue-700 p-5 rounded-2xl shadow-2xl transform hover:scale-105 transition-transform">
-                        <Smartphone className="w-16 h-16 text-white" />
+                <div className="relative group">
+                    <div className="absolute inset-0 bg-app-neon-cyan rounded-3xl blur-2xl opacity-40 animate-pulse" />
+                    <div className="relative glass p-6 rounded-3xl border border-white/20 shadow-2xl backdrop-blur-xl group-hover:scale-110 transition-transform duration-500">
+                        <Smartphone className="w-20 h-20 text-white drop-shadow-[0_0_15px_rgba(0,229,255,0.6)]" />
                     </div>
                 </div>
 
                 {/* Title */}
                 <div className="text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight animate-[slideUp_0.6s_ease-out_0.2s_both]">
+                    <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter animate-[slideUp_0.8s_ease-out_0.2s_both] font-sans">
                         La Ganga Phone
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400"> RD</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-app-neon-cyan to-app-neon-magenta transition-all duration-1000"> RD</span>
                     </h1>
-                    <p className="mt-3 text-lg text-blue-200/70 animate-[slideUp_0.6s_ease-out_0.4s_both]">
-                        Subastas en vivo de teléfonos móviles
+                    <p className="mt-4 text-xl text-white/40 font-bold uppercase tracking-[0.3em] animate-[slideUp_0.8s_ease-out_0.4s_both]">
+                        Subastas de otro nivel
                     </p>
                 </div>
 
                 {/* Loading indicator */}
-                <div className="flex items-center gap-2 mt-4 animate-[slideUp_0.6s_ease-out_0.6s_both]">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                <div className="flex items-center gap-3 mt-6 animate-[slideUp_0.8s_ease-out_0.6s_both]">
+                    <div className="w-2.5 h-2.5 bg-app-neon-cyan rounded-full animate-bounce shadow-[0_0_10px_rgba(0,229,255,1)]" style={{ animationDelay: '0ms' }} />
+                    <div className="w-2.5 h-2.5 bg-app-neon-cyan rounded-full animate-bounce shadow-[0_0_10px_rgba(0,229,255,1)]" style={{ animationDelay: '150ms' }} />
+                    <div className="w-2.5 h-2.5 bg-app-neon-cyan rounded-full animate-bounce shadow-[0_0_10px_rgba(0,229,255,1)]" style={{ animationDelay: '300ms' }} />
                 </div>
             </div>
 

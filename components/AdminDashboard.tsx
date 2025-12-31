@@ -339,9 +339,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             value: `DOP ${totalValue.toLocaleString()}`,
             trend: "+12.5%",
             icon: DollarSign,
-            color: "from-emerald-500/20 to-emerald-500/5",
-            text: "text-emerald-500",
-            bgIcon: "bg-emerald-500/20"
+            color: "from-app-neon-cyan/20 to-app-neon-cyan/5",
+            text: "text-app-neon-cyan",
+            bgIcon: "bg-app-neon-cyan/20",
+            glow: "shadow-[0_0_20px_rgba(0,229,255,0.15)]"
           },
           {
             title: "Subastas Activas",
@@ -349,32 +350,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             trend: `+${activityLog.filter(l => l.type === 'new_item').length} nuevos`,
             icon: Package,
             color: "from-blue-500/20 to-blue-500/5",
-            text: "text-blue-500",
-            bgIcon: "bg-blue-500/20"
+            text: "text-blue-400",
+            bgIcon: "bg-blue-500/20",
+            glow: "shadow-[0_0_20px_rgba(59,130,246,0.15)]"
           },
           {
             title: "Usuarios Activos",
             value: users.length,
             trend: "+18% vs mes anterior",
             icon: Users,
-            color: "from-violet-500/20 to-violet-500/5",
-            text: "text-violet-500",
-            bgIcon: "bg-violet-500/20"
+            color: "from-app-neon-magenta/20 to-app-neon-magenta/5",
+            text: "text-app-neon-magenta",
+            bgIcon: "bg-app-neon-magenta/20",
+            glow: "shadow-[0_0_20px_rgba(255,0,255,0.15)]"
           },
         ].map((stat, i) => (
-          <div key={i} className="group relative bg-app-card border border-app-border rounded-2xl p-6 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300">
+          <div key={i} className={`group relative glass border border-white/10 rounded-2xl p-6 overflow-hidden hover:shadow-2xl transition-all duration-300 ${stat.glow}`}>
             <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color} blur-3xl rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150`}></div>
             <div className="relative z-10">
               <div className="flex justify-between items-start mb-4">
-                <div className={`p-3 rounded-xl ${stat.bgIcon} ${stat.text}`}>
-                  <stat.icon className="w-6 h-6" />
+                <div className={`p-3 rounded-xl ${stat.bgIcon} ${stat.text} border border-white/5`}>
+                  <stat.icon className="w-6 h-6 drop-shadow-[0_0_5px_currentColor]" />
                 </div>
-                <span className={`text-xs font-bold px-2 py-1 rounded-full bg-app-bg border border-app-border ${stat.text}`}>
+                <span className={`text-[10px] font-bold px-2 py-1 rounded-full bg-black/40 border border-white/10 ${stat.text}`}>
                   {stat.trend}
                 </span>
               </div>
-              <h3 className="text-3xl font-bold text-app-text tracking-tight mb-1">{stat.value}</h3>
-              <p className="text-app-muted text-sm font-medium">{stat.title}</p>
+              <h3 className="text-3xl font-black text-white tracking-tight mb-1">{stat.value}</h3>
+              <p className="text-app-muted text-sm font-semibold uppercase tracking-wider">{stat.title}</p>
             </div>
           </div>
         ))}
@@ -383,10 +386,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Main Chart Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Chart */}
-        <div className="lg:col-span-2 bg-app-card border border-app-border rounded-2xl p-6 shadow-sm">
+        <div className="lg:col-span-2 glass border border-white/10 rounded-2xl p-6 shadow-xl">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-lg font-bold text-app-text">Actividad de Pujas</h3>
-            <select className="bg-app-bg border border-app-border text-xs rounded-lg px-2 py-1 text-app-muted outline-none">
+            <h3 className="text-lg font-bold text-white">Actividad de Pujas</h3>
+            <select className="bg-black/40 border border-white/10 text-xs rounded-lg px-3 py-1.5 text-app-muted outline-none focus:border-app-neon-cyan transition-colors backdrop-blur-md">
               <option>Últimos 7 días</option>
               <option>Este mes</option>
             </select>
@@ -397,48 +400,49 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div key={i} className="w-full relative group">
                 <div
                   style={{ height: `${h}%` }}
-                  className="w-full bg-app-accent/80 rounded-t-sm transition-all duration-500 group-hover:bg-app-accent group-hover:shadow-[0_0_15px_rgba(14,165,233,0.5)] relative overflow-hidden"
+                  className="w-full bg-app-neon-cyan/50 rounded-t-sm transition-all duration-500 group-hover:bg-app-neon-cyan group-hover:shadow-[0_0_20px_rgba(0,229,255,0.6)] relative overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                 </div>
                 {/* Tooltip */}
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-app-neon-cyan text-black font-bold text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap z-20 pointer-events-none transform translate-y-2 group-hover:translate-y-0">
                   DOP {(h * 150).toLocaleString()}
                 </div>
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-[10px] text-app-muted mt-4 font-semibold tracking-wider uppercase">
+          <div className="flex justify-between text-[10px] text-app-muted mt-6 font-bold tracking-widest uppercase">
             <span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span>
             <span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dic</span>
           </div>
         </div>
 
         {/* Recent Activity Feed */}
-        <div className="bg-app-card border border-app-border rounded-2xl p-6 shadow-sm flex flex-col">
-          <h3 className="text-lg font-bold text-app-text mb-6">Actividad Reciente</h3>
-          <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar flex-1 max-h-[300px]">
+        <div className="glass border border-white/10 rounded-2xl p-6 shadow-xl flex flex-col relative overflow-hidden group/feed">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-app-neon-magenta/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover/feed:bg-app-neon-magenta/10 transition-colors duration-700"></div>
+          <h3 className="text-lg font-bold text-white mb-6 relative z-10">Actividad Reciente</h3>
+          <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar flex-1 max-h-[300px] relative z-10">
             {activityLog.length > 0 ? activityLog.slice(0, 8).map((log, i) => (
-              <div key={log.id} className="flex gap-4 relative pl-4 border-l border-app-border/50">
-                <div className={`absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full border-2 border-app-card ${log.type === 'new_item' ? 'bg-green-500' : 'bg-app-accent'}`}></div>
+              <div key={log.id} className="flex gap-4 relative pl-4 border-l border-white/10 hover:border-app-neon-cyan transition-colors">
+                <div className={`absolute -left-[5.5px] top-1 w-2.5 h-2.5 rounded-full border-2 border-app-bg ${log.type === 'new_item' ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'bg-app-neon-cyan shadow-[0_0_8px_rgba(0,229,255,0.5)]'}`}></div>
                 <div>
-                  <p className="text-sm text-app-text font-medium leading-none mb-1">
+                  <p className="text-sm text-white font-bold leading-none mb-1">
                     {log.type === 'new_item' ? 'Nuevo Producto' : 'Nueva Puja'}
                   </p>
-                  <p className="text-xs text-app-muted line-clamp-2">{log.message}</p>
-                  <span className="text-[10px] text-app-muted/60 mt-1 block">
+                  <p className="text-xs text-app-muted line-clamp-2 leading-relaxed">{log.message}</p>
+                  <span className="text-[10px] font-mono text-app-muted/50 mt-1.5 block">
                     {new Date(log.timestamp).toLocaleTimeString()}
-                  </span>
+                  </span >
                 </div>
               </div>
             )) : (
-              <div className="text-center text-app-muted py-10">
-                <Activity className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                <p className="text-xs">Sin actividad reciente</p>
+              <div className="flex flex-col items-center justify-center py-10 opacity-30">
+                <Activity className="w-10 h-10 mb-2" />
+                <p className="text-xs font-bold uppercase tracking-wider">Sin actividad</p>
               </div>
             )}
           </div>
-          <button className="w-full mt-4 py-2 text-xs font-semibold text-app-muted hover:text-app-accent border-t border-app-border transition-colors">
+          <button className="w-full mt-6 py-3 text-[10px] font-black uppercase tracking-widest text-app-muted hover:text-app-neon-cyan border-t border-white/5 transition-all relative z-10">
             Ver todo el historial
           </button>
         </div>

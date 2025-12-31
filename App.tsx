@@ -335,50 +335,54 @@ const App: React.FC = () => {
 
     return (
       <>
-        <div className="flex flex-col gap-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4 justify-between md:items-center">
-            <div className="relative flex-1 group max-w-xl">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-app-muted group-focus-within:text-app-accent transition-colors" />
+        <div className="flex flex-col gap-8 mb-12">
+          <div className="flex flex-col lg:flex-row gap-6 justify-between lg:items-center">
+            <div className="relative flex-1 group max-w-2xl">
+              <div className="absolute inset-0 bg-app-neon-cyan blur-2xl opacity-5 group-focus-within:opacity-15 transition-opacity" />
+              <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-white/30 group-focus-within:text-app-neon-cyan transition-colors" />
               </div>
               <input
                 type="text"
-                className="block w-full pl-11 pr-4 py-4 bg-app-card border border-app-border rounded-2xl leading-5 text-app-text placeholder-app-muted focus:outline-none focus:bg-app-bg focus:border-app-accent/50 focus:ring-1 focus:ring-app-accent/50 sm:text-sm transition-all shadow-lg"
-                placeholder="Buscar por nombre..."
+                className="block w-full pl-12 pr-6 py-5 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl leading-5 text-white placeholder-white/20 focus:outline-none focus:bg-black/60 focus:border-app-neon-cyan/50 focus:ring-1 focus:ring-app-neon-cyan/50 font-bold transition-all shadow-2xl"
+                placeholder="Busca tu próximo equipo..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-2">
-              <div className="relative">
+            <div className="flex items-center gap-3">
+              <div className="relative group">
+                <SlidersHorizontal className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/30 group-hover:text-app-neon-cyan transition-colors pointer-events-none z-10" />
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="appearance-none bg-app-card border border-app-border text-app-text py-3 pl-10 pr-10 rounded-xl focus:outline-none focus:border-app-accent cursor-pointer hover:bg-app-bg transition-colors font-medium text-sm"
+                  className="appearance-none bg-black/40 backdrop-blur-xl border border-white/10 text-white font-black uppercase tracking-widest text-[10px] py-4 pl-11 pr-10 rounded-2xl focus:outline-none focus:border-app-neon-cyan cursor-pointer hover:bg-black/60 transition-all shadow-xl"
                 >
                   <option value="default">Relevancia</option>
-                  <option value="price-asc">Precio: Bajo a Alto</option>
-                  <option value="price-desc">Precio: Alto a Bajo</option>
-                  <option value="time-asc">Terminan Pronto</option>
+                  <option value="price-asc">Precio: ↑</option>
+                  <option value="price-desc">Precio: ↓</option>
+                  <option value="time-asc">Pronto Final</option>
                 </select>
-                <SlidersHorizontal className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-app-muted pointer-events-none" />
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20 group-hover:text-app-neon-cyan transition-colors">
+                  <ChevronDown className="w-4 h-4" />
+                </div>
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
+          <div className="flex flex-wrap gap-3">
+            {categories.map((cat) => (cat !== null && (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 
+                className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 border
                   ${selectedCategory === cat
-                    ? 'bg-app-accent text-white shadow-[0_0_10px_rgba(14,165,233,0.3)]'
-                    : 'bg-app-card text-app-muted border border-app-border hover:border-app-muted/50 hover:text-app-text'
+                    ? 'bg-app-neon-cyan text-black border-app-neon-cyan shadow-[0_0_25px_rgba(0,229,255,0.4)] scale-105'
+                    : 'bg-white/5 text-white/40 border-white/5 hover:border-white/20 hover:text-white hover:bg-white/10'
                   }`}
               >
                 {cat}
               </button>
-            ))}
+            )))}
           </div>
         </div>
 

@@ -1,14 +1,18 @@
 :root {
   /* Color palette */
-  --color-primary: #00e5ff; /* neon cyan */
+  --color-primary: #00e5ff;
+  /* neon cyan */
   --color-primary-dark: #0099b3;
-  --color-accent: #ff00ff; /* magenta */
-  --color-bg-dark: #0a0a0a;
+  --color-accent: #ff00ff;
+  /* magenta */
+  --color-bg-dark: #050b14;
   --color-bg-light: #f5f5f5;
-  --color-card-dark: rgba(255,255,255,0.08);
-  --color-card-light: rgba(0,0,0,0.04);
+  --color-card-dark: rgba(255, 255, 255, 0.08);
+  --color-card-light: rgba(0, 0, 0, 0.04);
   --color-text-dark: #e5e5e5;
   --color-text-light: #111111;
+  --color-neon-cyan: #00e5ff;
+  --color-neon-magenta: #ff00ff;
 }
 
 /* Dark mode */
@@ -20,6 +24,7 @@
   --app-border: #222;
   --app-accent: var(--color-primary);
 }
+
 /* Light mode */
 [data-theme="light"] {
   --app-bg: var(--color-bg-light);
@@ -32,22 +37,38 @@
 
 /* Glassmorphism utility */
 .glass {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* Neon underline animation */
 @keyframes neon-underline {
-  0% { box-shadow: 0 2px 4px var(--color-primary); }
-  50% { box-shadow: 0 2px 8px var(--color-primary); }
-  100% { box-shadow: 0 2px 4px var(--color-primary); }
+  0% {
+    box-shadow: 0 2px 4px var(--color-primary);
+  }
+
+  50% {
+    box-shadow: 0 2px 8px var(--color-primary);
+  }
+
+  100% {
+    box-shadow: 0 2px 4px var(--color-primary);
+  }
 }
 
 /* Pulse for hover */
 @keyframes pulse-glow {
-  0% { box-shadow: 0 0 5px var(--color-primary); }
-  50% { box-shadow: 0 0 15px var(--color-primary); }
-  100% { box-shadow: 0 0 5px var(--color-primary); }
+  0% {
+    box-shadow: 0 0 5px var(--color-primary);
+  }
+
+  50% {
+    box-shadow: 0 0 15px var(--color-primary);
+  }
+
+  100% {
+    box-shadow: 0 0 5px var(--color-primary);
+  }
 }

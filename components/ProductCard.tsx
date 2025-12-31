@@ -97,14 +97,14 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, isWinning = fa
   return (
     <div
       onClick={() => onClick && onClick(item)}
-      className={`glass rounded-xl overflow-hidden border flex flex-col transition-all duration-300 group relative cursor-pointer
+      className={`glass rounded-2xl overflow-hidden border flex flex-col transition-all duration-500 group relative cursor-pointer
       ${hasEnded
-          ? 'border-red-900/30 opacity-75'
+          ? 'border-white/5 opacity-60 grayscale-[0.5]'
           : isWinning
-            ? 'border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.4)] scale-[1.02] z-20 ring-1 ring-yellow-500'
+            ? 'border-app-neon-magenta shadow-[0_0_30px_rgba(255,0,255,0.2)] scale-[1.03] z-20 ring-1 ring-app-neon-magenta/50'
             : highlight
-              ? 'border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.3)] scale-[1.02] z-10 ring-1 ring-green-500'
-              : 'border-app-border hover:border-app-accent/50 hover:shadow-lg'
+              ? 'border-app-neon-cyan shadow-[0_0_30px_rgba(0,229,255,0.2)] scale-[1.03] z-10 ring-1 ring-app-neon-cyan/50'
+              : 'border-white/10 hover:border-app-neon-cyan/50 hover:shadow-[0_0_40px_rgba(0,229,255,0.1)] hover:-translate-y-1'
         }`}
     >
       {/* Winning Indicator Background Pulse */}
@@ -149,62 +149,66 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, isWinning = fa
 
       {/* Content */}
       <div className="p-2.5 sm:p-4 flex flex-col flex-grow relative z-10">
-        <div className="flex justify-between items-start mb-2 gap-1">
+        <div className="flex justify-between items-start mb-3 gap-2">
           <div className="min-w-0">
-            <h3 className="text-app-text font-bold text-xs sm:text-sm leading-tight mb-0.5 truncate pr-1 neon-underline">
+            <h3 className="text-white font-black text-sm sm:text-base leading-tight mb-1 truncate group-hover:text-app-neon-cyan transition-colors">
               {item.name}
             </h3>
             {item.specs && (
-              <p className="text-app-muted text-[10px] sm:text-xs leading-tight truncate">
+              <p className="text-app-muted text-[10px] sm:text-xs leading-tight line-clamp-1 italic font-medium">
                 {item.specs}
               </p>
             )}
           </div>
-          <span className="bg-app-badge-bg text-[10px] sm:text-xs text-app-muted px-1.5 py-0.5 rounded border border-app-border whitespace-nowrap">
+          <span className="bg-white/5 text-[9px] sm:text-[10px] font-black text-app-neon-cyan px-2 py-0.5 rounded border border-app-neon-cyan/20 uppercase tracking-tighter shadow-[0_0_8px_rgba(0,229,255,0.1)]">
             {item.brand}
           </span>
         </div>
 
-        <div className="flex flex-col mb-3 sm:mb-4 mt-auto">
-          <div className="flex justify-between items-end text-[10px] sm:text-xs text-app-muted mb-1">
+        <div className="flex flex-col mb-4 sm:mb-5 mt-auto">
+          <div className="flex justify-between items-end text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-app-muted/60 mb-1.5">
             <span>Puja actual</span>
-            <span>Termina en</span>
+            <span>Finaliza</span>
           </div>
           <div className="flex justify-between items-end">
-            <span className={`font-bold transition-all duration-300 text-base sm:text-xl ${isWinning ? 'text-yellow-500' : highlight ? 'text-green-500 scale-105' : 'text-app-accent'}`}>
+            <span className={`font-black tracking-tighter transition-all duration-500 text-lg sm:text-2xl ${isWinning ? 'text-app-neon-magenta drop-shadow-[0_0_8px_rgba(255,0,255,0.4)]' : highlight ? 'text-app-neon-cyan scale-105 drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]' : 'text-white'}`}>
               {formattedPrice}
             </span>
-            <span className={`text-[10px] sm:text-xs font-medium flex items-center gap-1 ${isEndingSoon ? 'text-red-500' : 'text-app-muted'} ${hasEnded ? 'text-red-500' : ''}`}>
-              <Clock className={`w-3 h-3 ${isEndingSoon ? 'animate-pulse' : ''}`} />
+            <div className={`text-[10px] sm:text-xs font-black flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black/40 border border-white/5 ${isEndingSoon ? 'text-app-neon-magenta animate-pulse border-app-neon-magenta/30' : 'text-app-neon-cyan border-app-neon-cyan/30'}`}>
+              <Clock className="w-3.5 h-3.5" />
               <span
                 key={timeLeftSeconds}
-                className={`${!hasEnded ? 'animate-in fade-in zoom-in-95 duration-300' : ''}`}
+                className="font-mono"
               >
                 {timeDisplay}
               </span>
-            </span>
+            </div>
           </div>
         </div>
 
         {/* Action Button */}
-        <div className="flex gap-1.5 sm:gap-2">
+        <div className="flex gap-2">
           <button
             onClick={(e) => {
               e.stopPropagation();
-              // Pass undefined for amount to trigger default increment logic
               onPlaceBid(item);
             }}
             disabled={hasEnded}
-            className={`flex-1 text-xs sm:text-sm font-semibold py-1.5 sm:py-2 rounded transition-all flex items-center justify-center
+            className={`flex-[2] relative overflow-hidden group/btn rounded-xl transition-transform active:scale-95
                   ${hasEnded
-                ? 'bg-app-muted/20 text-app-muted cursor-not-allowed'
+                ? 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
                 : isWinning
-                  ? 'bg-yellow-500 hover:bg-yellow-600 text-black shadow-[0_0_15px_rgba(234,179,8,0.4)]'
-                  : 'bg-app-accent hover:bg-app-accentHover active:scale-95 text-white shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(14,165,233,0.5)]'
+                  ? 'bg-app-neon-magenta shadow-[0_0_20px_rgba(255,0,255,0.4)] hover:shadow-[0_0_30px_rgba(255,0,255,0.6)]'
+                  : 'bg-app-neon-cyan shadow-[0_0_20px_rgba(0,229,255,0.4)] hover:shadow-[0_0_30px_rgba(0,229,255,0.6)]'
               }`}
           >
-            <Zap className="w-4 h-4 mr-1 fill-current" />
-            {hasEnded ? 'Fin' : isWinning ? '¡Vas Ganando!' : 'Pujar'}
+            <div className={`absolute inset-0 bg-gradient-to-r opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300
+              ${isWinning ? 'from-magenta-600 to-app-neon-magenta' : 'from-cyan-600 to-app-neon-cyan'}
+            `}></div>
+            <div className="relative py-2.5 flex items-center justify-center gap-2 text-[11px] sm:text-xs font-black uppercase tracking-widest text-white drop-shadow-sm">
+              <Zap className={`w-3.5 h-3.5 fill-current ${!hasEnded && 'animate-pulse'}`} />
+              {hasEnded ? 'Subasta Cerrada' : isWinning ? '¡Vas Ganando!' : 'Lanzar Puja'}
+            </div>
           </button>
 
           <button
@@ -212,9 +216,10 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, isWinning = fa
               e.stopPropagation();
               onShare(item);
             }}
-            className="px-2 sm:px-3 py-1.5 sm:py-2 rounded border transition-colors flex items-center justify-center bg-app-badge-bg hover:bg-app-border border-app-border text-app-muted hover:text-app-text"
+            className="flex-1 glass border border-white/10 hover:border-app-neon-cyan/50 hover:bg-app-neon-cyan/10 text-white flex items-center justify-center rounded-xl transition-all"
+            title="Compartir"
           >
-            <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
+            <Share2 className="w-4 h-4" />
           </button>
         </div>
       </div>

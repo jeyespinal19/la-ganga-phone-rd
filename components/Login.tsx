@@ -63,13 +63,17 @@ export const Login: React.FC<LoginProps> = ({ onBack }) => {
                 )}
 
                 {/* Card */}
-                <div className="bg-app-card rounded-2xl shadow-2xl p-8 border border-app-border">
+                <div className="glass rounded-3xl p-8 border border-white/10 shadow-[0_0_50px_rgba(0,229,255,0.1)] relative overflow-hidden group">
+                    {/* Decorative glow */}
+                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-app-neon-cyan/20 blur-[80px] rounded-full group-hover:bg-app-neon-cyan/30 transition-all duration-700"></div>
+                    <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-app-neon-magenta/10 blur-[80px] rounded-full group-hover:bg-app-neon-magenta/20 transition-all duration-700"></div>
+
                     {/* Header */}
-                    <div className="text-center mb-8">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-app-accent/10 rounded-full mb-4">
-                            <User className="w-8 h-8 text-app-accent" />
+                    <div className="text-center mb-10 relative z-10">
+                        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-app-neon-cyan/20 to-app-neon-magenta/20 rounded-2xl mb-6 border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                            <User className="w-10 h-10 text-app-neon-cyan drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]" />
                         </div>
-                        <h1 className="text-3xl font-bold text-app-text mb-2">
+                        <h1 className="text-4xl font-extrabold text-white mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
                             {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
                         </h1>
                         <p className="text-app-muted">
@@ -110,7 +114,7 @@ export const Login: React.FC<LoginProps> = ({ onBack }) => {
                                         type="text"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="block w-full pl-11 pr-4 py-3 bg-app-bg border border-app-border rounded-xl text-app-text placeholder-app-muted focus:outline-none focus:border-app-accent focus:ring-1 focus:ring-app-accent transition-all"
+                                        className="block w-full pl-11 pr-4 py-3.5 bg-black/40 border border-white/10 rounded-xl text-white placeholder-app-muted focus:outline-none focus:border-app-neon-cyan focus:ring-1 focus:ring-app-neon-cyan/50 transition-all backdrop-blur-sm"
                                         placeholder="Juan Pérez"
                                         required={!isLogin}
                                     />
@@ -119,12 +123,12 @@ export const Login: React.FC<LoginProps> = ({ onBack }) => {
                         )}
 
                         {/* Email Field */}
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-app-text mb-2">
+                        <div className="relative z-10">
+                            <label htmlFor="email" className="block text-sm font-semibold text-white/80 mb-2 ml-1">
                                 Correo Electrónico
                             </label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <div className="relative group/input">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none group-focus-within/input:text-app-neon-cyan transition-colors">
                                     <Mail className="h-5 w-5 text-app-muted" />
                                 </div>
                                 <input
@@ -132,7 +136,7 @@ export const Login: React.FC<LoginProps> = ({ onBack }) => {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="block w-full pl-11 pr-4 py-3 bg-app-bg border border-app-border rounded-xl text-app-text placeholder-app-muted focus:outline-none focus:border-app-accent focus:ring-1 focus:ring-app-accent transition-all"
+                                    className="block w-full pl-11 pr-4 py-3.5 bg-black/40 border border-white/10 rounded-xl text-white placeholder-app-muted focus:outline-none focus:border-app-neon-cyan focus:ring-1 focus:ring-app-neon-cyan/50 transition-all backdrop-blur-sm"
                                     placeholder="tu@email.com"
                                     required
                                 />
@@ -140,12 +144,12 @@ export const Login: React.FC<LoginProps> = ({ onBack }) => {
                         </div>
 
                         {/* Password Field */}
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-app-text mb-2">
+                        <div className="relative z-10">
+                            <label htmlFor="password" className="block text-sm font-semibold text-white/80 mb-2 ml-1">
                                 Contraseña
                             </label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <div className="relative group/input">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none group-focus-within/input:text-app-neon-cyan transition-colors">
                                     <Lock className="h-5 w-5 text-app-muted" />
                                 </div>
                                 <input
@@ -153,14 +157,14 @@ export const Login: React.FC<LoginProps> = ({ onBack }) => {
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="block w-full pl-11 pr-4 py-3 bg-app-bg border border-app-border rounded-xl text-app-text placeholder-app-muted focus:outline-none focus:border-app-accent focus:ring-1 focus:ring-app-accent transition-all"
+                                    className="block w-full pl-11 pr-4 py-3.5 bg-black/40 border border-white/10 rounded-xl text-white placeholder-app-muted focus:outline-none focus:border-app-neon-cyan focus:ring-1 focus:ring-app-neon-cyan/50 transition-all backdrop-blur-sm"
                                     placeholder="••••••••"
                                     required
                                     minLength={6}
                                 />
                             </div>
                             {!isLogin && (
-                                <p className="mt-2 text-xs text-app-muted">Mínimo 6 caracteres</p>
+                                <p className="mt-2 text-[10px] text-white/40 ml-1">Mínimo 6 caracteres</p>
                             )}
                         </div>
 
@@ -168,37 +172,44 @@ export const Login: React.FC<LoginProps> = ({ onBack }) => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-app-accent hover:bg-app-accentHover text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="relative w-full overflow-hidden group/btn"
                         >
-                            {loading ? (
-                                <>
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                    Procesando...
-                                </>
-                            ) : (
-                                <>{isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}</>
-                            )}
+                            <div className="absolute inset-0 bg-gradient-to-r from-app-neon-cyan to-app-neon-magenta opacity-90 group-hover/btn:opacity-100 transition-opacity"></div>
+                            <div className="relative flex items-center justify-center gap-2 py-3.5 px-4 text-white font-bold tracking-wide transition-transform group-active/btn:scale-95">
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        Procesando...
+                                    </>
+                                ) : (
+                                    <>{isLogin ? 'Iniciar Sesión' : 'Comenzar Ahora'}</>
+                                )}
+                            </div>
                         </button>
                     </form>
 
                     {/* Toggle Login/Register */}
-                    <div className="mt-6 text-center">
+                    <div className="mt-8 text-center relative z-10">
                         <button
                             onClick={() => {
                                 setIsLogin(!isLogin);
                                 setError('');
                                 setSuccess('');
                             }}
-                            className="text-app-accent hover:text-app-accentHover font-medium transition-colors"
+                            className="text-white/60 hover:text-app-neon-cyan font-medium transition-all text-sm group/toggle"
                         >
-                            {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
+                            {isLogin ? (
+                                <span>¿No tienes cuenta? <span className="text-app-neon-cyan group-hover/toggle:underline">Regístrate gratis</span></span>
+                            ) : (
+                                <span>¿Ya tienes cuenta? <span className="text-app-neon-cyan group-hover/toggle:underline">Inicia sesión</span></span>
+                            )}
                         </button>
                     </div>
 
                     {/* Forgot Password (Login Only) */}
                     {isLogin && (
-                        <div className="mt-4 text-center">
-                            <button className="text-sm text-app-muted hover:text-app-text transition-colors">
+                        <div className="mt-4 text-center relative z-10">
+                            <button className="text-xs text-white/40 hover:text-white transition-colors">
                                 ¿Olvidaste tu contraseña?
                             </button>
                         </div>
