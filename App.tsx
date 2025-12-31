@@ -67,10 +67,6 @@ const App: React.FC = () => {
 
   // Theme & Toast
   // Clear Local Storage for debugging
-  useEffect(() => {
-    console.log('Clearing Local Storage...');
-    localStorage.clear();
-  }, []);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -345,27 +341,39 @@ const App: React.FC = () => {
       <>
         <div className="flex flex-col gap-0 -mx-4 sm:mx-0 sticky top-0 z-50 bg-white">
           {/* Mobile Style Search Bar */}
-          <div className="px-4 py-3 bg-white flex items-center gap-3">
-            <div className="flex-1 relative flex items-center">
-              <div className="absolute left-4 text-gray-400">
-                <Search className="w-5 h-5" />
+          <div className="sticky top-0 z-50 bg-white">
+            {/* Top Bar: Logo & Menu */}
+            <div className="flex items-center justify-between px-4 pt-3 pb-2 bg-white">
+              <h1 className="text-xl font-black italic tracking-tighter">
+                <span className="text-orange-500">La Ganga</span>
+                <span className="text-blue-600 ml-1">Phone RD</span>
+              </h1>
+              <div className="flex items-center gap-3">
+                <button className="relative p-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
               </div>
-              <input
-                type="text"
-                className="w-full bg-gray-100 border-none rounded-full py-2.5 pl-11 pr-12 text-sm focus:ring-2 focus:ring-black/5"
-                placeholder="accesorios de pecera"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button className="absolute right-12 text-gray-500 hover:text-black p-2">
-                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                  <circle cx="12" cy="13" r="4" />
-                </svg>
-              </button>
-              <button className="absolute right-2 bg-black text-white p-2 rounded-full">
-                <Search className="w-4 h-4" strokeWidth={3} />
-              </button>
+            </div>
+
+            {/* Search Bar Row */}
+            <div className="px-4 pb-3 bg-white border-b border-gray-100">
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <Search className="w-5 h-5" />
+                </div>
+                <input
+                  type="text"
+                  className="w-full bg-gray-100 border-none rounded-2xl py-2.5 pl-10 pr-10 text-sm focus:ring-2 focus:ring-orange-500/20 text-gray-800 placeholder-gray-400"
+                  placeholder="Buscar productos..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <button className="absolute right-3 top-1/2 -translate-y-1/2 bg-orange-500 text-white p-1.5 rounded-xl shadow-lg shadow-orange-500/30">
+                  <Search className="w-4 h-4" strokeWidth={3} />
+                </button>
+              </div>
             </div>
           </div>
 
