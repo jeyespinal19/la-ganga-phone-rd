@@ -7,6 +7,7 @@
   <title>La Ganga Phone RD</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/styles/designTokens.css">
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -70,7 +71,7 @@
     body {
       background-color: var(--app-bg);
       color: var(--app-text);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Outfit', sans-serif;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
@@ -91,6 +92,68 @@
     ::-webkit-scrollbar-thumb:hover {
       background: var(--app-muted);
     }
+
+    /* Elegant Background System */
+    .bg-main-wrapper {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+      background-color: #050b14;
+      overflow: hidden;
+    }
+
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at center, black, transparent 80%);
+    }
+
+    .glow-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+      animation: blob-move 25s infinite alternate ease-in-out;
+    }
+
+    .glow-cyan {
+      width: 600px;
+      height: 600px;
+      background: var(--color-neon-cyan);
+      top: -200px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .glow-magenta {
+      width: 500px;
+      height: 500px;
+      background: var(--color-neon-magenta);
+      bottom: -100px;
+      right: -100px;
+      animation-delay: -5s;
+    }
+
+    @keyframes blob-move {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      33% {
+        transform: translate(100px, 50px) scale(1.1);
+      }
+
+      66% {
+        transform: translate(-50px, 120px) scale(0.9);
+      }
+
+      100% {
+        transform: translate(20px, -40px) scale(1);
+      }
+    }
   </style>
   <script type="importmap">
 {
@@ -106,6 +169,11 @@
 </head>
 
 <body>
+  <div class="bg-main-wrapper" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="glow-blob glow-cyan"></div>
+    <div class="glow-blob glow-magenta"></div>
+  </div>
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
