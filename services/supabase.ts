@@ -15,4 +15,14 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 console.log('Supabase URL:', SUPABASE_URL);
 console.log('Supabase KEY (first 10):', SUPABASE_ANON_KEY.substring(0, 10));
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+    },
+    global: {
+        headers: {
+            'apikey': SUPABASE_ANON_KEY,
+        }
+    }
+});
