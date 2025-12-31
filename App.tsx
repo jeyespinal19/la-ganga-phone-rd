@@ -9,6 +9,7 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { Toast } from './components/Toast';
 import { Login } from './components/Login';
 import { SplashScreen } from './components/SplashScreen';
+import { Cart } from './components/Cart';
 import { Category, Product, User, CartItem } from './types';
 import { productService } from './services/productService';
 import { PromoBanner } from './components/PromoBanner';
@@ -192,6 +193,33 @@ const App: React.FC = () => {
       );
     }
 
+    if (currentView === 'cart') {
+      return (
+        <Cart
+          cartItems={cart}
+          onUpdateQuantity={(id, qty) => {
+            setCart(prev => {
+              const updated = prev.map(item => item.id === id ? { ...item, quantity: qty } : item);
+              localStorage.setItem('cart', JSON.stringify(updated));
+              return updated;
+            });
+          }}
+          onRemoveItem={(id) => {
+            setCart(prev => {
+              const updated = prev.filter(item => item.id !== id);
+              localStorage.setItem('cart', JSON.stringify(updated));
+              return updated;
+            });
+            setToast({ visible: true, message: 'Producto eliminado', type: 'success' });
+          }}
+          onCheckout={() => {
+            setToast({ visible: true, message: 'Checkout próximamente...' });
+          }}
+          onBack={() => setCurrentView('home')}
+        />
+      );
+    }
+
     return (
       <>
         <div className="flex flex-col gap-0 -mx-4 sm:mx-0 bg-white">
@@ -203,7 +231,7 @@ const App: React.FC = () => {
                 <span className="text-blue-600 ml-1">Phone RD</span>
               </h1>
               <div className="flex items-center gap-3">
-                <button className="relative p-1">
+                <button className="relative p-1" onClick={() => setCurrentView('cart')}>
                   <ShoppingCart className="text-gray-700 w-6 h-6" />
                   {cart.length > 0 && (
                     <span className="absolute -top-0.5 -right-0.5 bg-orange-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
@@ -307,7 +335,7 @@ const App: React.FC = () => {
             <UserIcon className="w-6 h-6" />
             <span className="text-[10px] font-bold">Tú</span>
           </button>
-          <button className="flex flex-col items-center gap-1 text-gray-400 relative">
+          <button onClick={() => setCurrentView('cart')} className={`flex flex-col items-center gap-1 relative ${currentView === 'cart' ? 'text-red-600' : 'text-gray-400'}`}>
             <ShoppingCart className="w-6 h-6" />
             {cart.length > 0 && (
               <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[8px] w-4 h-4 flex items-center justify-center rounded-full">
