@@ -66,6 +66,13 @@ const App: React.FC = () => {
   const [lastUserAction, setLastUserAction] = useState(0);
 
   // Theme & Toast
+  // Clear Local Storage for debugging
+  useEffect(() => {
+    console.log('Clearing Local Storage...');
+    localStorage.clear();
+  }, []);
+
+  const [isLoading, setIsLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [toast, setToast] = useState<{ visible: boolean; message: string; type?: 'success' | 'error' }>({ visible: false, message: '', type: 'success' });
 
