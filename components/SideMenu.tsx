@@ -59,6 +59,16 @@ export const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, onNavigate,
                                 </button>
                             </li>
 
+                            <li>
+                                <button
+                                    onClick={() => { onNavigate('settings'); onClose(); }}
+                                    className="w-full flex items-center gap-3 px-6 py-3 hover:bg-gray-50 text-gray-700 transition-colors"
+                                >
+                                    <Settings className="w-5 h-5" />
+                                    <span>Configuración</span>
+                                </button>
+                            </li>
+
                             {isAdmin && (
                                 <li>
                                     <button
@@ -75,14 +85,6 @@ export const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, onNavigate,
 
                     {/* Footer Items */}
                     <div className="p-4 border-t border-gray-100 space-y-2">
-                        <button
-                            onClick={() => { /* Navigate to settings or show modal */ onClose(); }}
-                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-gray-600 rounded-xl transition-colors"
-                        >
-                            <Settings className="w-5 h-5" />
-                            <span>Configuración</span>
-                        </button>
-
                         <button
                             onClick={() => { onLogout(); onClose(); }}
                             className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 rounded-xl transition-colors font-medium"

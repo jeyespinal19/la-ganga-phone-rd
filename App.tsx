@@ -341,9 +341,9 @@ const App: React.FC = () => {
 
     return (
       <>
-        <div className="flex flex-col gap-0 -mx-4 sm:mx-0 sticky top-0 z-50 bg-white">
+        <div className="flex flex-col gap-0 -mx-4 sm:mx-0 bg-white">
           {/* Mobile Style Search Bar */}
-          <div className="sticky top-0 z-50 bg-white">
+          <div className="bg-white">
             {/* Top Bar: Logo & Menu */}
             <div className="flex items-center justify-between px-4 pt-3 pb-2 bg-white">
               <h1 className="text-xl font-black italic tracking-tighter">
