@@ -120,28 +120,34 @@ export const UserProfile: React.FC<UserProfileProps> = ({ userBids, allItems, on
          </div>
 
          {/* Recent Activity Mini List */}
-         <div className="bg-app-card border border-app-border rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-app-text mb-4">Actividad Reciente</h3>
+         <div className="glass border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group">
+            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
+               <div className="w-2 h-2 bg-app-neon-cyan rounded-full animate-pulse" />
+               Rastreo de Actividad
+            </h3>
             <div className="space-y-4">
                {sortedBids.slice(0, 4).map((bid, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-app-bg rounded-xl border border-app-border">
-                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-app-card flex items-center justify-center border border-app-border">
-                           <Clock className="w-5 h-5 text-app-muted" />
+                  <div key={idx} className="flex items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-app-neon-cyan/30 transition-all group/item">
+                     <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-black/40 flex items-center justify-center border border-white/10 group-hover/item:border-app-neon-cyan/50 transition-colors">
+                           <Clock className="w-6 h-6 text-white/20 group-hover/item:text-app-neon-cyan" />
                         </div>
                         <div>
-                           <p className="text-sm font-semibold text-app-text">{bid.itemName}</p>
-                           <p className="text-xs text-app-muted">Puja realizada</p>
+                           <p className="text-sm font-black text-white tracking-tight">{bid.itemName}</p>
+                           <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Oferta Realizada</p>
                         </div>
                      </div>
                      <div className="text-right">
-                        <span className="block font-bold text-app-text">DOP {bid.amount.toLocaleString()}</span>
-                        <span className="text-xs text-app-muted">{new Date(bid.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span className="block font-black text-app-neon-cyan text-lg">DOP {bid.amount.toLocaleString()}</span>
+                        <span className="text-[9px] font-black uppercase text-white/20 tracking-widest">{new Date(bid.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                      </div>
                   </div>
                ))}
                {sortedBids.length === 0 && (
-                  <p className="text-app-muted text-sm text-center py-4">No hay actividad reciente.</p>
+                  <div className="py-12 text-center">
+                     <p className="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">Zona Silenciosa</p>
+                  </div>
                )}
             </div>
          </div>
@@ -149,74 +155,106 @@ export const UserProfile: React.FC<UserProfileProps> = ({ userBids, allItems, on
    );
 
    const renderWallet = () => (
-      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-         <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden border border-gray-700">
-            <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-5 rounded-full blur-3xl"></div>
-            <div className="relative z-10 flex justify-between items-start mb-12">
-               <CreditCard className="w-10 h-10 opacity-80" />
-               <span className="text-lg font-mono opacity-60">DEBIT</span>
-            </div>
-            <div className="relative z-10">
-               <p className="text-gray-400 text-sm mb-2">Saldo Disponible</p>
-               <h3 className="text-4xl font-bold mb-8">DOP 14,250.00</h3>
-               <div className="flex justify-between items-end">
-                  <p className="font-mono tracking-widest text-lg">**** **** **** 4289</p>
-                  <p className="text-sm opacity-80">EXP 12/28</p>
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+         <div className="relative group perspective-1000">
+            <div className="absolute inset-0 bg-gradient-to-r from-app-neon-cyan to-app-neon-magenta rounded-[2.5rem] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity" />
+            <div className="relative bg-black border border-white/10 p-10 rounded-[2.5rem] text-white shadow-2xl overflow-hidden transition-transform duration-500 group-hover:rotate-x-2">
+               <div className="absolute top-0 right-0 -mt-10 -mr-10 w-60 h-60 bg-white opacity-5 rounded-full blur-3xl animate-pulse"></div>
+               <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-app-neon-cyan opacity-5 rounded-full blur-2xl"></div>
+
+               <div className="relative z-10 flex justify-between items-start mb-16">
+                  <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-lg">
+                     <CreditCard className="w-10 h-10 text-white" />
+                  </div>
+                  <span className="text-xs font-black tracking-[0.5em] text-white/40 uppercase">Platinum Node</span>
+               </div>
+
+               <div className="relative z-10">
+                  <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em] mb-3 leading-none">Capital Disponible</p>
+                  <h3 className="text-5xl font-black mb-12 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">DOP 14,250.00</h3>
+
+                  <div className="flex justify-between items-end border-t border-white/10 pt-8">
+                     <div className="flex flex-col gap-1">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Identidad Digital</p>
+                        <p className="font-black tracking-widest text-lg text-white/60">**** **** **** 4289</p>
+                     </div>
+                     <div className="text-right">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Expira</p>
+                        <p className="font-black text-sm text-white/60">12 / 28</p>
+                     </div>
+                  </div>
                </div>
             </div>
          </div>
 
-         <div className="bg-app-card border border-app-border rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-app-text mb-4">Historial de Transacciones</h3>
-            <div className="space-y-4 text-center py-8 text-app-muted border-dashed border-2 border-app-border rounded-xl">
-               <Wallet className="w-12 h-12 mx-auto mb-2 opacity-20" />
-               <p>No hay transacciones recientes para mostrar.</p>
+         <div className="glass border border-white/10 rounded-[2.5rem] p-10">
+            <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] mb-8">Libro de Transacciones</h3>
+            <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-3xl">
+               <Wallet className="w-16 h-16 mx-auto mb-6 opacity-10" />
+               <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 leading-loose">Registro de datos vacío.<br />No se detectan movimientos.</p>
             </div>
          </div>
       </div>
    );
 
    const renderSettings = () => (
-      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-         <div className="bg-app-card border border-app-border rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-app-text mb-6 flex items-center gap-2">
-               <User className="w-5 h-5" />
-               Información Personal
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div className="space-y-1">
-                  <label className="text-xs font-semibold text-app-muted uppercase">Nombre de Usuario</label>
-                  <input type="text" value="Admin" disabled className="w-full bg-app-bg border border-app-border rounded-lg px-4 py-2 text-app-text" />
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+         <div className="glass border border-white/10 rounded-[2.5rem] p-10 shadow-2xl">
+            <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] mb-10 flex items-center gap-4">
+               <div className="p-2 bg-app-neon-cyan/20 rounded-lg text-app-neon-cyan">
+                  <User className="w-5 h-5" />
                </div>
-               <div className="space-y-1">
-                  <label className="text-xs font-semibold text-app-muted uppercase">Email</label>
-                  <input type="email" value="admin@lagransubasta.com" disabled className="w-full bg-app-bg border border-app-border rounded-lg px-4 py-2 text-app-text" />
+               Información de Perfil
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+               <div className="space-y-3">
+                  <label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] ml-2">Alias del Nodo</label>
+                  <div className="relative group">
+                     <div className="absolute inset-0 bg-app-neon-cyan/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                     <input type="text" value="Admin" disabled className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white font-black tracking-tight focus:border-app-neon-cyan transition-all cursor-not-allowed opacity-60" />
+                  </div>
+               </div>
+               <div className="space-y-3">
+                  <label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] ml-2">Enlace de Comunicación</label>
+                  <div className="relative group">
+                     <div className="absolute inset-0 bg-app-neon-cyan/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                     <input type="email" value="admin@lagransubasta.com" disabled className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white font-black tracking-tight focus:border-app-neon-cyan transition-all cursor-not-allowed opacity-60" />
+                  </div>
                </div>
             </div>
          </div>
 
-         <div className="bg-app-card border border-app-border rounded-2xl p-6">
-            <h3 className="text-lg font-bold text-app-text mb-6 flex items-center gap-2">
-               <Bell className="w-5 h-5" />
-               Notificaciones
+         <div className="glass border border-white/10 rounded-[2.5rem] p-10 shadow-2xl">
+            <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] mb-10 flex items-center gap-4">
+               <div className="p-2 bg-app-neon-magenta/20 rounded-lg text-app-neon-magenta">
+                  <Bell className="w-5 h-5" />
+               </div>
+               Frecuencias de Notificación
             </h3>
-            <div className="space-y-4">
-               <div className="flex items-center justify-between p-3 rounded-lg hover:bg-app-bg transition-colors cursor-pointer">
-                  <div>
-                     <p className="font-medium text-app-text">Alertas de Subasta</p>
-                     <p className="text-xs text-app-muted">Recibir notificación cuando superen mi puja</p>
+            <div className="space-y-2">
+               <div className="flex items-center justify-between p-6 rounded-[1.5rem] hover:bg-white/5 transition-all cursor-pointer group border border-transparent hover:border-white/10">
+                  <div className="flex items-center gap-4">
+                     <div className="w-2 h-2 bg-app-neon-cyan rounded-full shadow-[0_0_8px_rgba(0,229,255,0.6)]" />
+                     <div>
+                        <p className="font-black text-white uppercase tracking-widest text-xs">Alertas de Puja</p>
+                        <p className="text-[10px] text-white/30 font-bold uppercase mt-1 tracking-wider">Notificar si mi oferta es superada</p>
+                     </div>
                   </div>
-                  <div className="w-10 h-5 bg-app-accent rounded-full relative">
-                     <div className="w-3 h-3 bg-white rounded-full absolute top-1 right-1"></div>
+                  <div className="w-12 h-6 bg-app-neon-cyan rounded-full relative shadow-[0_0_15px_rgba(0,229,255,0.3)]">
+                     <div className="w-4 h-4 bg-black rounded-full absolute top-1 right-1"></div>
                   </div>
                </div>
-               <div className="flex items-center justify-between p-3 rounded-lg hover:bg-app-bg transition-colors cursor-pointer">
-                  <div>
-                     <p className="font-medium text-app-text">Boletín Semanal</p>
-                     <p className="text-xs text-app-muted">Nuevos productos y ofertas especiales</p>
+
+               <div className="flex items-center justify-between p-6 rounded-[1.5rem] hover:bg-white/5 transition-all cursor-pointer group border border-transparent hover:border-white/10">
+                  <div className="flex items-center gap-4">
+                     <div className="w-2 h-2 bg-white/10 rounded-full" />
+                     <div>
+                        <p className="font-black text-white/40 uppercase tracking-widest text-xs">Novedades del Sector</p>
+                        <p className="text-[10px] text-white/20 font-bold uppercase mt-1 tracking-wider">Reportes semanales de equipos</p>
+                     </div>
                   </div>
-                  <div className="w-10 h-5 bg-app-border rounded-full relative">
-                     <div className="w-3 h-3 bg-app-muted/50 rounded-full absolute top-1 left-1"></div>
+                  <div className="w-12 h-6 bg-white/5 border border-white/10 rounded-full relative">
+                     <div className="w-4 h-4 bg-white/20 rounded-full absolute top-1 left-1"></div>
                   </div>
                </div>
             </div>
@@ -228,17 +266,18 @@ export const UserProfile: React.FC<UserProfileProps> = ({ userBids, allItems, on
       <div className="flex flex-col lg:flex-row gap-6 min-h-[600px] h-[calc(100vh-100px)] overflow-hidden">
 
          {/* Sidebar Navigation */}
-         <aside className="w-full lg:w-64 bg-app-card border border-app-border rounded-2xl p-4 flex flex-col shrink-0 overflow-y-auto">
+         <aside className="w-full lg:w-80 glass border border-white/10 rounded-[2.5rem] p-6 flex flex-col shrink-0 overflow-y-auto">
 
             {/* User Mini Profile */}
-            <div className="flex items-center gap-3 px-2 py-4 mb-6 border-b border-app-border/50">
-               <div className="relative">
-                  <img src="https://picsum.photos/seed/useravatar/60/60" alt="Avatar" className="w-12 h-12 rounded-full border border-app-border" />
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-app-card rounded-full"></span>
+            <div className="flex items-center gap-4 px-2 py-6 mb-8 border-b border-white/5">
+               <div className="relative group">
+                  <div className="absolute inset-0 bg-app-neon-cyan rounded-full blur-md opacity-20 animate-pulse" />
+                  <img src="https://picsum.photos/seed/useravatar/60/60" alt="Avatar" className="relative w-14 h-14 rounded-full border-2 border-white/20 object-cover group-hover:border-app-neon-cyan transition-colors" />
+                  <span className="absolute bottom-0 right-0 w-4 h-4 bg-app-neon-cyan border-4 border-black rounded-full shadow-[0_0_10px_rgba(0,229,255,1)]"></span>
                </div>
                <div className="overflow-hidden">
-                  <h3 className="font-bold text-app-text truncate">Admin User</h3>
-                  <p className="text-xs text-app-muted truncate">admin@demo.com</p>
+                  <h3 className="font-black text-white tracking-tight truncate leading-tight">Admin User</h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-white/30 truncate">Rango: Nexus Prime</p>
                </div>
             </div>
 

@@ -168,27 +168,29 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ item, onBack, onPl
             className="relative group cursor-zoom-in"
             onClick={() => setShowLightbox(true)}
           >
-            <div className="bg-app-card border border-app-border rounded-2xl p-8 h-[400px] lg:h-[500px] flex items-center justify-center relative overflow-hidden">
+            <div className="glass border border-white/10 rounded-[2.5rem] p-8 h-[500px] lg:h-[600px] flex items-center justify-center relative overflow-hidden shadow-2xl backdrop-blur-3xl">
+              <div className="absolute inset-0 bg-app-neon-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+
               {/* Live Badge */}
               {!hasEnded && (
-                <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-600 px-3 py-1 rounded-full text-white shadow-lg z-10">
+                <div className="absolute top-8 left-8 flex items-center gap-3 bg-black/60 backdrop-blur-xl border border-app-neon-magenta/50 px-5 py-2 rounded-2xl text-white shadow-[0_0_20px_rgba(255,0,255,0.3)] z-10 scale-90 sm:scale-100">
                   <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-full w-full bg-white"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-app-neon-magenta opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-full w-full bg-app-neon-magenta"></span>
                   </span>
-                  <span className="text-xs font-bold tracking-wide uppercase">En vivo</span>
+                  <span className="text-[10px] font-black tracking-[0.3em] uppercase">Subasta en Vivo</span>
                 </div>
               )}
 
               {/* Zoom Hint */}
-              <div className="absolute top-4 right-4 p-2 bg-black/40 backdrop-blur-md rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
-                <Maximize2 className="w-5 h-5" />
+              <div className="absolute top-8 right-8 p-4 bg-app-neon-cyan/20 backdrop-blur-md rounded-2xl text-app-neon-cyan border border-app-neon-cyan/30 opacity-0 group-hover:opacity-100 transition-all duration-500 z-20 pointer-events-none translate-x-4 group-hover:translate-x-0">
+                <Maximize2 className="w-6 h-6" />
               </div>
 
               <img
                 src={imageUrl}
                 alt={item.name}
-                className="w-full h-full object-contain mix-blend-normal transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-contain mix-blend-normal transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1"
               />
             </div>
           </div>
@@ -200,105 +202,123 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ item, onBack, onPl
         </div>
 
         {/* Right Column: Details */}
-        <div className="flex flex-col">
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-app-accent/10 text-app-accent border border-app-accent/20 px-2 py-0.5 rounded text-xs font-semibold">
+        <div className="flex flex-col py-2">
+          <div className="mb-10">
+            <div className="flex items-center gap-4 mb-4">
+              <span className="bg-app-neon-cyan/10 text-app-neon-cyan border border-app-neon-cyan/20 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em]">
                 {item.brand}
               </span>
-              <span className="text-app-muted text-sm">Ref: #{item.id.substring(0, 6)}</span>
+              <div className="h-px flex-1 bg-white/5" />
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-app-text mb-2">{item.name}</h1>
-            <p className="text-app-muted text-lg">{item.specs || 'Especificaciones estándar del fabricante'}</p>
+            <h1 className="text-4xl lg:text-5xl font-black text-white mb-4 tracking-tighter leading-tight">{item.name}</h1>
+            <p className="text-white/40 text-lg font-bold italic opacity-60 uppercase tracking-widest">{item.specs || 'Edición Limitada Premium'}</p>
           </div>
 
           {/* Price Card */}
-          <div className={`bg-app-card border rounded-2xl p-6 mb-6 transition-colors duration-300 ${highlight ? 'border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.15)]' : 'border-app-border'}`}>
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <p className="text-sm text-app-muted mb-1">Puja actual</p>
-                <div className="flex items-baseline gap-1">
-                  <span className={`text-4xl font-bold transition-all duration-300 ${highlight ? 'text-green-500 scale-105 origin-left' : 'text-app-text'}`}>
+          <div className={`glass relative border rounded-[2rem] p-8 mb-8 transition-all duration-500 overflow-hidden ${highlight ? 'border-app-neon-cyan shadow-[0_0_50px_rgba(0,229,255,0.2)]' : 'border-white/10'}`}>
+            {highlight && <div className="absolute inset-0 bg-app-neon-cyan/5 animate-pulse" />}
+
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-8">
+              <div className="relative">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-2">Oferta Actual</p>
+                <div className="flex items-baseline gap-2">
+                  <span className={`text-5xl font-black transition-all duration-500 tracking-tighter ${highlight ? 'text-app-neon-cyan scale-105 origin-left' : 'text-white'}`}>
                     DOP {item.currentBid.toLocaleString('es-ES')}
                   </span>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm text-app-muted mb-1">Tiempo restante</p>
-                <div className={`flex items-center justify-end gap-2 text-xl font-mono font-medium ${isEndingSoon ? 'text-red-500 animate-pulse' : 'text-app-text'}`}>
-                  <Clock className="w-5 h-5" />
+              <div className="text-left sm:text-right">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-2">Cierre de subasta</p>
+                <div className={`flex items-center sm:justify-end gap-3 text-2xl font-black tracking-widest ${isEndingSoon ? 'text-app-neon-magenta animate-pulse' : 'text-app-neon-cyan'}`}>
+                  <Clock className="w-6 h-6" />
                   {formatTimeLeft(timeLeftSeconds)}
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Manual Bid Input */}
               {!hasEnded && (
-                <div className="bg-app-bg border border-app-border rounded-xl p-1 flex items-center justify-between">
+                <div className="bg-black/40 border border-white/10 rounded-2xl p-2 flex items-center justify-between shadow-inner">
                   <button
                     onClick={() => setCustomBid(prev => Math.max(item.currentBid + 50, prev - 50))}
-                    className="p-3 hover:bg-app-border rounded-lg text-app-muted hover:text-app-text transition-colors"
+                    className="p-4 hover:bg-app-neon-magenta/20 rounded-xl text-white/40 hover:text-app-neon-magenta transition-all border border-transparent hover:border-app-neon-magenta/30"
                   >
                     <Minus className="w-5 h-5" />
                   </button>
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] text-app-muted font-bold uppercase tracking-wider mb-0.5">Tu Puja</span>
-                    <div className="flex items-center justify-center gap-1">
-                      <span className="text-sm font-semibold text-app-muted">DOP</span>
+                    <span className="text-[9px] text-white/40 font-black uppercase tracking-widest mb-1">Tu próxima oferta</span>
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-xs font-black text-app-neon-cyan pt-1">DOP</span>
                       <input
                         type="number"
                         value={customBid}
                         onChange={(e) => setCustomBid(Math.max(0, parseInt(e.target.value) || 0))}
-                        className="w-28 bg-transparent text-center font-bold text-xl text-app-text focus:outline-none border-b border-transparent focus:border-app-accent transition-colors"
+                        className="w-32 bg-transparent text-center font-black text-3xl text-white focus:outline-none border-b-2 border-transparent focus:border-app-neon-cyan transition-all"
                       />
                     </div>
                   </div>
                   <button
                     onClick={() => setCustomBid(prev => prev + 50)}
-                    className="p-3 hover:bg-app-border rounded-lg text-app-muted hover:text-app-text transition-colors"
+                    className="p-4 hover:bg-app-neon-cyan/20 rounded-xl text-white/40 hover:text-app-neon-cyan transition-all border border-transparent hover:border-app-neon-cyan/30"
                   >
                     <Plus className="w-5 h-5" />
                   </button>
                 </div>
               )}
 
-              <button
-                onClick={() => onPlaceBid(item, customBid)}
-                disabled={hasEnded}
-                className={`w-full py-4 rounded-xl text-lg font-bold shadow-lg transition-all flex items-center justify-center gap-2
-                            ${hasEnded
-                    ? 'bg-app-muted/20 text-app-muted cursor-not-allowed'
-                    : 'bg-app-accent hover:bg-app-accentHover active:scale-[0.98] text-white shadow-app-accent/25'
-                  }`}
-              >
-                <Zap className="w-5 h-5 fill-current" />
-                {hasEnded ? 'Subasta Finalizada' : 'Pujar Ahora'}
-              </button>
-              <button
-                onClick={() => onShare(item)}
-                className="w-full py-3 rounded-xl border border-app-border text-app-text font-medium hover:bg-app-bg transition-colors flex items-center justify-center gap-2"
-              >
-                <Share2 className="w-4 h-4" />
-                Compartir Producto
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => onPlaceBid(item, customBid)}
+                  disabled={hasEnded}
+                  className={`flex-1 relative overflow-hidden group py-5 rounded-2xl text-lg font-black uppercase tracking-widest transition-all
+                                ${hasEnded
+                      ? 'bg-white/5 text-white/20 cursor-not-allowed border border-white/10'
+                      : 'active:scale-95 text-black'
+                    }`}
+                >
+                  {!hasEnded && (
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-r from-app-neon-cyan to-app-neon-magenta group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/20 to-transparent" />
+                    </>
+                  )}
+                  <div className="relative flex items-center justify-center gap-2">
+                    <Zap className={`w-6 h-6 ${hasEnded ? 'text-white/10' : 'fill-black'}`} />
+                    {hasEnded ? 'Subasta Finalizada' : 'Lanzar Puja'}
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => onShare(item)}
+                  className="px-6 py-5 rounded-2xl border border-white/10 bg-white/5 text-white font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-3 group"
+                >
+                  <Share2 className="w-5 h-5 text-app-neon-cyan group-hover:scale-110 transition-transform" />
+                  Compartir
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Info Tabs / Highlights */}
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="bg-app-bg p-4 rounded-xl border border-app-border flex items-start gap-3">
-              <Shield className="w-6 h-6 text-green-500 shrink-0" />
+          <div className="grid grid-cols-2 gap-6 mb-10">
+            <div className="glass p-6 rounded-[1.5rem] border border-white/5 flex flex-col items-center text-center gap-4 group hover:border-app-neon-cyan/30 transition-all">
+              <div className="p-3 bg-app-neon-cyan/10 rounded-2xl text-app-neon-cyan group-hover:scale-110 transition-transform">
+                <Shield className="w-8 h-8" />
+              </div>
               <div>
-                <h4 className="font-semibold text-app-text text-sm">Garantía Segura</h4>
-                <p className="text-xs text-app-muted mt-1">Protección al comprador de 30 días incluida.</p>
+                <h4 className="font-black text-white text-[10px] uppercase tracking-[0.3em] mb-2">Garantía Segura</h4>
+                <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest leading-relaxed">Protección de 30 días Certificada</p>
               </div>
             </div>
-            <div className="bg-app-bg p-4 rounded-xl border border-app-border flex items-start gap-3">
-              <Truck className="w-6 h-6 text-blue-500 shrink-0" />
+            <div className="glass p-6 rounded-[1.5rem] border border-white/5 flex flex-col items-center text-center gap-4 group hover:border-app-neon-magenta/30 transition-all">
+              <div className="p-3 bg-app-neon-magenta/10 rounded-2xl text-app-neon-magenta group-hover:scale-110 transition-transform">
+                <Truck className="w-8 h-8" />
+              </div>
               <div>
-                <h4 className="font-semibold text-app-text text-sm">Envío Rápido</h4>
-                <p className="text-xs text-app-muted mt-1">Entrega estimada en 3-5 días hábiles.</p>
+                <h4 className="font-black text-white text-[10px] uppercase tracking-[0.3em] mb-2">Envío Rápido</h4>
+                <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest leading-relaxed">Nodos de Entrega en 3-5 días</p>
               </div>
             </div>
           </div>
@@ -309,18 +329,30 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ item, onBack, onPl
           </div>
 
           {/* Description Section (Static) */}
-          <div className="mt-4 border-t border-app-border pt-6">
-            <h3 className="text-lg font-bold text-app-text mb-4">Descripción del Producto</h3>
-            <div className="space-y-4 text-app-muted text-sm leading-relaxed">
-              <p>
-                Este {item.name} de {item.brand} ofrece un rendimiento excepcional con su configuración de {item.specs}.
-                Diseñado para usuarios exigentes, cuenta con tecnología de punta y un diseño robusto característico de la marca.
+          <div className="mt-8 border-t border-white/10 pt-10">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-1.5 bg-gradient-to-r from-app-neon-cyan to-app-neon-magenta rounded-full shadow-[0_0_15px_rgba(0,229,255,0.4)]" />
+              <h3 className="text-xs font-black text-white uppercase tracking-[0.4em]">Protocolo de Especificaciones</h3>
+            </div>
+            <div className="space-y-8 text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] leading-loose">
+              <p className="p-8 bg-white/5 rounded-[2rem] border border-white/5 italic text-white/60 backdrop-blur-sm">
+                El {item.name} de {item.brand} representa la cúspide de la ingeniería móvil actual.
+                Desbloquea el máximo potencial con una configuración de {item.specs}.
               </p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Pantalla de alta resolución con colores vibrantes.</li>
-                <li>Batería de larga duración para todo el día.</li>
-                <li>Sistema de cámaras avanzado para fotos nítidas.</li>
-                <li>Conectividad 5G ultrarrápida (según modelo).</li>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {[
+                  'Display Ultra-XDR NextGen',
+                  'Arquitectura Energética Inteligente',
+                  'Óptica Profesional de Alta Gama',
+                  'Módulo Quantum 5G Ready',
+                  'Protección de Grado Aeroespacial',
+                  'IA Neural Engine Integrado'
+                ].map((spec, i) => (
+                  <li key={i} className="flex items-center gap-4 p-5 bg-black/40 rounded-2xl border border-white/5 group hover:border-app-neon-cyan/40 transition-all">
+                    <div className="w-2 h-2 bg-app-neon-cyan rounded-full shadow-[0_0_10px_rgba(0,229,255,0.8)] animate-pulse" />
+                    <span className="group-hover:text-white transition-colors">{spec}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
