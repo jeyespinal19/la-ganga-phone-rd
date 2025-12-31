@@ -1,59 +1,28 @@
 
-export interface AuctionItem {
+export interface Product {
   id: string;
   name: string;
   brand: string;
   specs: string;
-  currentBid: number;
-  timeLeft: string;
-  imageDetails: string; // Used to seed the random image
-  reservePrice?: number;
+  price: number;
+  imageDetails: string;
+  originalPrice?: number; // Optional: for showing "scratch" price
 }
 
-export type Category = 'Todos' | 'Oukitel' | 'Samsung' | 'Xiaomi';
+export type Category = 'Todos' | 'Oukitel' | 'Samsung' | 'Xiaomi' | 'Hogar' | 'Hombre' | 'Oficina' | 'Industrial' | 'Deporte' | 'Mascotas';
 
-export interface BidUpdate {
-  itemId: string;
-  newBid: number;
-}
 
-export interface BidResult {
-  success: boolean;
-  message: string;
-  currentPrice?: number;
-}
-
-export interface UserBid {
-  itemId: string;
-  itemName: string;
-  amount: number;
-  timestamp: string; // ISO string
-}
 
 export interface User {
   id: string;
   name: string;
   email: string;
   phone?: string;
-  role: 'admin' | 'user' | 'vip';
-  status: 'active' | 'pending' | 'banned';
-  lastSeen: string;
-  avatar: string;
+  role: 'admin' | 'user';
+  status: 'active' | 'banned';
+  avatar?: string;
 }
 
-export interface ActivityLog {
-  id: string;
-  type: 'bid' | 'system' | 'new_item' | 'user_action';
-  message: string;
-  timestamp: string;
-  user?: string;
-  amount?: number;
-  itemId?: string;
-}
-
-export interface BidHistoryItem {
-  userId: string;
-  userName: string;
-  amount: number;
-  timestamp: string;
+export interface CartItem extends Product {
+  quantity: number;
 }
