@@ -56,9 +56,9 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({ active, icon, label, onCl
     <div className={`transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
       {icon}
     </div>
-    <span className="tracking-tight">{label}</span>
+    <span className="tracking-tight lg:block">{label}</span>
     {active && (
-      <div className="absolute right-4 w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+      <div className="absolute right-4 w-1.5 h-1.5 bg-white rounded-full animate-pulse hidden lg:block" />
     )}
   </button>
 );
@@ -77,6 +77,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (activeTab === 'orders') {
@@ -192,8 +193,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
 
         {/* Toolbar */}
-        <div className="flex gap-4 bg-white/40 backdrop-blur-xl p-4 rounded-2xl border border-white/40 shadow-lg shadow-blue-500/5">
-          <div className="relative flex-1 max-w-md">
+        <div className="flex flex-col sm:flex-row gap-4 bg-white/40 backdrop-blur-xl p-4 rounded-2xl border border-white/40 shadow-lg shadow-blue-500/5">
+          <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-400" />
             <input
               type="text"
@@ -205,64 +206,66 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
-        {/* Table Container */}
+        {/* Table Container with Horizontal Scroll */}
         <div className="bg-white/40 backdrop-blur-xl border border-white/40 rounded-[2.5rem] shadow-2xl shadow-blue-500/10 overflow-hidden">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-white/40 bg-white/20">
-                <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] w-24 text-center">Visual</th>
-                <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em]">Producto / Detalles</th>
-                <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-center">Stock</th>
-                <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-right">Precio</th>
-                <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-right">Gestión</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/20">
-              {filteredItems.map((item) => {
-                const isCustomImage = item.imageDetails.startsWith('data:') || item.imageDetails.startsWith('http');
-                const imgSrc = isCustomImage ? item.imageDetails : `https://picsum.photos/seed/${item.imageDetails}/200/200`;
+          <div className="overflow-x-auto no-scrollbar">
+            <table className="w-full text-left min-w-[800px]">
+              <thead>
+                <tr className="border-b border-white/40 bg-white/20">
+                  <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] w-24 text-center">Visual</th>
+                  <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em]">Producto / Detalles</th>
+                  <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-center">Stock</th>
+                  <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-right">Precio</th>
+                  <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-right">Gestión</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/20">
+                {filteredItems.map((item) => {
+                  const isCustomImage = item.imageDetails.startsWith('data:') || item.imageDetails.startsWith('http');
+                  const imgSrc = isCustomImage ? item.imageDetails : `https://picsum.photos/seed/${item.imageDetails}/200/200`;
 
-                return (
-                  <tr key={item.id} className="group hover:bg-white/50 transition-all duration-300">
-                    <td className="p-6 text-center">
-                      <div className="relative w-14 h-14 mx-auto group-hover:scale-110 transition-transform duration-500">
-                        <div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-lg group-hover:blur-xl transition-all" />
-                        <div className="relative w-full h-full bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-white shadow-inner">
-                          <img src={imgSrc} className="w-full h-full object-cover" alt="product" />
+                  return (
+                    <tr key={item.id} className="group hover:bg-white/50 transition-all duration-300">
+                      <td className="p-6 text-center">
+                        <div className="relative w-14 h-14 mx-auto group-hover:scale-110 transition-transform duration-500">
+                          <div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-lg group-hover:blur-xl transition-all" />
+                          <div className="relative w-full h-full bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-white shadow-inner">
+                            <img src={imgSrc} className="w-full h-full object-cover" alt="product" />
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="p-6">
-                      <p className="font-black text-gray-900 text-base group-hover:text-blue-600 transition-colors">{item.name}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md">{item.brand}</span>
-                        <span className="text-[10px] text-gray-400 font-bold truncate max-w-[200px]">{item.specs}</span>
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black shadow-sm ${item.stock > 0 ? 'bg-green-100/50 text-green-600 border border-green-200' : 'bg-red-100/50 text-red-600 border border-red-200'}`}>
-                        {item.stock} unidades
-                      </span>
-                    </td>
-                    <td className="p-6 text-right">
-                      <p className="font-black text-gray-900 text-lg">RD$ {item.price.toLocaleString()}</p>
-                      {item.originalPrice && <p className="text-xs text-red-400 line-through font-bold">RD$ {item.originalPrice.toLocaleString()}</p>}
-                    </td>
-                    <td className="p-6 text-right">
-                      <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                        <button onClick={() => handleEditClick(item)} className="p-3 bg-white text-blue-600 hover:bg-blue-600 hover:text-white rounded-2xl shadow-sm border border-blue-50 transition-all scale-90 group-hover:scale-100">
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => onDeleteItem(item.id)} className="p-3 bg-white text-red-600 hover:bg-red-600 hover:text-white rounded-2xl shadow-sm border border-red-50 transition-all scale-90 group-hover:scale-100 delay-75">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      </td>
+                      <td className="p-6">
+                        <p className="font-black text-gray-900 text-base group-hover:text-blue-600 transition-colors">{item.name}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md">{item.brand}</span>
+                          <span className="text-[10px] text-gray-400 font-bold truncate max-w-[200px]">{item.specs}</span>
+                        </div>
+                      </td>
+                      <td className="p-6 text-center">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black shadow-sm ${item.stock > 0 ? 'bg-green-100/50 text-green-600 border border-green-200' : 'bg-red-100/50 text-red-600 border border-red-200'}`}>
+                          {item.stock} unidades
+                        </span>
+                      </td>
+                      <td className="p-6 text-right">
+                        <p className="font-black text-gray-900 text-lg">RD$ {item.price.toLocaleString()}</p>
+                        {item.originalPrice && <p className="text-xs text-red-400 line-through font-bold">RD$ {item.originalPrice.toLocaleString()}</p>}
+                      </td>
+                      <td className="p-6 text-right">
+                        <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                          <button onClick={() => handleEditClick(item)} className="p-3 bg-white text-blue-600 hover:bg-blue-600 hover:text-white rounded-2xl shadow-sm border border-blue-50 transition-all scale-90 group-hover:scale-100">
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => onDeleteItem(item.id)} className="p-3 bg-white text-red-600 hover:bg-red-600 hover:text-white rounded-2xl shadow-sm border border-red-50 transition-all scale-90 group-hover:scale-100 delay-75">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
           {filteredItems.length === 0 && (
             <div className="p-20 text-center">
               <Package className="w-16 h-16 text-blue-100 mx-auto mb-4" />
@@ -275,12 +278,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 min-h-screen bg-[#f8fbff] p-4 lg:p-8 animate-in fade-in duration-500">
+    <div className="flex flex-col lg:flex-row gap-6 min-h-screen bg-[#f8fbff] p-4 lg:p-8 pb-24 lg:pb-8 animate-in fade-in duration-500">
 
-      {/* Futuristic Sidebar */}
-      <aside className="w-full lg:w-72 bg-white/60 backdrop-blur-3xl rounded-[3rem] border border-white shadow-2xl shadow-blue-500/10 p-8 flex flex-col shrink-0 h-fit lg:h-[calc(100vh-4rem)] lg:sticky lg:top-8 overflow-hidden relative">
+      {/* Mobile Header */}
+      <div className="lg:hidden flex items-center justify-between bg-white/60 backdrop-blur-xl p-6 rounded-[2rem] border border-white shadow-lg">
+        <h1 className="text-xl font-black italic">
+          <span className="text-gray-900">La Ganga</span>
+          <span className="text-blue-600 ml-2">Admin</span>
+        </h1>
+        <button
+          onClick={onBack}
+          className="p-3 bg-blue-50 text-blue-600 rounded-2xl"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* Futuristic Sidebar - Desktop */}
+      <aside className={`fixed inset-0 z-50 lg:relative lg:z-0 lg:flex w-full lg:w-72 bg-white/60 backdrop-blur-3xl lg:rounded-[3rem] border-r lg:border border-white shadow-2xl lg:shadow-blue-500/10 p-8 flex-col shrink-0 h-full lg:h-[calc(100vh-4rem)] lg:sticky lg:top-8 overflow-hidden transition-all duration-500 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
+
 
         <div className="mb-12 relative">
           <button onClick={onBack} className="flex items-center gap-2 text-blue-500 hover:text-blue-700 font-black text-xs uppercase tracking-widest mb-6 transition-all group">
@@ -310,7 +328,32 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             Cerrar Sesión
           </button>
         </div>
+
+        {/* Mobile Close Sidebar */}
+        <button
+          onClick={() => setIsSidebarOpen(false)}
+          className="lg:hidden absolute top-8 right-8 p-2 bg-gray-50 rounded-full"
+        >
+          <X className="w-6 h-6" />
+        </button>
       </aside>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-6 left-6 right-6 z-[60] bg-white/80 backdrop-blur-2xl rounded-[2.5rem] border border-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-2 flex items-center justify-around">
+        <button onClick={() => setActiveTab('products')} className={`p-4 rounded-[2rem] transition-all ${activeTab === 'products' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110' : 'text-gray-400'}`}>
+          <Package className="w-6 h-6" />
+        </button>
+        <button onClick={() => setActiveTab('orders')} className={`p-4 rounded-[2rem] transition-all ${activeTab === 'orders' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110' : 'text-gray-400'}`}>
+          <ShoppingBag className="w-6 h-6" />
+        </button>
+        <button onClick={() => setActiveTab('users')} className={`p-4 rounded-[2rem] transition-all ${activeTab === 'users' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110' : 'text-gray-400'}`}>
+          <Users className="w-6 h-6" />
+        </button>
+        <div className="w-px h-8 bg-gray-100 mx-2" />
+        <button onClick={openAddModal} className="p-4 bg-blue-50 text-blue-600 rounded-[2rem] hover:bg-blue-100 transition-all">
+          <Plus className="w-6 h-6" />
+        </button>
+      </div>
 
       {/* Main Content Area */}
       <main className="flex-1 min-w-0">
