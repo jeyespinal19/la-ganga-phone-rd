@@ -80,6 +80,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [ordersError, setOrdersError] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -106,16 +107,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const fetchOrders = async () => {
     setOrdersLoading(true);
+    setOrdersError(null);
     try {
       const data = await productService.getAllOrders();
+      console.log('Orders data:', data);
+
       // Map order_items to items for UI consistency
       const mappedOrders = data.map((order: any) => ({
         ...order,
         items: order.order_items || []
       }));
       setOrders(mappedOrders);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching orders:', err);
+      setOrdersError(err.message || 'Error al cargar los pedidos');
     } finally {
       setOrdersLoading(false);
     }
@@ -387,11 +392,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-700">
             <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl shadow-blue-500/5">
               <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">Gestión de Pedidos</h2>
-              <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">Seguimiento en tiempo real</p>
+              <div className="flex justify-between items-center">
+                <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">Seguimiento en tiempo real</p>
+                <button
+                  onClick={fetchOrders}
+                  disabled={ordersLoading}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-all font-black text-[10px] uppercase tracking-widest disabled:opacity-50"
+                >
+                  {ordersLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Refrescar'}
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-              {ordersLoading ? (
+              {ordersError ? (
+                <div className="bg-red-50 text-red-600 p-10 rounded-[2.5rem] border border-red-100 text-center flex flex-col items-center">
+                  <AlertCircle className="w-12 h-12 mb-4 opacity-50" />
+                  <p className="font-black text-sm uppercase tracking-widest mb-4">{ordersError}</p>
+                  <button
+                    onClick={fetchOrders}
+                    className="bg-red-600 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-red-200 active:scale-95 transition-all"
+                  >
+                    Reintentar Conexión
+                  </button>
+                </div>
+              ) : ordersLoading ? (
                 <div className="flex flex-col items-center justify-center p-20 bg-white/40 rounded-[2.5rem] border border-white/40">
                   <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
                   <p className="text-blue-500 font-black text-xs uppercase tracking-widest">Sincronizando órdenes...</p>
@@ -469,12 +494,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       </div>
                     </div>
                   ))}
-                  {orders.length === 0 && !ordersLoading && (
-                    <div className="bg-white/40 backdrop-blur-xl rounded-[2.5rem] p-20 text-center border border-white/40 shadow-xl">
-                      <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <ShoppingBag className="w-10 h-10 text-blue-200" />
+                  {orders.length === 0 && (
+                    <div className="bg-white/40 backdrop-blur-xl rounded-[2.5rem] p-20 text-center border border-white/40 shadow-xl flex flex-col items-center animate-in fade-in zoom-in duration-500">
+                      <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-8 border border-blue-100 shadow-inner">
+                        <ShoppingBag className="w-12 h-12 text-blue-200 animate-pulse" />
                       </div>
-                      <p className="text-gray-400 font-black uppercase tracking-widest text-sm">Sin pedidos registrados</p>
+                      <h3 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">Cero Pedidos</h3>
+                      <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-xs">Aún no se han registrado ventas en el sistema</p>
+                      <button
+                        onClick={fetchOrders}
+                        className="mt-8 bg-blue-600 text-white px-10 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-blue-200 hover:scale-105 active:scale-95 transition-all"
+                      >
+                        Sincronizar Ahora
+                      </button>
                     </div>
                   )}
                 </div>

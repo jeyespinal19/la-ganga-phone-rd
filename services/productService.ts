@@ -214,10 +214,14 @@ class ProductService {
   async getAllOrders() {
     const { data, error } = await supabase
       .from('orders')
-      .select('*, order_items(*), profiles(name, email)')
+      .select(`
+        *,
+        order_items (*),
+        profiles:user_id (name, email)
+      `)
       .order('created_at', { ascending: false });
     if (error) throw error;
-    return data as any;
+    return data || [];
   }
 
   async updateOrderStatus(orderId: string, status: string) {
