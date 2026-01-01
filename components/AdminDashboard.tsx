@@ -476,6 +476,110 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     );
   };
 
+  const renderBanners = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-700">
+      <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl shadow-blue-500/5 flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-black text-gray-900 tracking-tight">Gestión de Banners</h2>
+          <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">Personaliza el carrusel de inicio</p>
+        </div>
+        <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+          <ImageIcon className="w-7 h-7" />
+        </div>
+      </div>
+
+      <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl">
+        <h3 className="text-xl font-black text-gray-900 mb-6">Subir Nuevo Banner (Canva)</h3>
+        <form onSubmit={handleAddBanner} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Imagen del Banner</label>
+              <div className="relative group">
+                <input type="file" onChange={handleBannerUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
+                <div className="w-full h-32 bg-white/60 border-2 border-dashed border-blue-100 rounded-2xl flex flex-col items-center justify-center group-hover:bg-blue-50 transition-colors">
+                  {newBanner.image_url ? (
+                    <img src={newBanner.image_url} className="h-full w-full object-cover rounded-2xl" alt="Preview" />
+                  ) : (
+                    <>
+                      <Upload className="w-8 h-8 text-blue-300 mb-2" />
+                      <span className="text-xs font-bold text-blue-400">Seleccionar imagen o soltar aquí</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Etiqueta (Badge)</label>
+              <input
+                type="text"
+                placeholder="Ej: OFERTA, NUEVO, MÁS VENDIDO"
+                value={newBanner.badge}
+                onChange={(e) => setNewBanner(prev => ({ ...prev, badge: e.target.value }))}
+                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
+              />
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Título</label>
+              <input
+                type="text"
+                placeholder="Ej: iPhone 15 Pro"
+                value={newBanner.title}
+                onChange={(e) => setNewBanner(prev => ({ ...prev, title: e.target.value }))}
+                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Subtítulo</label>
+              <input
+                type="text"
+                placeholder="Ej: El smartphone más potente"
+                value={newBanner.subtitle}
+                onChange={(e) => setNewBanner(prev => ({ ...prev, subtitle: e.target.value }))}
+                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={!newBanner.image_url}
+              className="w-full mt-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+            >
+              Añadir al Carrusel
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {banners.map((banner) => (
+          <div key={banner.id} className="group relative bg-white/40 backdrop-blur-xl rounded-[2.5rem] overflow-hidden border border-white/40 shadow-xl hover:shadow-blue-500/10 transition-all duration-500">
+            <div className="aspect-[21/9] w-full relative">
+              <img src={banner.image_url} className="w-full h-full object-cover" alt={banner.title} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-6">
+                <span className="inline-block px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg mb-2 w-fit">{banner.badge}</span>
+                <p className="text-white font-black text-xl leading-none mb-1">{banner.title}</p>
+                <p className="text-white/80 font-bold text-xs">{banner.subtitle}</p>
+              </div>
+              <button
+                onClick={() => handleDeleteBanner(banner.id)}
+                className="absolute top-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-white hover:bg-red-500 hover:text-white transition-all shadow-xl opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        ))}
+        {banners.length === 0 && !bannersLoading && (
+          <div className="col-span-full py-20 bg-white/40 rounded-[2.5rem] border border-white/40 text-center flex flex-col items-center">
+            <ImageIcon className="w-16 h-16 text-blue-200 mb-4 animate-pulse" />
+            <p className="text-gray-400 font-black uppercase text-xs tracking-widest">No hay banners personalizados</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex flex-col lg:flex-row gap-6 min-h-screen bg-[#f8fbff] p-4 lg:p-8 pb-24 lg:pb-8 animate-in fade-in duration-500">
       {/* Sidebar */}
