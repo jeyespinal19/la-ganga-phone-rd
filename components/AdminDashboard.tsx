@@ -1,4 +1,4 @@
-
+// Product Management Dashboard - Production Deployment
 import React, { useState, useRef, useEffect } from 'react';
 import {
   LayoutDashboard,
