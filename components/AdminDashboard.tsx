@@ -634,7 +634,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <span className="text-gray-900 ml-1">ADMIN</span>
             </h1>
           </button>
-          <div className="flex-1 space-y-1.5">
+          <div className="flex-1 space-y-3">
             <SidebarButton active={activeTab === 'overview'} icon={<LayoutDashboard />} label="Dashboard" onClick={() => setActiveTab('overview')} />
             <SidebarButton active={activeTab === 'products'} icon={<Package />} label="Inventario" onClick={() => setActiveTab('products')} />
             <SidebarButton active={activeTab === 'orders'} icon={<ShoppingBag />} label="Ventas" onClick={() => setActiveTab('orders')} />
@@ -651,7 +651,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Main Content */}
       <main className="flex-1 min-w-0">
         <div className="lg:hidden flex items-center justify-between bg-white/60 backdrop-blur-xl p-4 rounded-2xl mb-4 border border-white">
-          <button onClick={onBack} className="font-black italic text-gray-900 hover:opacity-70 transition-opacity active:scale-95 duration-200">LA GANGA ADMIN</button>
+          <button onClick={onBack} className="font-black italic text-gray-900 hover:opacity-70 transition-opacity active:scale-95 duration-200 flex items-center gap-1.5">
+            <span>LA GANGA</span>
+            <span className="text-blue-600">ADMIN</span>
+          </button>
           <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-blue-50 rounded-xl text-blue-600"><LayoutDashboard className="w-6 h-6" /></button>
         </div>
 

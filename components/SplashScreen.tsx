@@ -69,8 +69,8 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                 {/* Title */}
                 <div className="text-center">
                     <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter animate-[slideUp_0.8s_ease-out_0.2s_both] font-sans">
-                        La Ganga Phone
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-app-neon-cyan to-app-neon-magenta transition-all duration-1000"> RD</span>
+                        La Ganga Phone{' '}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-app-neon-cyan to-app-neon-magenta transition-all duration-1000">RD</span>
                     </h1>
                     <p className="mt-4 text-xl text-white/40 font-bold uppercase tracking-[0.3em] animate-[slideUp_0.8s_ease-out_0.4s_both]">
                         Subastas de otro nivel
