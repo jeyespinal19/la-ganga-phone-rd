@@ -302,12 +302,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100/50">
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Productos</p>
                             <div className="space-y-2">
-                              {order.order_items?.map((item: any, idx: number) => (
-                                <div key={idx} className="flex justify-between text-xs font-bold text-gray-600">
-                                  <span>{item.quantity}x ID: {item.product_id.slice(0, 8)}</span>
-                                  <span>{formatCurrency(item.price * item.quantity)}</span>
-                                </div>
-                              ))}
+                              {order.order_items?.map((item: any, idx: number) => {
+                                const imgSrc = `https://picsum.photos/seed/${item.product_id.slice(0, 8)}/40/40`;
+                                return (
+                                  <div key={idx} className="flex items-center gap-2 py-2 border-b border-gray-100 last:border-0">
+                                    <img src={imgSrc} alt="product" className="w-10 h-10 rounded" />
+                                    <div className="flex-1">
+                                      <p className="font-medium text-gray-900">ID: {item.product_id.slice(0, 8)}</p>
+                                      <p className="text-xs text-gray-500">Cantidad: {item.quantity}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <p className="text-xs text-gray-600">Precio unitario: {formatCurrency(item.price)}</p>
+                                      <p className="font-bold text-gray-800">Subtotal: {formatCurrency(item.price * item.quantity)}</p>
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         </div>
