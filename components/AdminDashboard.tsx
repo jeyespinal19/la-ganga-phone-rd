@@ -621,12 +621,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-[60] w-72 bg-white/80 backdrop-blur-2xl border-r border-white/40 p-6 transition-all duration-500 lg:static lg:block ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex flex-col h-full">
-          <div className="mb-10 px-4">
+          <button onClick={onBack} className="mb-10 px-4 text-left hover:opacity-70 transition-opacity active:scale-95 duration-200">
             <h1 className="text-2xl font-black italic tracking-tighter">
               <span className="text-gray-900 leading-none">LA GANGA</span><br />
               <span className="text-blue-600 leading-none text-3xl">ADMIN</span>
             </h1>
-          </div>
+          </button>
           <div className="flex-1 space-y-3">
             <SidebarButton active={activeTab === 'overview'} icon={<LayoutDashboard className="w-6 h-6" />} label="Dashboard" onClick={() => setActiveTab('overview')} />
             <SidebarButton active={activeTab === 'products'} icon={<Package className="w-6 h-6" />} label="Inventario" onClick={() => setActiveTab('products')} />
@@ -644,7 +644,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Main Content */}
       <main className="flex-1 min-w-0">
         <div className="lg:hidden flex items-center justify-between bg-white/60 backdrop-blur-xl p-4 rounded-2xl mb-4 border border-white">
-          <h1 className="font-black italic text-gray-900">LA GANGA ADMIN</h1>
+          <button onClick={onBack} className="font-black italic text-gray-900 hover:opacity-70 transition-opacity active:scale-95 duration-200">LA GANGA ADMIN</button>
           <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-blue-50 rounded-xl text-blue-600"><LayoutDashboard className="w-6 h-6" /></button>
         </div>
 

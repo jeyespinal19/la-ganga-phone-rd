@@ -284,7 +284,10 @@ const App: React.FC = () => {
           {/* Header */}
           <div className="sticky top-0 z-30 glass shadow-sm px-4 pt-3 pb-3">
             <div className="flex items-center justify-between bg-transparent">
-              <div className="flex items-center gap-2">
+              <div
+                className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity active:scale-95 duration-200"
+                onClick={() => setCurrentView('home')}
+              >
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold animate-float">G</div>
                 <h1 className="text-lg font-black italic tracking-tighter leading-none">
                   <span className="text-app-text">La Ganga</span>
