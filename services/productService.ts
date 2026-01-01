@@ -259,7 +259,7 @@ class ProductService {
       .delete()
       .eq('id', id);
     if (error) throw error;
-  },
+  }
 
   async uploadBannerImage(file: File) {
     const fileExt = file.name.split('.').pop();
