@@ -50,17 +50,17 @@ interface SidebarButtonProps {
 const SidebarButton: React.FC<SidebarButtonProps> = ({ active, icon, label, onClick }) => (
   <button
     onClick={onClick}
-    className={`w-full flex items-center gap-4 px-6 py-4 rounded-[1.5rem] font-black text-sm transition-all duration-300 relative group ${active
-      ? 'bg-blue-600 text-white shadow-xl shadow-blue-200 translate-x-1'
-      : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50/50 hover:translate-x-1'
+    className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 relative group ${active
+      ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+      : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50'
       }`}
   >
-    <div className={`transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
-      {icon}
+    <div className={`transition-transform duration-200 ${active ? 'scale-100' : 'group-hover:scale-110'}`}>
+      {React.cloneElement(icon as React.ReactElement, { size: 20 })}
     </div>
-    <span className="tracking-tight lg:block">{label}</span>
+    <span className="tracking-tight">{label}</span>
     {active && (
-      <div className="absolute right-4 w-1.5 h-1.5 bg-white rounded-full animate-pulse hidden lg:block" />
+      <div className="absolute right-3 w-1.5 h-1.5 bg-white rounded-full lg:block" />
     )}
   </button>
 );
@@ -272,80 +272,77 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const filteredItems = items.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
     return (
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="flex justify-between items-center bg-white/40 backdrop-blur-xl p-6 rounded-[2rem] border border-white/40 shadow-xl shadow-blue-500/5">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div>
-            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Inventario</h2>
-            <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">{items.length} productos disponibles</p>
+            <h2 className="text-xl font-bold text-gray-900 tracking-tight">Inventario de Productos</h2>
+            <p className="text-sm font-medium text-gray-400">{filteredItems.length} productos encontrados</p>
           </div>
           <button
             onClick={openAddModal}
-            className="group bg-blue-600 text-white px-6 py-3.5 rounded-2xl flex items-center gap-2 text-sm font-black shadow-lg shadow-blue-200 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all"
+            className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-blue-700 transition-all active:scale-95"
           >
-            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" /> Nuevo Producto
+            <Plus className="w-4 h-4" /> Nuevo Producto
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 bg-white/40 backdrop-blur-xl p-4 rounded-2xl border border-white/40 shadow-lg shadow-blue-500/5">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Buscar por nombre o marca..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white/60 border-none rounded-xl pl-12 pr-4 py-3 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder-blue-300"
+              className="w-full bg-white border border-gray-100 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder-gray-300 shadow-sm"
             />
           </div>
         </div>
 
-        <div className="bg-white/40 backdrop-blur-xl border border-white/40 rounded-[2.5rem] shadow-2xl shadow-blue-500/10 overflow-hidden">
-          <div className="overflow-x-auto no-scrollbar">
-            <table className="w-full text-left min-w-[800px]">
+        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-white/40 bg-white/20">
-                  <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] w-24 text-center">Visual</th>
-                  <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em]">Producto / Detalles</th>
-                  <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-center">Stock</th>
-                  <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-right">Precio</th>
-                  <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-right">Gestión</th>
+                <tr className="border-b border-gray-50 bg-gray-50/50">
+                  <th className="px-6 py-4 font-bold text-gray-500 text-[11px] uppercase tracking-wider w-20 text-center">Imagen</th>
+                  <th className="px-6 py-4 font-bold text-gray-500 text-[11px] uppercase tracking-wider">Detalles del Producto</th>
+                  <th className="px-6 py-4 font-bold text-gray-500 text-[11px] uppercase tracking-wider text-center">Stock</th>
+                  <th className="px-6 py-4 font-bold text-gray-500 text-[11px] uppercase tracking-wider text-right">Precio</th>
+                  <th className="px-6 py-4 font-bold text-gray-500 text-[11px] uppercase tracking-wider text-right">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/20">
+              <tbody className="divide-y divide-gray-50">
                 {filteredItems.map((item) => {
                   const isCustomImage = item.imageDetails.startsWith('data:') || item.imageDetails.startsWith('http');
                   const imgSrc = isCustomImage ? item.imageDetails : `https://picsum.photos/seed/${item.imageDetails}/200/200`;
                   return (
-                    <tr key={item.id} className="group hover:bg-white/50 transition-all duration-300">
-                      <td className="p-6 text-center">
-                        <div className="relative w-14 h-14 mx-auto group-hover:scale-110 transition-transform duration-500">
-                          <div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-lg group-hover:blur-xl transition-all" />
-                          <div className="relative w-full h-full bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-white shadow-inner">
-                            <img src={imgSrc} className="w-full h-full object-cover" alt="product" />
-                          </div>
+                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="w-12 h-12 mx-auto rounded-lg overflow-hidden bg-gray-50 border border-gray-100">
+                          <img src={imgSrc} className="w-full h-full object-cover" alt="product" />
                         </div>
                       </td>
-                      <td className="p-6">
-                        <p className="font-black text-gray-900 text-base group-hover:text-blue-600 transition-colors">{item.name}</p>
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-gray-900 text-sm">{item.name}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md">{item.brand}</span>
-                          <span className="text-[10px] text-gray-400 font-bold truncate max-w-[200px]">{item.specs}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">{item.brand}</span>
+                          <span className="text-[10px] text-gray-400 font-medium truncate max-w-[200px]">{item.specs}</span>
                         </div>
                       </td>
-                      <td className="p-6 text-center">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black shadow-sm ${item.stock > 0 ? 'bg-green-100/50 text-green-600 border border-green-200' : 'bg-red-100/50 text-red-600 border border-red-200'}`}>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${item.stock > 0 ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
                           {item.stock} unidades
                         </span>
                       </td>
-                      <td className="p-6 text-right">
-                        <p className="font-black text-gray-900 text-lg">RD$ {item.price.toLocaleString()}</p>
-                        {item.originalPrice && <p className="text-xs text-red-400 line-through font-bold">RD$ {item.originalPrice.toLocaleString()}</p>}
+                      <td className="px-6 py-4 text-right">
+                        <p className="font-bold text-gray-900">{formatCurrency(item.price)}</p>
+                        {item.originalPrice && <p className="text-[10px] text-gray-400 line-through font-medium">{formatCurrency(item.originalPrice)}</p>}
                       </td>
-                      <td className="p-6 text-right">
-                        <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                          <button onClick={() => handleEditClick(item)} className="p-3 bg-white text-blue-600 hover:bg-blue-600 hover:text-white rounded-2xl shadow-sm border border-blue-50 transition-all scale-90 group-hover:scale-100">
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => handleEditClick(item)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all border border-transparent hover:border-blue-100">
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button onClick={() => onDeleteItem(item.id)} className="p-3 bg-white text-red-600 hover:bg-red-600 hover:text-white rounded-2xl shadow-sm border border-red-50 transition-all scale-90 group-hover:scale-100 delay-75">
+                          <button onClick={() => onDeleteItem(item.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all border border-transparent hover:border-red-100">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -368,116 +365,112 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const today = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
 
     return (
-      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">
-              ¡Hola de nuevo, <span className="text-blue-600">Admin</span>! 👋
+            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+              Dashboard Principal
             </h2>
-            <p className="text-sm font-bold text-gray-400 uppercase tracking-[0.2em]">{today}</p>
+            <p className="text-sm font-medium text-gray-500">{today.charAt(0).toUpperCase() + today.slice(1)}</p>
           </div>
           <div className="flex gap-3">
-            <div className="px-4 py-2 bg-green-50 rounded-xl border border-green-100 flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Sistema Online</span>
+            <div className="px-3 py-1.5 bg-green-50 rounded-lg border border-green-100 flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-[11px] font-bold text-green-700 uppercase tracking-wider">Sistema Online</span>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { label: 'Ventas Totales', value: formatCurrency(totalRevenue), icon: <DollarSign className="w-6 h-6" />, color: 'from-blue-600 to-indigo-600', shadow: 'shadow-blue-200' },
-            { label: 'Pedidos Hoy', value: orders.length.toString(), icon: <ShoppingBag className="w-6 h-6" />, color: 'from-purple-600 to-pink-600', shadow: 'shadow-purple-200' },
-            { label: 'Clientes', value: users.length.toString(), icon: <Users className="w-6 h-6" />, color: 'from-orange-500 to-amber-500', shadow: 'shadow-orange-200' },
-            { label: 'Stock Crítico', value: lowStockCount.toString(), icon: <AlertCircle className="w-6 h-6" />, color: 'from-red-500 to-rose-600', shadow: 'shadow-red-200' },
+            { label: 'Ventas Totales', value: formatCurrency(totalRevenue), icon: <DollarSign className="w-5 h-5" />, color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'Pedidos Hoy', value: orders.length.toString(), icon: <ShoppingBag className="w-5 h-5" />, color: 'text-purple-600', bg: 'bg-purple-50' },
+            { label: 'Clientes', value: users.length.toString(), icon: <Users className="w-5 h-5" />, color: 'text-orange-600', bg: 'bg-orange-50' },
+            { label: 'Stock Crítico', value: lowStockCount.toString(), icon: <AlertCircle className="w-5 h-5" />, color: 'text-red-600', bg: 'bg-red-50' },
           ].map((stat, i) => (
-            <div key={i} className="group relative overflow-hidden bg-white rounded-[2.5rem] p-6 border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color} opacity-5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700`} />
-              <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg ${stat.shadow}`}>
-                {stat.icon}
+            <div key={i} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-4">
+                <div className={`w-10 h-10 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center`}>
+                  {stat.icon}
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{stat.label}</p>
+                  <h3 className="text-xl font-bold text-gray-900">{stat.value}</h3>
+                </div>
               </div>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">{stat.label}</p>
-              <h3 className="text-2xl font-black text-gray-900">{stat.value}</h3>
             </div>
           ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-white/40 backdrop-blur-xl rounded-[3rem] p-8 border border-white/40 shadow-2xl relative overflow-hidden">
-            <div className="flex justify-between items-center mb-8 relative z-10">
+          <div className="lg:col-span-2 bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+            <div className="flex justify-between items-center mb-10">
               <div>
-                <h3 className="text-xl font-black text-gray-900">Tendencia de Ventas</h3>
-                <p className="text-xs font-bold text-blue-500/60 uppercase tracking-widest">Últimos 7 días</p>
+                <h3 className="text-lg font-bold text-gray-900">Tendencia de Ventas</h3>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Últimos 7 días</p>
               </div>
               <div className="flex gap-2">
-                <div className="w-3 h-3 bg-blue-500 rounded-full" />
-                <div className="w-3 h-3 bg-blue-200 rounded-full" />
+                <div className="w-2.5 h-2.5 bg-blue-500 rounded-full" />
+                <div className="w-2.5 h-2.5 bg-blue-100 rounded-full" />
               </div>
             </div>
-            <div className="h-48 w-full flex items-end justify-between gap-2 relative">
+            <div className="h-48 w-full flex items-end justify-between gap-3 relative">
               <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
                 <path
                   d="M0 160 Q 100 140, 200 180 T 400 120 T 600 150 T 800 100"
                   fill="none"
-                  stroke="url(#gradient-overview)"
-                  strokeWidth="4"
+                  stroke="#2563eb"
+                  strokeWidth="3"
                   className="animate-[dash_3s_ease-in-out_infinite]"
                   strokeDasharray="1000"
                   strokeDashoffset="1000"
                 />
-                <defs>
-                  <linearGradient id="gradient-overview" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#2563eb" />
-                    <stop offset="100%" stopColor="#7c3aed" />
-                  </linearGradient>
-                </defs>
               </svg>
               {[40, 65, 45, 90, 55, 75, 85].map((h, i) => (
                 <div key={i} className="flex-1 group relative">
                   <div
-                    className="w-full bg-blue-500/10 rounded-t-xl group-hover:bg-blue-500/20 transition-all duration-500"
+                    className="w-full bg-blue-50 rounded-t-lg group-hover:bg-blue-100 transition-colors"
                     style={{ height: `${h}%` }}
                   />
-                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] font-black text-gray-400">D{i + 1}</div>
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-gray-400">D{i + 1}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-white/40 backdrop-blur-xl rounded-[3rem] p-8 border border-white/40 shadow-2xl">
-            <h3 className="text-xl font-black text-gray-900 mb-6">Actividad Reciente</h3>
-            <div className="space-y-6">
+          <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm flex flex-col">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Actividad Reciente</h3>
+            <div className="space-y-6 flex-1 text-sm">
               {orders.slice(0, 5).map((order) => (
-                <div key={order.id} className="flex gap-4 group cursor-default">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                    <ShoppingBag className="w-5 h-5" />
+                <div key={order.id} className="flex gap-4 group">
+                  <div className="w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                    <ShoppingBag className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-black text-gray-900 truncate">Venta de {order.total.toLocaleString()} DOP</p>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{new Date(order.created_at).toLocaleTimeString()}</p>
+                    <p className="font-semibold text-gray-900 truncate">Venta #{order.id.slice(0, 8)}</p>
+                    <p className="text-[11px] font-medium text-gray-400">{formatCurrency(order.total)}</p>
                   </div>
                   <div className={`w-2 h-2 rounded-full self-center ${order.status === 'pending' ? 'bg-amber-400' : 'bg-green-400'}`} />
                 </div>
               ))}
               {orders.length === 0 && (
-                <div className="py-10 text-center text-gray-400 font-bold text-xs uppercase tracking-widest">Sin ventas recientes</div>
+                <div className="py-10 text-center text-gray-400 font-medium text-xs">Sin ventas recientes</div>
               )}
             </div>
             <button
               onClick={() => setActiveTab('orders')}
-              className="w-full mt-8 py-3 bg-white/60 border border-white hover:bg-white rounded-2xl text-[10px] font-black uppercase tracking-widest text-blue-600 transition-all"
+              className="w-full mt-8 py-3 bg-gray-50 border border-gray-100 hover:bg-gray-100 rounded-xl text-xs font-bold text-blue-600 transition-all"
             >
               Ver todos los pedidos
             </button>
           </div>
         </div>
 
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-[3rem] p-8 text-white shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[100px] -mr-32 -mt-32 rounded-full group-hover:bg-white/20 transition-all duration-700" />
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
-              <h3 className="text-2xl font-black mb-2">Acciones Rápidas</h3>
-              <p className="text-blue-100 font-bold opacity-80">Gestiona tu tienda de manera eficiente</p>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Acciones Rápidas</h3>
+              <p className="text-sm font-medium text-gray-500">Gestión directa de los módulos principales</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full md:w-auto">
               {[
@@ -489,10 +482,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <button
                   key={i}
                   onClick={act.action}
-                  className="flex flex-col items-center gap-2 p-4 bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-md border border-white/10 transition-all hover:scale-105 active:scale-95"
+                  className="flex items-center gap-3 px-5 py-3.5 bg-gray-50 hover:bg-white hover:shadow-md hover:ring-1 hover:ring-blue-100 rounded-xl transition-all border border-transparent"
                 >
-                  {act.icon}
-                  <span className="text-[9px] font-black uppercase tracking-widest">{act.label}</span>
+                  <span className="text-blue-600">{act.icon}</span>
+                  <span className="text-xs font-bold text-gray-700">{act.label}</span>
                 </button>
               ))}
             </div>
@@ -503,78 +496,78 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const renderBanners = () => (
-    <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-700">
-      <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl shadow-blue-500/5 flex justify-between items-center">
+    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
+      <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-black text-gray-900 tracking-tight">Gestión de Banners</h2>
-          <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">Personaliza el carrusel de inicio</p>
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Gestión de Banners</h2>
+          <p className="text-sm font-medium text-gray-400">Personaliza el carrusel de inicio</p>
         </div>
-        <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-          <ImageIcon className="w-7 h-7" />
+        <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+          <ImageIcon className="w-5 h-5" />
         </div>
       </div>
 
-      <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl">
-        <h3 className="text-xl font-black text-gray-900 mb-6">Subir Nuevo Banner (Canva)</h3>
-        <form onSubmit={handleAddBanner} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
+      <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+        <h3 className="text-lg font-bold text-gray-900 mb-6">Subir Nuevo Banner</h3>
+        <form onSubmit={handleAddBanner} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-5">
             <div>
-              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Imagen del Banner</label>
+              <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Imagen del Banner</label>
               <div className="relative group">
                 <input type="file" onChange={handleBannerUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
-                <div className="w-full h-32 bg-white/60 border-2 border-dashed border-blue-100 rounded-2xl flex flex-col items-center justify-center group-hover:bg-blue-50 transition-colors">
+                <div className="w-full h-40 bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-200 transition-all">
                   {isUploading ? (
                     <div className="flex flex-col items-center">
-                      <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-2" />
-                      <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Subiendo...</span>
+                      <Loader2 className="w-6 h-6 text-blue-500 animate-spin mb-2" />
+                      <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Subiendo...</span>
                     </div>
                   ) : newBanner.image_url ? (
-                    <img src={newBanner.image_url} className="h-full w-full object-cover rounded-2xl" alt="Preview" />
+                    <img src={newBanner.image_url} className="h-full w-full object-cover rounded-lg" alt="Preview" />
                   ) : (
                     <>
-                      <Upload className="w-8 h-8 text-blue-300 mb-2" />
-                      <span className="text-xs font-bold text-blue-400">Seleccionar imagen o soltar aquí</span>
+                      <Upload className="w-6 h-6 text-gray-300 mb-2" />
+                      <span className="text-xs font-medium text-gray-400">Clic para subir imagen</span>
                     </>
                   )}
                 </div>
               </div>
             </div>
             <div>
-              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Etiqueta (Badge)</label>
+              <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Etiqueta (Badge)</label>
               <input
                 type="text"
                 placeholder="Ej: OFERTA, NUEVO, MÁS VENDIDO"
                 value={newBanner.badge}
                 onChange={(e) => setNewBanner(prev => ({ ...prev, badge: e.target.value }))}
-                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
               />
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Título</label>
+              <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Título</label>
               <input
                 type="text"
                 placeholder="Ej: iPhone 15 Pro"
                 value={newBanner.title}
                 onChange={(e) => setNewBanner(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
               />
             </div>
             <div>
-              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Subtítulo</label>
+              <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Subtítulo</label>
               <input
                 type="text"
                 placeholder="Ej: El smartphone más potente"
                 value={newBanner.subtitle}
                 onChange={(e) => setNewBanner(prev => ({ ...prev, subtitle: e.target.value }))}
-                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
               />
             </div>
             <button
               type="submit"
               disabled={!newBanner.image_url || isUploading || isSaving}
-              className="w-full mt-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full mt-2 bg-blue-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-sm hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isSaving ? (
                 <>
@@ -589,27 +582,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {banners.map((banner) => (
-          <div key={banner.id} className="group relative bg-white/40 backdrop-blur-xl rounded-[2.5rem] overflow-hidden border border-white/40 shadow-xl hover:shadow-blue-500/10 transition-all duration-500">
+          <div key={banner.id} className="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
             <div className="aspect-[21/9] w-full relative">
               <img src={banner.image_url} className="w-full h-full object-cover" alt={banner.title} />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-6">
-                <span className="inline-block px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg mb-2 w-fit">{banner.badge}</span>
-                <p className="text-white font-black text-xl leading-none mb-1">{banner.title}</p>
-                <p className="text-white/80 font-bold text-xs">{banner.subtitle}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-6">
+                <span className="inline-block px-2.5 py-1 bg-yellow-400 text-black text-[10px] font-bold rounded-md mb-2 w-fit">{banner.badge}</span>
+                <p className="text-white font-bold text-lg leading-none mb-1">{banner.title}</p>
+                <p className="text-white/80 font-medium text-xs">{banner.subtitle}</p>
               </div>
               <button
                 onClick={() => handleDeleteBanner(banner.id)}
-                className="absolute top-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-white hover:bg-red-500 hover:text-white transition-all shadow-xl opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
+                className="absolute top-4 right-4 w-9 h-9 bg-black/20 backdrop-blur-md rounded-lg flex items-center justify-center text-white hover:bg-red-600 transition-all shadow-xl opacity-0 group-hover:opacity-100"
               >
-                <Trash2 className="w-5 h-5" />
+                <Trash2 className="w-4 h-4" />
               </button>
             </div>
           </div>
         ))}
         {banners.length === 0 && !bannersLoading && (
-          <div className="col-span-full py-20 bg-white/40 rounded-[2.5rem] border border-white/40 text-center flex flex-col items-center">
-            <ImageIcon className="w-16 h-16 text-blue-200 mb-4 animate-pulse" />
-            <p className="text-gray-400 font-black uppercase text-xs tracking-widest">No hay banners personalizados</p>
+          <div className="col-span-full py-16 bg-white rounded-2xl border border-gray-100 text-center flex flex-col items-center">
+            <ImageIcon className="w-12 h-12 text-gray-200 mb-4" />
+            <p className="text-gray-400 font-bold uppercase text-[11px] tracking-wider">No hay banners personalizados</p>
           </div>
         )}
       </div>
@@ -617,25 +610,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   );
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 min-h-screen bg-[#f8fbff] p-4 lg:p-8 pb-24 lg:pb-8 animate-in fade-in duration-500">
+    <div className="flex flex-col lg:flex-row gap-8 min-h-screen bg-[#fcfdfe] p-4 lg:p-8 pb-24 lg:pb-8 animate-in fade-in duration-500">
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-[60] w-72 bg-white/80 backdrop-blur-2xl border-r border-white/40 p-6 transition-all duration-500 lg:static lg:block ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}`}>
+      <aside className={`fixed inset-y-0 left-0 z-[60] w-64 bg-white border-r border-gray-100 p-6 transition-all duration-300 lg:static lg:block ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex flex-col h-full">
-          <button onClick={onBack} className="mb-10 px-4 text-left hover:opacity-70 transition-opacity active:scale-95 duration-200">
-            <h1 className="text-2xl font-black italic tracking-tighter">
-              <span className="text-gray-900 leading-none">LA GANGA</span><br />
-              <span className="text-blue-600 leading-none text-3xl">ADMIN</span>
+          <button onClick={onBack} className="mb-10 px-2 text-left hover:opacity-80 transition-opacity">
+            <h1 className="text-xl font-bold tracking-tight">
+              <span className="text-blue-600">LA GANGA</span>
+              <span className="text-gray-900 ml-1">ADMIN</span>
             </h1>
           </button>
-          <div className="flex-1 space-y-3">
-            <SidebarButton active={activeTab === 'overview'} icon={<LayoutDashboard className="w-6 h-6" />} label="Dashboard" onClick={() => setActiveTab('overview')} />
-            <SidebarButton active={activeTab === 'products'} icon={<Package className="w-6 h-6" />} label="Inventario" onClick={() => setActiveTab('products')} />
-            <SidebarButton active={activeTab === 'orders'} icon={<ShoppingBag className="w-6 h-6" />} label="Ventas" onClick={() => setActiveTab('orders')} />
-            <SidebarButton active={activeTab === 'users'} icon={<Users className="w-6 h-6" />} label="Clientes" onClick={() => setActiveTab('users')} />
-            <SidebarButton active={activeTab === 'banners'} icon={<ImageIcon className="w-6 h-6" />} label="Banners" onClick={() => setActiveTab('banners')} />
+          <div className="flex-1 space-y-1.5">
+            <SidebarButton active={activeTab === 'overview'} icon={<LayoutDashboard />} label="Dashboard" onClick={() => setActiveTab('overview')} />
+            <SidebarButton active={activeTab === 'products'} icon={<Package />} label="Inventario" onClick={() => setActiveTab('products')} />
+            <SidebarButton active={activeTab === 'orders'} icon={<ShoppingBag />} label="Ventas" onClick={() => setActiveTab('orders')} />
+            <SidebarButton active={activeTab === 'users'} icon={<Users />} label="Clientes" onClick={() => setActiveTab('users')} />
+            <SidebarButton active={activeTab === 'banners'} icon={<ImageIcon />} label="Banners" onClick={() => setActiveTab('banners')} />
           </div>
-          <button onClick={onLogout} className="mt-8 w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-sm text-red-500 hover:bg-red-50 transition-all">
-            <LayoutDashboard className="w-6 h-6 rotate-180" />
+          <button onClick={onLogout} className="mt-8 w-full flex items-center gap-3 px-5 py-4 rounded-xl font-semibold text-sm text-red-500 hover:bg-red-50 transition-all">
+            <LayoutDashboard className="w-5 h-5 rotate-180" />
             Cerrar Sesión
           </button>
         </div>
@@ -651,25 +644,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {activeTab === 'overview' ? renderOverview() :
           activeTab === 'products' ? renderProducts() :
             activeTab === 'orders' ? (
-              <div className="space-y-6">
-                <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40">
-                  <h2 className="text-3xl font-black text-gray-900">Ventas</h2>
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
+                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">Historial de Ventas</h2>
+                    <p className="text-sm font-medium text-gray-400">{orders.length} pedidos registrados</p>
+                  </div>
+                  <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
+                    <ShoppingBag className="w-5 h-5" />
+                  </div>
                 </div>
-                {/* Simplified Order View for robustness */}
                 <div className="grid gap-4">
                   {orders.map(o => (
-                    <div key={o.id} className="bg-white/60 p-6 rounded-3xl border border-white shadow-sm">
-                      <div className="flex justify-between items-center">
+                    <div key={o.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                          <p className="font-black text-blue-600">ORDEN #{o.id.slice(0, 8)}</p>
-                          <p className="text-sm font-bold text-gray-500">{new Date(o.created_at).toLocaleString()}</p>
+                          <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">ORDEN #{o.id.slice(0, 8)}</p>
+                          <div className="flex items-center gap-2 text-gray-400">
+                            <Clock className="w-3.5 h-3.5" />
+                            <p className="text-xs font-medium">{new Date(o.created_at).toLocaleString('es-ES')}</p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-black text-xl">RD$ {o.total.toLocaleString()}</p>
+                        <div className="flex flex-col sm:items-end gap-2">
+                          <p className="font-bold text-lg text-gray-900">{formatCurrency(o.total)}</p>
                           <select
                             value={o.status}
                             onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
-                            className="mt-1 bg-blue-50 border-none rounded-lg text-[10px] font-black uppercase tracking-widest text-blue-600"
+                            className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
                           >
                             <option value="pending">Pendiente</option>
                             <option value="paid">Pagado</option>
@@ -684,19 +685,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             ) :
               activeTab === 'users' ? (
-                <div className="space-y-6">
-                  <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40">
-                    <h2 className="text-3xl font-black text-gray-900">Clientes</h2>
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
+                  <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900 tracking-tight">Base de Clientes</h2>
+                      <p className="text-sm font-medium text-gray-400">{users.length} usuarios registrados</p>
+                    </div>
+                    <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
+                      <Users className="w-5 h-5" />
+                    </div>
                   </div>
-                  <div className="bg-white/40 rounded-[2.5rem] overflow-hidden border border-white">
+                  <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
                     <table className="w-full text-left">
-                      <tbody className="divide-y divide-white/20">
+                      <thead>
+                        <tr className="border-b border-gray-50 bg-gray-50/50 text-[11px] uppercase tracking-wider font-bold text-gray-500">
+                          <th className="px-6 py-4">Nombre de Usuario</th>
+                          <th className="px-6 py-4">Correo Electrónico</th>
+                          <th className="px-6 py-4 text-right">Gestión</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
                         {users.map(u => (
-                          <tr key={u.id} className="hover:bg-white/50 transition-all">
-                            <td className="p-6 font-black">{u.name}</td>
-                            <td className="p-6 text-gray-500 font-bold">{u.email}</td>
-                            <td className="p-6 text-right">
-                              <button onClick={() => onDeleteUser(u.id)} className="p-3 text-red-500 hover:bg-red-50 rounded-xl"><Trash2 className="w-4 h-4" /></button>
+                          <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
+                            <td className="px-6 py-4 font-bold text-gray-900 text-sm">{u.name}</td>
+                            <td className="px-6 py-4 text-gray-500 font-medium text-sm">{u.email}</td>
+                            <td className="px-6 py-4 text-right">
+                              <button onClick={() => onDeleteUser(u.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -715,44 +731,56 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Product Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-[100] bg-blue-900/20 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-white rounded-[2.5rem] w-full max-w-lg p-8 shadow-2xl animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[100] bg-gray-900/10 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-center mb-8">
-              <h3 className="text-2xl font-black">{editingId ? 'Editar' : 'Nuevo'} Producto</h3>
-              <button onClick={() => setShowAddModal(false)}><X /></button>
+              <h3 className="text-xl font-bold text-gray-900">{editingId ? 'Editar' : 'Nuevo'} Producto</h3>
+              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors"><X className="w-5 h-5" /></button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                className="w-full bg-gray-50 p-4 rounded-xl border-none outline-none focus:ring-2 ring-blue-500/20 font-bold"
-                placeholder="Nombre"
-                value={newItem.name}
-                onChange={e => setNewItem({ ...newItem, name: e.target.value })}
-              />
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre del Dispositivo</label>
                 <input
-                  className="w-full bg-gray-50 p-4 rounded-xl border-none outline-none focus:ring-2 ring-blue-500/20 font-bold"
-                  placeholder="Precio"
-                  type="number"
-                  value={newItem.price}
-                  onChange={e => setNewItem({ ...newItem, price: e.target.value })}
-                />
-                <input
-                  className="w-full bg-gray-50 p-4 rounded-xl border-none outline-none focus:ring-2 ring-blue-500/20 font-bold"
-                  placeholder="Stock"
-                  type="number"
-                  value={newItem.stock}
-                  onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
+                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
+                  placeholder="Ej: iPhone 15 Pro Max"
+                  value={newItem.name}
+                  onChange={e => setNewItem({ ...newItem, name: e.target.value })}
                 />
               </div>
-              <textarea
-                className="w-full bg-gray-50 p-4 rounded-xl border-none outline-none focus:ring-2 ring-blue-500/20 font-bold h-32"
-                placeholder="Especificaciones"
-                value={newItem.specs}
-                onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio (DOP)</label>
+                  <input
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
+                    placeholder="0.00"
+                    type="number"
+                    value={newItem.price}
+                    onChange={e => setNewItem({ ...newItem, price: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Stock Inicial</label>
+                  <input
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
+                    placeholder="0"
+                    type="number"
+                    value={newItem.stock}
+                    onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Especificaciones Técnicas</label>
+                <textarea
+                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm h-32 resize-none transition-all"
+                  placeholder="Ej: 256GB, Color Titanio, Salud 100%..."
+                  value={newItem.specs}
+                  onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
+                />
+              </div>
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white p-4 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all"
+                className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm shadow-sm hover:bg-blue-700 active:scale-[0.98] transition-all mt-4"
               >
                 {editingId ? 'Guardar Cambios' : 'Crear Producto'}
               </button>
