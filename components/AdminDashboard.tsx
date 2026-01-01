@@ -23,6 +23,7 @@ import {
 import { Product, User, Order } from '../types';
 import { formatCurrency } from '../utils/format';
 import { productService } from '../services/productService';
+import { supabase } from '../services/supabase';
 
 interface AdminDashboardProps {
   items: Product[];
@@ -31,6 +32,7 @@ interface AdminDashboardProps {
   onEditItem: (id: string, updatedFields: Partial<Product>) => void;
   onDeleteItem: (id: string) => void;
   onDeleteUser: (id: string) => void;
+  onLogout: () => void;
   onBack: () => void;
 }
 
@@ -70,6 +72,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onEditItem,
   onDeleteItem,
   onDeleteUser,
+  onLogout,
   onBack
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>('products');
@@ -82,6 +85,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   useEffect(() => {
     if (activeTab === 'orders') {
       fetchOrders();
+
+      // Subscribe to real-time order updates
+      const channel = supabase
+        .channel('admin_orders_realtime')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'orders' },
+          () => {
+            fetchOrders();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
   }, [activeTab]);
 
@@ -89,7 +108,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setOrdersLoading(true);
     try {
       const data = await productService.getAllOrders();
-      setOrders(data);
+      // Map order_items to items for UI consistency
+      const mappedOrders = data.map((order: any) => ({
+        ...order,
+        items: order.order_items || []
+      }));
+      setOrders(mappedOrders);
     } catch (err) {
       console.error('Error fetching orders:', err);
     } finally {
@@ -322,7 +346,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <p className="text-sm font-black text-gray-700">Administrador</p>
           </div>
           <button
-            onClick={() => window.location.reload()}
+            onClick={onLogout}
             className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
           >
             Cerrar Sesión

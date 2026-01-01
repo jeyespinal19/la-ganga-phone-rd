@@ -146,10 +146,21 @@ const App: React.FC = () => {
     setToast({ visible: true, message: 'Producto eliminado', type: 'success' });
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setCurrentView('home');
+      setToast({ visible: true, message: 'Sesión cerrada correctamente', type: 'success' });
+    } catch (error) {
+      console.error('Logout error:', error);
+      setToast({ visible: true, message: 'Error al cerrar sesión', type: 'error' });
+    }
+  };
+
   const handleDeleteUser = (id: string) => {
     setUsers(users.filter(u => u.id !== id));
     setToast({ visible: true, message: 'Usuario eliminado', type: 'success' });
-  }
+  };
 
   // --- Filtering ---
   const filteredItems = items.filter((item) => {
@@ -192,6 +203,7 @@ const App: React.FC = () => {
           onEditItem={handleEditItem}
           onDeleteItem={handleDeleteItem}
           onDeleteUser={handleDeleteUser}
+          onLogout={handleLogout}
           onBack={() => setCurrentView('home')}
         />
       );
@@ -396,7 +408,7 @@ const App: React.FC = () => {
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
           onNavigate={(view) => setCurrentView(view)}
-          onLogout={signOut}
+          onLogout={handleLogout}
           isAdmin={isAdmin}
           user={user}
         />
