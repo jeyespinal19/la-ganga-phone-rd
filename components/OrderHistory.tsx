@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Order } from '../types';
-import { productService } from '../services/productService';
 import { formatCurrency } from '../utils/format';
+import { productService } from '../services/productService';
 import { useAuth } from '../contexts/AuthContext';
 import { ArrowLeft } from 'lucide-react';
 
@@ -9,7 +9,7 @@ interface OrderHistoryProps {
     onBack: () => void;
 }
 
-const OrderHistory: React.FC<OrderHistoryProps> = ({ onBack }) => {
+export const OrderHistory: React.FC<OrderHistoryProps> = ({ onBack }) => {
     const { user } = useAuth();
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
@@ -89,9 +89,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ onBack }) => {
                                         <p className="font-mono text-sm text-gray-700">#{order.id.slice(0, 8)}</p>
                                     </div>
                                     <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${order.status === 'paid' ? 'bg-green-100 text-green-700' :
-                                            order.status === 'delivered' ? 'bg-blue-100 text-blue-700' :
-                                                order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                                                    'bg-orange-100 text-orange-700'
+                                        order.status === 'delivered' ? 'bg-blue-100 text-blue-700' :
+                                            order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                                                'bg-orange-100 text-orange-700'
                                         }`}>
                                         {order.status === 'paid' ? 'Pagado' :
                                             order.status === 'delivered' ? 'Entregado' :

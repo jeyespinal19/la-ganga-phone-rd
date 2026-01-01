@@ -11,7 +11,7 @@ import { Login } from './components/Login';
 import { SplashScreen } from './components/SplashScreen';
 import { Cart } from './components/Cart';
 import { Checkout } from './components/Checkout';
-import OrderHistory from './components/OrderHistory';
+import { OrderHistory } from './components/OrderHistory';
 import { Category, Product, User, CartItem } from './types';
 import { productService } from './services/productService';
 import { PromoBanner } from './components/PromoBanner';
@@ -154,15 +154,15 @@ const App: React.FC = () => {
   // --- Filtering ---
   const filteredItems = items.filter((item) => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.specs.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'Todos' || item.brand === ('Oukitel' as any) || item.brand === ('Samsung' as any) || item.brand === ('Xiaomi' as any); // Fallback logic for now as mapping is loose
+      item.specs.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.brand.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // Better category logic
-    if (selectedCategory === 'Todos') return matchesSearch;
-    if (selectedCategory === 'Samsung' || selectedCategory === 'Xiaomi' || selectedCategory === 'Oukitel') {
-      return matchesSearch && item.brand === selectedCategory;
+    if (selectedCategory === 'Todos' || selectedCategory === 'Inicio') {
+      return matchesSearch;
     }
-    return matchesSearch; // For other categories not strictly in brand, maybe filter by tag later
+
+    // Dynamic brand/category matching
+    return matchesSearch && item.brand.toLowerCase() === selectedCategory.toLowerCase();
   });
 
   const selectedItem = items.find(i => i.id === selectedItemId);

@@ -297,6 +297,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <AlertCircle className="w-3.5 h-3.5" />
                             {order.shipping_address?.address}, {order.shipping_address?.city}
                           </p>
+
+                          {/* Order Items Detail */}
+                          <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100/50">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Productos</p>
+                            <div className="space-y-2">
+                              {order.order_items?.map((item: any, idx: number) => (
+                                <div key={idx} className="flex justify-between text-xs font-bold text-gray-600">
+                                  <span>{item.quantity}x ID: {item.product_id.slice(0, 8)}</span>
+                                  <span>{formatCurrency(item.price * item.quantity)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </div>
 
                         <div className="flex flex-col md:items-end justify-between gap-3">
@@ -335,10 +348,57 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               )}
             </div>
+          ) : activeTab === 'users' ? (
+            <div className="space-y-6 animate-in fade-in duration-500">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h2 className="text-2xl font-black text-gray-900 tracking-tight">Gestión de Usuarios</h2>
+                  <p className="text-sm text-gray-500">Administra los clientes de la plataforma</p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Usuario</th>
+                      <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Email</th>
+                      <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Rol</th>
+                      <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {users.map((u) => (
+                      <tr key={u.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
+                              {u.name.charAt(0)}
+                            </div>
+                            <span className="font-bold text-gray-700">{u.name}</span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-gray-500">{u.email}</td>
+                        <td className="p-4">
+                          <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}`}>
+                            {u.role}
+                          </span>
+                        </td>
+                        <td className="p-4 text-right">
+                          <button onClick={() => onDeleteUser(u.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           ) : (
             <div className="p-12 text-center text-gray-400">
-              <Users className="w-12 h-12 mx-auto mb-4 opacity-20" />
-              <p>Gestión de usuarios próximamente</p>
+              <LayoutDashboard className="w-12 h-12 mx-auto mb-4 opacity-20" />
+              <p>Vista general próximamente</p>
             </div>
           )}
       </main>

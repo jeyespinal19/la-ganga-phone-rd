@@ -103,6 +103,44 @@ class ProductService {
     await supabase.from('products').delete().eq('id', id);
   }
 
+  // --- User Addresses ---
+
+  async getAddresses(userId: string) {
+    const { data, error } = await supabase
+      .from('user_addresses')
+      .select('*')
+      .eq('user_id', userId)
+      .order('is_default', { ascending: false });
+    if (error) throw error;
+    return data;
+  }
+
+  async addAddress(address: any) {
+    const { data, error } = await supabase
+      .from('user_addresses')
+      .insert(address)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  async deleteAddress(id: string) {
+    const { error } = await supabase
+      .from('user_addresses')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  }
+
+  async updateAddress(id: string, updates: any) {
+    const { error } = await supabase
+      .from('user_addresses')
+      .update(updates)
+      .eq('id', id);
+    if (error) throw error;
+  }
+
   // --- Orders ---
 
   async createOrder(userId: string, total: number, shippingAddress: any, items: { id: string, price: number, quantity: number }[]) {

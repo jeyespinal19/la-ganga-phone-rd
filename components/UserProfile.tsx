@@ -12,10 +12,13 @@ import {
    CreditCard,
    Bell,
    CheckCircle2,
-   ArrowLeft
+   ArrowLeft,
+   Trash2
 } from 'lucide-react';
+import { OrderHistory } from './OrderHistory';
 import { useAuth } from '../contexts/AuthContext';
 import { formatCurrency } from '../utils/format';
+import { productService } from '../services/productService';
 
 interface UserProfileProps {
    allItems: Product[];
@@ -27,9 +30,58 @@ type Tab = 'dashboard' | 'orders' | 'settings';
 export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) => {
    const { user, signOut } = useAuth();
    const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-   const [savedAddresses] = useState([
-      { id: '1', alias: 'Hogar', address: 'Av. Winston Churchill #123, Santo Domingo', isDefault: true }
-   ]);
+   const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+   const [orders, setOrders] = useState<any[]>([]);
+   const [loading, setLoading] = useState(true);
+   const [showAddAddress, setShowAddAddress] = useState(false);
+   const [newAddress, setNewAddress] = useState({ alias: '', address: '', city: '' });
+
+   React.useEffect(() => {
+      if (user) {
+         fetchUserData();
+      }
+   }, [user]);
+
+   const fetchUserData = async () => {
+      setLoading(true);
+      try {
+         const [addrData, orderData] = await Promise.all([
+            productService.getAddresses(user!.id),
+            productService.getOrders(user!.id)
+         ]);
+         setSavedAddresses(addrData);
+         setOrders(orderData);
+      } catch (err) {
+         console.error('Error fetching user data:', err);
+      } finally {
+         setLoading(false);
+      }
+   };
+
+   const handleAddAddress = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+         await productService.addAddress({
+            ...newAddress,
+            user_id: user!.id,
+            is_default: savedAddresses.length === 0
+         });
+         setShowAddAddress(false);
+         setNewAddress({ alias: '', address: '', city: '' });
+         fetchUserData();
+      } catch (err) {
+         console.error('Error adding address:', err);
+      }
+   };
+
+   const handleDeleteAddress = async (id: string) => {
+      try {
+         await productService.deleteAddress(id);
+         fetchUserData();
+      } catch (err) {
+         console.error('Error deleting address:', err);
+      }
+   };
 
    const renderSidebarLink = (id: Tab, label: string, icon: React.ReactNode) => (
       <button
@@ -54,7 +106,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
                <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-2xl w-fit mb-4">
                   <ShoppingBag className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                </div>
-               <h3 className="text-3xl font-black text-gray-900 dark:text-white">0</h3>
+               <h3 className="text-3xl font-black text-gray-900 dark:text-white">{orders.length}</h3>
                <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">Pedidos Totales</p>
                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-2xl" />
             </div>
@@ -62,22 +114,42 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
                <div className="p-3 bg-green-50 dark:bg-green-900/30 rounded-2xl w-fit mb-4">
                   <CheckCircle2 className="w-6 h-6 text-green-600 dark:text-green-400" />
                </div>
-               <h3 className="text-3xl font-black text-gray-900 dark:text-white">0</h3>
+               <h3 className="text-3xl font-black text-gray-900 dark:text-white">
+                  {orders.filter(o => o.status === 'delivered').length}
+               </h3>
                <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">Entregados</p>
                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-green-50 dark:bg-green-900/10 rounded-full blur-2xl" />
             </div>
          </div>
 
-         <div className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 p-12 text-center shadow-sm">
-            <div className="w-20 h-20 bg-gray-50 dark:bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
-               <ShoppingBag className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+         {orders.length === 0 ? (
+            <div className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 p-12 text-center shadow-sm">
+               <div className="w-20 h-20 bg-gray-50 dark:bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <ShoppingBag className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+               </div>
+               <h3 className="text-xl font-black text-gray-900 dark:text-white">¡No hay pedidos aún!</h3>
+               <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-xs mx-auto">Tu historial de compras aparecerá aquí cuando realices tu primer pedido.</p>
+               <button onClick={onBack} className="mt-8 px-8 py-4 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 dark:shadow-none hover:scale-105 active:scale-95">
+                  ¡IR A COMPRAR AHORA!
+               </button>
             </div>
-            <h3 className="text-xl font-black text-gray-900 dark:text-white">¡No hay pedidos aún!</h3>
-            <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-xs mx-auto">Tu historial de compras aparecerá aquí cuando realices tu primer pedido.</p>
-            <button onClick={onBack} className="mt-8 px-8 py-4 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 dark:shadow-none hover:scale-105 active:scale-95">
-               ¡IR A COMPRAR AHORA!
-            </button>
-         </div>
+         ) : (
+            <div className="space-y-4">
+               {orders.slice(0, 3).map(order => (
+                  <div key={order.id} className="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex items-center justify-between">
+                     <div>
+                        <p className="text-sm font-black text-gray-900 dark:text-white">#{order.id.slice(0, 8)}</p>
+                        <p className="text-xs text-gray-400 font-bold">{new Date(order.created_at).toLocaleDateString()}</p>
+                     </div>
+                     <div className="text-right">
+                        <p className="text-sm font-black text-blue-600">{formatCurrency(order.total)}</p>
+                        <span className="text-[10px] font-black uppercase text-orange-500">{order.status}</span>
+                     </div>
+                  </div>
+               ))}
+               <button onClick={() => setActiveTab('orders')} className="w-full py-3 text-sm font-black text-blue-600 hover:underline">VER TODOS LOS PEDIDOS</button>
+            </div>
+         )}
       </div>
    );
 
@@ -110,24 +182,70 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
                   </div>
                   Direcciones de Envío
                </h3>
-               <button className="text-blue-600 font-black text-xs hover:underline uppercase tracking-wider">Añadir Nueva</button>
+               <button
+                  onClick={() => setShowAddAddress(true)}
+                  className="text-blue-600 font-black text-xs hover:underline uppercase tracking-wider"
+               >
+                  Añadir Nueva
+               </button>
             </div>
+
+            {showAddAddress && (
+               <form onSubmit={handleAddAddress} className="mb-6 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-2xl space-y-4 animate-in zoom-in-95 duration-200">
+                  <input
+                     placeholder="Nombre de lugar (Ej: Mi Casa, Oficina)"
+                     className="w-full bg-white dark:bg-gray-800 border-none rounded-xl px-4 py-3 text-sm font-bold outline-none"
+                     value={newAddress.alias}
+                     onChange={e => setNewAddress({ ...newAddress, alias: e.target.value })}
+                     required
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                     <input
+                        placeholder="Ciudad"
+                        className="w-full bg-white dark:bg-gray-800 border-none rounded-xl px-4 py-3 text-sm font-bold outline-none"
+                        value={newAddress.city}
+                        onChange={e => setNewAddress({ ...newAddress, city: e.target.value })}
+                        required
+                     />
+                     <input
+                        placeholder="Dirección Completa"
+                        className="w-full bg-white dark:bg-gray-800 border-none rounded-xl px-4 py-3 text-sm font-bold outline-none"
+                        value={newAddress.address}
+                        onChange={e => setNewAddress({ ...newAddress, address: e.target.value })}
+                        required
+                     />
+                  </div>
+                  <div className="flex gap-2">
+                     <button type="submit" className="flex-1 bg-blue-600 text-white font-black py-3 rounded-xl text-xs">GUARDAR DIRECCIÓN</button>
+                     <button type="button" onClick={() => setShowAddAddress(false)} className="px-4 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-black py-3 rounded-xl text-xs">CANCELAR</button>
+                  </div>
+               </form>
+            )}
 
             <div className="space-y-3">
                {savedAddresses.map(addr => (
-                  <div key={addr.id} className="flex items-center gap-4 p-5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-2xl group hover:border-blue-200 dark:hover:border-blue-900 transition-all cursor-pointer">
+                  <div key={addr.id} className="flex items-center gap-4 p-5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-2xl group hover:border-blue-200 dark:hover:border-blue-900 transition-all">
                      <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm text-gray-400 group-hover:text-blue-500">
                         <MapPin className="w-5 h-5" />
                      </div>
                      <div className="flex-1">
                         <div className="flex items-center gap-2">
                            <span className="font-bold text-gray-900 dark:text-white">{addr.alias}</span>
-                           {addr.isDefault && <span className="text-[8px] font-black bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded uppercase">Principal</span>}
+                           {addr.is_default && <span className="text-[8px] font-black bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded uppercase">Principal</span>}
                         </div>
-                        <p className="text-xs text-gray-500 font-medium mt-0.5">{addr.address}</p>
+                        <p className="text-xs text-gray-500 font-medium mt-0.5">{addr.address}, {addr.city}</p>
                      </div>
+                     <button
+                        onClick={() => handleDeleteAddress(addr.id)}
+                        className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                     >
+                        <Trash2 className="w-4 h-4" />
+                     </button>
                   </div>
                ))}
+               {savedAddresses.length === 0 && (
+                  <p className="text-center py-6 text-sm text-gray-400 font-bold italic">No has guardado ninguna dirección aún.</p>
+               )}
             </div>
          </div>
 
@@ -192,7 +310,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
             </div>
 
             {activeTab === 'dashboard' && renderDashboard()}
-            {activeTab === 'orders' && renderDashboard()}
+            {activeTab === 'orders' && <OrderHistory onBack={() => setActiveTab('dashboard')} />}
             {activeTab === 'settings' && renderSettings()}
          </main>
       </div>
