@@ -16,7 +16,9 @@ import {
   CheckCircle2,
   Truck as TruckIcon,
   AlertCircle,
-  Loader2
+  Loader2,
+  ArrowLeft,
+  MapPin
 } from 'lucide-react';
 import { Product, User, Order } from '../types';
 import { formatCurrency } from '../utils/format';
@@ -35,6 +37,31 @@ interface AdminDashboardProps {
 type Tab = 'overview' | 'products' | 'users' | 'orders';
 
 const ROW_HEIGHT = 80;
+
+interface SidebarButtonProps {
+  active: boolean;
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}
+
+const SidebarButton: React.FC<SidebarButtonProps> = ({ active, icon, label, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center gap-4 px-6 py-4 rounded-[1.5rem] font-black text-sm transition-all duration-300 relative group ${active
+      ? 'bg-blue-600 text-white shadow-xl shadow-blue-200 translate-x-1'
+      : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50/50 hover:translate-x-1'
+      }`}
+  >
+    <div className={`transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
+      {icon}
+    </div>
+    <span className="tracking-tight">{label}</span>
+    {active && (
+      <div className="absolute right-4 w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+    )}
+  </button>
+);
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   items,
@@ -85,6 +112,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     specs: '',
     price: '',
     originalPrice: '',
+    stock: '0',
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -131,7 +159,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       brand: newItem.brand,
       specs: newItem.specs,
       price: Number(newItem.price),
-      stock: Number((newItem as any).stock || 0),
+      stock: Number(newItem.stock || 0),
       originalPrice: newItem.originalPrice ? Number(newItem.originalPrice) : undefined,
       imageDetails: imagePreview || '1' // Fallback
     };
@@ -149,70 +177,83 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const filteredItems = items.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
-      <div className="space-y-6 animate-in fade-in duration-500">
-        <div className="flex justify-between items-center">
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="flex justify-between items-center bg-white/40 backdrop-blur-xl p-6 rounded-[2rem] border border-white/40 shadow-xl shadow-blue-500/5">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Inventario</h2>
-            <p className="text-sm text-gray-500">{items.length} productos</p>
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Inventario</h2>
+            <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">{items.length} productos disponibles</p>
           </div>
           <button
             onClick={openAddModal}
-            className="bg-black text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg hover:bg-gray-800 transition-all"
+            className="group bg-blue-600 text-white px-6 py-3.5 rounded-2xl flex items-center gap-2 text-sm font-black shadow-lg shadow-blue-200 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all"
           >
-            <Plus className="w-4 h-4" /> Nuevo Producto
+            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" /> Nuevo Producto
           </button>
         </div>
 
         {/* Toolbar */}
-        <div className="flex gap-4">
+        <div className="flex gap-4 bg-white/40 backdrop-blur-xl p-4 rounded-2xl border border-white/40 shadow-lg shadow-blue-500/5">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-400" />
             <input
               type="text"
-              placeholder="Buscar productos..."
+              placeholder="Buscar por nombre o marca..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/5"
+              className="w-full bg-white/60 border-none rounded-xl pl-12 pr-4 py-3 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder-blue-300"
             />
           </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider w-20">Imagen</th>
-                <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Producto</th>
-                <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Precio</th>
-                <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Acciones</th>
+        {/* Table Container */}
+        <div className="bg-white/40 backdrop-blur-xl border border-white/40 rounded-[2.5rem] shadow-2xl shadow-blue-500/10 overflow-hidden">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-white/40 bg-white/20">
+                <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] w-24 text-center">Visual</th>
+                <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em]">Producto / Detalles</th>
+                <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-center">Stock</th>
+                <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-right">Precio</th>
+                <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-right">Gestión</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-white/20">
               {filteredItems.map((item) => {
                 const isCustomImage = item.imageDetails.startsWith('data:') || item.imageDetails.startsWith('http');
-                const imgSrc = isCustomImage ? item.imageDetails : `https://picsum.photos/seed/${item.imageDetails}/100/100`;
+                const imgSrc = isCustomImage ? item.imageDetails : `https://picsum.photos/seed/${item.imageDetails}/200/200`;
 
                 return (
-                  <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="p-4">
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                        <img src={imgSrc} className="w-full h-full object-cover" alt="mini" />
+                  <tr key={item.id} className="group hover:bg-white/50 transition-all duration-300">
+                    <td className="p-6 text-center">
+                      <div className="relative w-14 h-14 mx-auto group-hover:scale-110 transition-transform duration-500">
+                        <div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-lg group-hover:blur-xl transition-all" />
+                        <div className="relative w-full h-full bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-white shadow-inner">
+                          <img src={imgSrc} className="w-full h-full object-cover" alt="product" />
+                        </div>
                       </div>
                     </td>
-                    <td className="p-4">
-                      <p className="font-bold text-gray-900">{item.name}</p>
-                      <p className="text-xs text-gray-500">{item.brand}</p>
+                    <td className="p-6">
+                      <p className="font-black text-gray-900 text-base group-hover:text-blue-600 transition-colors">{item.name}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md">{item.brand}</span>
+                        <span className="text-[10px] text-gray-400 font-bold truncate max-w-[200px]">{item.specs}</span>
+                      </div>
                     </td>
-                    <td className="p-4 text-right">
-                      <p className="font-bold text-gray-900">RD$ {item.price.toLocaleString()}</p>
+                    <td className="p-6 text-center">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black shadow-sm ${item.stock > 0 ? 'bg-green-100/50 text-green-600 border border-green-200' : 'bg-red-100/50 text-red-600 border border-red-200'}`}>
+                        {item.stock} unidades
+                      </span>
                     </td>
-                    <td className="p-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button onClick={() => handleEditClick(item)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
+                    <td className="p-6 text-right">
+                      <p className="font-black text-gray-900 text-lg">RD$ {item.price.toLocaleString()}</p>
+                      {item.originalPrice && <p className="text-xs text-red-400 line-through font-bold">RD$ {item.originalPrice.toLocaleString()}</p>}
+                    </td>
+                    <td className="p-6 text-right">
+                      <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                        <button onClick={() => handleEditClick(item)} className="p-3 bg-white text-blue-600 hover:bg-blue-600 hover:text-white rounded-2xl shadow-sm border border-blue-50 transition-all scale-90 group-hover:scale-100">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => onDeleteItem(item.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                        <button onClick={() => onDeleteItem(item.id)} className="p-3 bg-white text-red-600 hover:bg-red-600 hover:text-white rounded-2xl shadow-sm border border-red-50 transition-all scale-90 group-hover:scale-100 delay-75">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -222,255 +263,338 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               })}
             </tbody>
           </table>
+          {filteredItems.length === 0 && (
+            <div className="p-20 text-center">
+              <Package className="w-16 h-16 text-blue-100 mx-auto mb-4" />
+              <p className="text-gray-400 font-bold text-lg">No se encontraron productos</p>
+            </div>
+          )}
         </div>
       </div>
-    )
+    );
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 min-h-screen bg-gray-50 p-6">
+    <div className="flex flex-col lg:flex-row gap-6 min-h-screen bg-[#f8fbff] p-4 lg:p-8 animate-in fade-in duration-500">
 
-      {/* Sidebar */}
-      <aside className="w-full lg:w-64 bg-white rounded-2xl border border-gray-200 p-6 flex flex-col shrink-0 h-fit">
-        <div className="mb-8">
-          <h1 className="text-xl font-black italic tracking-tighter">
-            <span className="text-orange-500">Panel</span>
-            <span className="text-blue-600 ml-1">Admin</span>
+      {/* Futuristic Sidebar */}
+      <aside className="w-full lg:w-72 bg-white/60 backdrop-blur-3xl rounded-[3rem] border border-white shadow-2xl shadow-blue-500/10 p-8 flex flex-col shrink-0 h-fit lg:h-[calc(100vh-4rem)] lg:sticky lg:top-8 overflow-hidden relative">
+        <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
+
+        <div className="mb-12 relative">
+          <button onClick={onBack} className="flex items-center gap-2 text-blue-500 hover:text-blue-700 font-black text-xs uppercase tracking-widest mb-6 transition-all group">
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Volver
+          </button>
+          <h1 className="text-3xl font-black italic tracking-tighter leading-none">
+            <span className="text-gray-900 block">La Ganga</span>
+            <span className="text-blue-600 block pl-8 -mt-1 drop-shadow-sm">Admin</span>
           </h1>
         </div>
 
-        <nav className="space-y-1">
-          <button onClick={() => setActiveTab('products')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'products' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-gray-500 hover:bg-gray-100'}`}>
-            <Package className="w-5 h-5" /> Productos
-          </button>
-          <button onClick={() => setActiveTab('orders')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'orders' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-gray-500 hover:bg-gray-100'}`}>
-            <ShoppingBag className="w-5 h-5" /> Pedidos
-          </button>
-          <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'users' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-gray-500 hover:bg-gray-100'}`}>
-            <Users className="w-5 h-5" /> Usuarios
-          </button>
+        <nav className="space-y-3 relative flex-1">
+          <SidebarButton active={activeTab === 'products'} icon={<Package className="w-5 h-5" />} label="Inventario" onClick={() => setActiveTab('products')} />
+          <SidebarButton active={activeTab === 'orders'} icon={<ShoppingBag className="w-5 h-5" />} label="Pedidos" onClick={() => setActiveTab('orders')} />
+          <SidebarButton active={activeTab === 'users'} icon={<Users className="w-5 h-5" />} label="Clientes" onClick={() => setActiveTab('users')} />
         </nav>
 
-        <button onClick={onBack} className="mt-8 text-sm text-gray-400 font-bold hover:text-black transition-colors px-4">
-          ← Volver a la Tienda
-        </button>
+        <div className="mt-auto pt-8 border-t border-blue-50 relative">
+          <div className="bg-blue-50/50 rounded-2xl p-4 mb-4 border border-blue-100/50">
+            <p className="text-[10px] uppercase font-black text-blue-400 tracking-widest mb-1">Sesión activa</p>
+            <p className="text-sm font-black text-gray-700">Administrador</p>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+          >
+            Cerrar Sesión
+          </button>
+        </div>
       </aside>
 
-      {/* Main */}
-      <main className="flex-1">
-        {activeTab === 'products' ? renderProducts() :
-          activeTab === 'orders' ? (
-            <div className="space-y-6 animate-in fade-in duration-500">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-2xl font-black text-gray-900 tracking-tight">Gestión de Pedidos</h2>
-                  <p className="text-sm text-gray-500">Monitorea y actualiza el estado de las compras</p>
-                </div>
-                <button
-                  onClick={fetchOrders}
-                  className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
-                  disabled={ordersLoading}
-                >
-                  <Clock className={`w-5 h-5 text-gray-500 ${ordersLoading ? 'animate-spin' : ''}`} />
-                </button>
-              </div>
+      {/* Main Content Area */}
+      <main className="flex-1 min-w-0">
+        {activeTab === 'products' ? (
+          renderProducts()
+        ) : activeTab === 'orders' ? (
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-700">
+            <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl shadow-blue-500/5">
+              <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">Gestión de Pedidos</h2>
+              <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">Seguimiento en tiempo real</p>
+            </div>
 
-              {ordersLoading && orders.length === 0 ? (
-                <div className="bg-white rounded-3xl p-12 flex flex-col items-center justify-center border border-gray-100 shadow-sm">
-                  <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
-                  <p className="text-gray-500 font-medium">Cargando pedidos...</p>
+            <div className="grid grid-cols-1 gap-4">
+              {ordersLoading ? (
+                <div className="flex flex-col items-center justify-center p-20 bg-white/40 rounded-[2.5rem] border border-white/40">
+                  <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
+                  <p className="text-blue-500 font-black text-xs uppercase tracking-widest">Sincronizando órdenes...</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-4">
-                  {orders.map((order: any) => (
-                    <div key={order.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                      <div className="p-5 flex flex-col md:flex-row justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">#{order.id.slice(0, 8)}</span>
-                            <span className="text-xs text-gray-400 font-medium">
-                              {new Date(order.created_at).toLocaleString('es-DO')}
-                            </span>
-                          </div>
-                          <h3 className="font-bold text-gray-900 mb-1">{order.shipping_address?.name || 'Cliente sin nombre'}</h3>
-                          <p className="text-sm text-gray-500 flex items-center gap-1.5">
-                            <AlertCircle className="w-3.5 h-3.5" />
-                            {order.shipping_address?.address}, {order.shipping_address?.city}
-                          </p>
-
-                          {/* Order Items Detail */}
-                          <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100/50">
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Productos</p>
-                            <div className="space-y-2">
-                              {order.order_items?.map((item: any, idx: number) => {
-                                const imgSrc = `https://picsum.photos/seed/${item.product_id.slice(0, 8)}/40/40`;
-                                return (
-                                  <div key={idx} className="flex items-center gap-2 py-2 border-b border-gray-100 last:border-0">
-                                    <img src={imgSrc} alt="product" className="w-10 h-10 rounded" />
-                                    <div className="flex-1">
-                                      <p className="font-medium text-gray-900">ID: {item.product_id.slice(0, 8)}</p>
-                                      <p className="text-xs text-gray-500">Cantidad: {item.quantity}</p>
-                                    </div>
-                                    <div className="text-right">
-                                      <p className="text-xs text-gray-600">Precio unitario: {formatCurrency(item.price)}</p>
-                                      <p className="font-bold text-gray-800">Subtotal: {formatCurrency(item.price * item.quantity)}</p>
-                                    </div>
-                                  </div>
-                                );
-                              })}
+                <div className="space-y-6">
+                  {orders.map((order) => (
+                    <div key={order.id} className="group bg-white/40 backdrop-blur-xl border border-white/40 rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-blue-500/10 transition-all duration-500">
+                      <div className="p-8">
+                        <div className="flex flex-wrap justify-between items-start gap-4 mb-8">
+                          <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                              <ShoppingBag className="w-7 h-7" />
                             </div>
+                            <div>
+                              <p className="text-[10px] font-black uppercase text-blue-400 tracking-[0.2em] mb-1">ID PEDIDO: #{order.id.slice(0, 8)}</p>
+                              <p className="text-lg font-black text-gray-900 flex items-center gap-2">
+                                <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-lg text-xs tracking-tighter">RD$ {order.total.toLocaleString()}</span>
+                                <span className="text-gray-400 font-bold">•</span>
+                                <span className="text-sm">Por: {order.shipping_address?.name}</span>
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 bg-white/60 p-2 rounded-2xl border border-white/80 shadow-sm">
+                            {(['pending', 'paid', 'shipped', 'cancelled'] as const).map((status) => (
+                              <button
+                                key={status}
+                                onClick={() => handleUpdateStatus(order.id, status)}
+                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${order.status === status
+                                  ? status === 'shipped' ? 'bg-green-500 text-white shadow-lg shadow-green-200' :
+                                    status === 'cancelled' ? 'bg-red-500 text-white shadow-lg shadow-red-200' :
+                                      'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                                  : 'text-gray-400 hover:bg-white hover:text-blue-500'
+                                  }`}
+                              >
+                                {status === 'pending' ? 'Pendiente' :
+                                  status === 'paid' ? 'Pagado' :
+                                    status === 'shipped' ? 'Enviado' : 'Cancelado'}
+                              </button>
+                            ))}
                           </div>
                         </div>
 
-                        <div className="flex flex-col md:items-end justify-between gap-3">
-                          <div className="text-right">
-                            <span className="block text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Total del Pedido</span>
-                            <span className="text-lg font-black text-gray-900">{formatCurrency(order.total)}</span>
+                        <div className="bg-white/40 rounded-3xl p-6 border border-white/40">
+                          <h4 className="text-[10px] font-black uppercase text-blue-400 tracking-[0.2em] mb-4">Artículos del Pedido</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {order.items?.map((item: any) => (
+                              <div key={item.id} className="flex gap-4 p-3 bg-white/60 rounded-2xl border border-white shadow-sm hover:scale-105 transition-transform">
+                                <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
+                                  <img src={`https://picsum.photos/seed/${item.product_id}/100/100`} className="w-full h-full object-cover" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="font-black text-xs text-gray-900 truncate">ID: {item.product_id.slice(0, 10)}...</p>
+                                  <p className="text-blue-600 font-black text-xs mt-1">
+                                    {item.quantity} x RD$ {item.price.toLocaleString()}
+                                  </p>
+                                  <div className="h-0.5 w-full bg-blue-100/50 mt-1" />
+                                  <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase">Subtotal: RD$ {(item.quantity * item.price).toLocaleString()}</p>
+                                </div>
+                              </div>
+                            ))}
                           </div>
+                        </div>
 
-                          <div className="flex items-center gap-2">
-                            <select
-                              value={order.status}
-                              onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
-                              className={`text-xs font-black px-4 py-2 rounded-xl border-none ring-1 ring-inset outline-none cursor-pointer transition-all ${order.status === 'paid' ? 'bg-green-50 text-green-700 ring-green-100' :
-                                order.status === 'shipped' ? 'bg-blue-50 text-blue-700 ring-blue-100' :
-                                  order.status === 'cancelled' ? 'bg-red-50 text-red-700 ring-red-100' :
-                                    'bg-orange-50 text-orange-700 ring-orange-100'
-                                }`}
-                            >
-                              <option value="pending">Pendiente</option>
-                              <option value="paid">Pagado</option>
-                              <option value="shipped">Enviado</option>
-                              <option value="delivered">Entregado</option>
-                              <option value="cancelled">Cancelado</option>
-                            </select>
+                        <div className="mt-6 flex flex-wrap gap-4 text-xs font-bold text-gray-500">
+                          <div className="flex items-center gap-2 bg-blue-50/50 px-4 py-2 rounded-xl border border-blue-100/50">
+                            <MapPin className="w-4 h-4 text-blue-500" />
+                            <span>{order.shipping_address?.address}, {order.shipping_address?.city}</span>
+                          </div>
+                          <div className="flex items-center gap-2 bg-blue-50/50 px-4 py-2 rounded-xl border border-blue-100/50 ml-auto">
+                            <Clock className="w-4 h-4 text-blue-500" />
+                            <span>{new Date(order.created_at).toLocaleDateString()} {new Date(order.created_at).toLocaleTimeString()}</span>
                           </div>
                         </div>
                       </div>
                     </div>
                   ))}
                   {orders.length === 0 && !ordersLoading && (
-                    <div className="bg-white rounded-3xl p-12 text-center border border-gray-100">
-                      <ShoppingBag className="w-12 h-12 text-gray-100 mx-auto mb-4" />
-                      <p className="text-gray-400 font-bold">No hay pedidos registrados aún</p>
+                    <div className="bg-white/40 backdrop-blur-xl rounded-[2.5rem] p-20 text-center border border-white/40 shadow-xl">
+                      <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <ShoppingBag className="w-10 h-10 text-blue-200" />
+                      </div>
+                      <p className="text-gray-400 font-black uppercase tracking-widest text-sm">Sin pedidos registrados</p>
                     </div>
                   )}
                 </div>
               )}
             </div>
-          ) : activeTab === 'users' ? (
-            <div className="space-y-6 animate-in fade-in duration-500">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-2xl font-black text-gray-900 tracking-tight">Gestión de Usuarios</h2>
-                  <p className="text-sm text-gray-500">Administra los clientes de la plataforma</p>
-                </div>
+          </div>
+        ) : activeTab === 'users' ? (
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-700">
+            <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl shadow-blue-500/5 flex justify-between items-center">
+              <div>
+                <h2 className="text-3xl font-black text-gray-900 tracking-tight">Clientes</h2>
+                <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">Base de datos de usuarios registrados</p>
               </div>
+              <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                <Users className="w-7 h-7" />
+              </div>
+            </div>
 
-              <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Usuario</th>
-                      <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Email</th>
-                      <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Rol</th>
-                      <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {users.map((u) => (
-                      <tr key={u.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="p-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
-                              {u.name.charAt(0)}
-                            </div>
-                            <span className="font-bold text-gray-700">{u.name}</span>
+            <div className="bg-white/40 backdrop-blur-xl border border-white/40 rounded-[2.5rem] shadow-2xl shadow-blue-500/10 overflow-hidden">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-white/40 bg-white/20">
+                    <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em]">Perfil</th>
+                    <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em]">Correo Electrónico</th>
+                    <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-center">Privilegios</th>
+                    <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/20">
+                  {users.map((u) => (
+                    <tr key={u.id} className="group hover:bg-white/50 transition-all duration-300">
+                      <td className="p-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            {u.name.charAt(0)}
                           </div>
-                        </td>
-                        <td className="p-4 text-gray-500">{u.email}</td>
-                        <td className="p-4">
-                          <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}`}>
-                            {u.role}
-                          </span>
-                        </td>
-                        <td className="p-4 text-right">
-                          <button onClick={() => onDeleteUser(u.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                          <div>
+                            <span className="font-black text-gray-900 block group-hover:text-blue-600 transition-colors">{u.name}</span>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Registrado</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-6 text-gray-600 font-bold">{u.email}</td>
+                      <td className="p-6 text-center">
+                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${u.role === 'admin' ? 'bg-indigo-50 text-indigo-600 border-indigo-100 shadow-sm shadow-indigo-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
+                          {u.role}
+                        </span>
+                      </td>
+                      <td className="p-6 text-right">
+                        <button onClick={() => onDeleteUser(u.id)} className="p-3 bg-white text-red-500 hover:bg-red-500 hover:text-white rounded-2xl border border-red-50 shadow-sm transition-all scale-90 group-hover:scale-100">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {users.length === 0 && (
+                <div className="p-20 text-center">
+                  <Package className="w-16 h-16 text-blue-100 mx-auto mb-4" />
+                  <p className="text-gray-400 font-bold text-lg uppercase tracking-widest">Sin usuarios en base de datos</p>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="p-12 text-center text-gray-400">
-              <LayoutDashboard className="w-12 h-12 mx-auto mb-4 opacity-20" />
-              <p>Vista general próximamente</p>
+          </div>
+        ) : (
+          <div className="p-20 text-center bg-white/40 backdrop-blur-xl rounded-[3rem] border border-white/40 shadow-xl flex flex-col items-center">
+            <div className="w-24 h-24 bg-blue-50 rounded-[2rem] flex items-center justify-center mb-6 border border-blue-100 shadow-sm">
+              <LayoutDashboard className="w-12 h-12 text-blue-300 opacity-50" />
             </div>
-          )}
+            <h3 className="text-2xl font-black text-gray-900 mb-2">Panel Ejecutivo</h3>
+            <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Estadísticas avanzadas próximamente</p>
+          </div>
+        )}
       </main>
 
-      {/* Add/Edit Modal */}
+      {/* Glassmorphism Add/Edit Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="text-xl font-bold">{editingId ? 'Editar Producto' : 'Nuevo Producto'}</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                <X className="w-5 h-5" />
+        <div className="fixed inset-0 z-[100] bg-blue-900/10 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-white/90 backdrop-blur-2xl rounded-[3rem] w-full max-w-xl overflow-hidden shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] border border-white animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
+            <div className="p-10 border-b border-gray-100/50 flex justify-between items-center bg-white/50">
+              <div>
+                <h3 className="text-2xl font-black text-gray-900 tracking-tight">{editingId ? 'Editar Producto' : 'Nuevo Producto'}</h3>
+                <p className="text-[10px] uppercase font-black text-blue-400 tracking-[0.2em] mt-1 italic">Administración de Catálogo</p>
+              </div>
+              <button onClick={() => setShowAddModal(false)} className="w-12 h-12 flex items-center justify-center hover:bg-red-50 hover:text-red-500 rounded-full transition-all group">
+                <X className="w-6 h-6 group-hover:rotate-90 transition-transform" />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre</label>
-                <input className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-black/5 outline-none"
-                  value={newItem.name} onChange={e => setNewItem({ ...newItem, name: e.target.value })} />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Marca</label>
-                  <input className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-black/5 outline-none"
-                    value={newItem.brand} onChange={e => setNewItem({ ...newItem, brand: e.target.value })} />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Precio (RD$)</label>
-                  <input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-black/5 outline-none"
-                    value={newItem.price} onChange={e => setNewItem({ ...newItem, price: e.target.value })} />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Stock</label>
-                <input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-black/5 outline-none"
-                  value={(newItem as any).stock || ''} onChange={e => setNewItem({ ...newItem, stock: Number(e.target.value) } as any)} />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Descripción</label>
-                <textarea className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-black/5 outline-none h-24 resize-none"
-                  value={newItem.specs} onChange={e => setNewItem({ ...newItem, specs: e.target.value })} />
-              </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Imagen</label>
-                <div className="flex items-center gap-4">
-                  {imagePreview && (
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
-                      <img src={imagePreview} className="w-full h-full object-cover" />
+            <form onSubmit={handleSubmit} className="p-10 space-y-6 max-h-[70vh] overflow-y-auto no-scrollbar">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Nombre del Dispositivo</label>
+                  <input
+                    className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all placeholder-gray-300"
+                    placeholder="Ej: Samsung Galaxy S24 Ultra"
+                    value={newItem.name}
+                    onChange={e => setNewItem({ ...newItem, name: e.target.value })}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Marca</label>
+                    <input
+                      className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all"
+                      value={newItem.brand}
+                      onChange={e => setNewItem({ ...newItem, brand: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Precio (RD$)</label>
+                    <input
+                      type="number"
+                      className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all"
+                      value={newItem.price}
+                      onChange={e => setNewItem({ ...newItem, price: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Stock Disponible</label>
+                    <input
+                      type="number"
+                      className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all"
+                      value={newItem.stock}
+                      onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Precio Original (Opcional)</label>
+                    <input
+                      type="number"
+                      className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all"
+                      value={newItem.originalPrice}
+                      onChange={e => setNewItem({ ...newItem, originalPrice: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Especificaciones Técnicas</label>
+                  <textarea
+                    className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all h-32 resize-none no-scrollbar placeholder-gray-300 text-sm"
+                    placeholder="Describe el procesador, cámara, batería..."
+                    value={newItem.specs}
+                    onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Identidad Visual</label>
+                  <div className="bg-gray-50/50 border border-gray-100 rounded-3xl p-6">
+                    <div className="flex items-center gap-6">
+                      <div className="relative group/img">
+                        <div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-lg opacity-0 group-hover/img:opacity-100 transition-opacity" />
+                        <div className="relative w-24 h-24 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-white shadow-lg">
+                          {imagePreview ? (
+                            <img src={imagePreview} className="w-full h-full object-cover" />
+                          ) : (
+                            <Package className="w-8 h-8 text-gray-100" />
+                          )}
+                        </div>
+                      </div>
+                      <label className="flex-1 cursor-pointer group/upload">
+                        <div className="h-24 bg-white border-2 border-dashed border-gray-100 rounded-2xl flex flex-col items-center justify-center hover:border-blue-400 hover:bg-blue-50/30 transition-all duration-300">
+                          <Upload className="w-6 h-6 text-gray-300 mb-1 group-hover/upload:text-blue-500 group-hover/upload:-translate-y-1 transition-all" />
+                          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover/upload:text-blue-600">Actualizar Media</span>
+                        </div>
+                        <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                      </label>
                     </div>
-                  )}
-                  <label className="flex-1 cursor-pointer bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center p-4 hover:bg-gray-100 transition-colors">
-                    <Upload className="w-5 h-5 text-gray-400 mr-2" />
-                    <span className="text-sm text-gray-500 font-bold">Subir Imagen</span>
-                    <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
-                  </label>
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-4">
-                <button type="submit" className="w-full bg-black text-white font-bold py-4 rounded-xl hover:bg-gray-800 transition-colors">
-                  {editingId ? 'Guardar Cambios' : 'Crear Producto'}
+              <div className="pt-6 relative">
+                <div className="absolute inset-x-0 -top-4 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-200 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest text-xs flex items-center justify-center gap-3 group"
+                >
+                  <CheckCircle2 className="w-5 h-5 group-hover:scale-125 transition-transform" />
+                  {editingId ? 'Confirmar Actualización' : 'Publicar Producto'}
                 </button>
               </div>
             </form>
