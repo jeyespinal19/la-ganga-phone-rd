@@ -88,63 +88,79 @@ const CheckoutForm: React.FC<{
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="text-xl font-black mb-6">Detalles de Pago</h2>
+        <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
+            <div className="mb-8">
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Confirmar Pedido</h2>
+                <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest mt-1">Paso final de seguridad</p>
+            </div>
 
             {paymentMethod === 'stripe' ? (
-                <div className="p-4 border border-gray-100 rounded-2xl bg-gray-50/50">
+                <div className="p-6 border border-blue-100 rounded-[2rem] bg-gradient-to-br from-white to-blue-50/30 shadow-inner">
+                    <div className="flex items-center gap-3 mb-4 text-blue-600">
+                        <Lock className="w-4 h-4" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Pago Seguro Encriptado</span>
+                    </div>
                     <PaymentElement />
                 </div>
             ) : (
-                <div className="bg-orange-50 border border-orange-100 p-4 rounded-xl flex items-start gap-3">
-                    <div className="p-2 bg-white rounded-full text-orange-600">
-                        <CreditCard className="w-5 h-5" />
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 p-8 rounded-[2rem] flex items-center gap-6 shadow-sm group">
+                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-xl shadow-blue-500/10 group-hover:scale-110 transition-transform">
+                        <CreditCard className="w-8 h-8" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-900">Pago Contra Entrega</h3>
-                        <p className="text-sm text-gray-600">Pagas en efectivo o transferencia al recibir tu pedido.</p>
+                        <h3 className="font-black text-gray-900 text-lg">Pago Contra Entrega</h3>
+                        <p className="text-sm text-gray-500 font-medium">Efectivo o transferencia al recibir tu paquete.</p>
+                        <div className="flex items-center gap-2 mt-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                            <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Disponible ahora</span>
+                        </div>
                     </div>
                 </div>
             )}
 
-            <div className="bg-gray-50 rounded-2xl p-4 space-y-2 text-sm border border-gray-100">
-                <div className="flex justify-between items-center">
-                    <span className="text-gray-500 font-medium">Total a Pagar</span>
-                    <span className="font-black text-xl text-blue-600">RD$ {total.toLocaleString()}</span>
+            <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-6 space-y-3 border border-gray-100 shadow-xl shadow-blue-500/5">
+                <div className="flex justify-between items-center px-2">
+                    <span className="text-gray-400 font-black text-[10px] uppercase tracking-widest">Total del Pedido</span>
+                    <span className="font-black text-3xl text-gray-900 tracking-tighter">RD$ {total.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-xs text-gray-400 border-t border-gray-200 pt-2 font-medium">
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-100 to-transparent" />
+                <div className="flex justify-between text-[10px] text-blue-600 font-black uppercase tracking-[0.2em] px-2 opacity-60">
                     <span>{cartItems.length} artículos</span>
-                    <span>Envío incluido</span>
+                    <span>Envío Bonificado</span>
                 </div>
             </div>
 
             {error && (
-                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold flex items-center gap-2 border border-red-100 animate-shake">
-                    <span>⚠️</span> {error}
+                <div className="bg-red-50 text-red-600 p-6 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center gap-3 border border-red-100 animate-in fade-in slide-in-from-top-4">
+                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm">⚠️</div>
+                    <span>{error}</span>
                 </div>
             )}
 
-            <button
-                type="submit"
-                disabled={loading || (paymentMethod === 'stripe' && !stripe)}
-                className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 h-[60px]"
-            >
-                {loading ? (
-                    <>
-                        <Loader2 className="w-6 h-6 animate-spin" />
-                        <span>PROCESANDO...</span>
-                    </>
-                ) : (
-                    <>
-                        <Lock className="w-5 h-5" />
-                        <span>CONFIRMAR Y PAGAR</span>
-                    </>
-                )}
-            </button>
+            <div className="space-y-4 pt-4">
+                <button
+                    type="submit"
+                    disabled={loading || (paymentMethod === 'stripe' && !stripe)}
+                    className="w-full bg-blue-600 text-white py-6 rounded-3xl font-black shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group overflow-hidden relative"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    {loading ? (
+                        <>
+                            <Loader2 className="w-6 h-6 animate-spin" />
+                            <span className="uppercase tracking-[0.2em] text-xs">Validando...</span>
+                        </>
+                    ) : (
+                        <>
+                            <Lock className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                            <span className="uppercase tracking-[0.2em] text-xs">Confirmar y Pagar</span>
+                        </>
+                    )}
+                </button>
 
-            <button type="button" onClick={onBackToShipping} className="w-full text-gray-400 text-sm font-bold py-2 hover:text-gray-600 transition-colors">
-                MODIFICAR ENVÍO
-            </button>
+                <button type="button" onClick={onBackToShipping} className="w-full text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] py-4 hover:text-blue-600 transition-all hover:bg-blue-50/50 rounded-2xl">
+                    Modificar Detalles
+                </button>
+            </div>
         </form>
     );
 };
