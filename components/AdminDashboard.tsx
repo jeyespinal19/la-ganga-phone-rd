@@ -86,6 +86,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingProduct, setIsUploadingProduct] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const [newBanner, setNewBanner] = useState<Omit<Banner, 'id' | 'created_at'>>({
@@ -216,14 +217,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Local preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Actual upload
+    setIsUploadingProduct(true);
+    try {
+      const url = await productService.uploadProductImage(file);
+      setImagePreview(url);
+    } catch (err: any) {
+      console.error('Error uploading product image:', err);
+      alert('Error al subir la imagen del producto. Revisa el bucket "products".');
+    } finally {
+      setIsUploadingProduct(false);
     }
   };
 
@@ -737,69 +751,84 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <h3 className="text-xl font-bold text-gray-900">{editingId ? 'Editar' : 'Nuevo'} Producto</h3>
               <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors"><X className="w-5 h-5" /></button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-1.5 text-center">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block text-left ml-1">Foto del Producto</label>
-                <div className="relative group">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block ml-1 text-center">Foto del Producto</label>
+                <div className="relative group mx-auto w-48 h-48">
                   <input type="file" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
-                  <div className="w-full h-40 bg-gray-50 border-2 border-dashed border-gray-100 rounded-xl flex flex-col items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-100 transition-all overflow-hidden">
-                    {imagePreview ? (
-                      <img src={imagePreview} className="w-full h-full object-contain p-2" alt="Preview" />
+                  <div className={`w-full h-full bg-gray-50 border-2 border-dashed ${isUploadingProduct ? 'border-blue-400' : 'border-gray-200'} rounded-2xl flex flex-col items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-200 transition-all overflow-hidden relative shadow-inner`}>
+                    {isUploadingProduct ? (
+                      <div className="flex flex-col items-center animate-in fade-in">
+                        <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-2" />
+                        <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Subiendo...</span>
+                      </div>
+                    ) : imagePreview ? (
+                      <img src={imagePreview} className="w-full h-full object-cover rounded-xl" alt="Preview" />
                     ) : (
-                      <div className="flex flex-col items-center">
-                        <ImageIcon className="w-8 h-8 text-gray-300 mb-2" />
-                        <span className="text-xs font-semibold text-gray-400">Seleccionar Imagen</span>
+                      <div className="flex flex-col items-center px-4 text-center">
+                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 text-gray-400 group-hover:text-blue-500 transition-colors">
+                          <ImageIcon className="w-6 h-6" />
+                        </div>
+                        <p className="text-[10px] font-bold text-gray-400 group-hover:text-blue-600 transition-colors uppercase tracking-wider leading-tight">Haz clic para<br />añadir foto</p>
+                      </div>
+                    )}
+                    {imagePreview && !isUploadingProduct && (
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                        <p className="text-white text-[10px] font-bold uppercase tracking-wider">Cambiar Foto</p>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre del Dispositivo</label>
-                <input
-                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
-                  placeholder="Ej: iPhone 15 Pro Max"
-                  value={newItem.name}
-                  required
-                  onChange={e => setNewItem({ ...newItem, name: e.target.value })}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio (DOP)</label>
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre del Dispositivo</label>
                   <input
                     className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
-                    placeholder="0.00"
-                    type="number"
-                    value={newItem.price}
+                    placeholder="Ej: iPhone 15 Pro Max"
+                    value={newItem.name}
                     required
-                    onChange={e => setNewItem({ ...newItem, price: e.target.value })}
+                    onChange={e => setNewItem({ ...newItem, name: e.target.value })}
                   />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio (DOP)</label>
+                    <input
+                      className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
+                      placeholder="0.00"
+                      type="number"
+                      value={newItem.price}
+                      required
+                      onChange={e => setNewItem({ ...newItem, price: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Stock Inicial</label>
+                    <input
+                      className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
+                      placeholder="0"
+                      type="number"
+                      value={newItem.stock}
+                      onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
+                    />
+                  </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Stock Inicial</label>
-                  <input
-                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
-                    placeholder="0"
-                    type="number"
-                    value={newItem.stock}
-                    onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Especificaciones Técnicas</label>
+                  <textarea
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm h-28 resize-none transition-all placeholder:text-gray-300"
+                    placeholder="Ej: 256GB, Color Titanio, Salud 100%..."
+                    value={newItem.specs}
+                    onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
                   />
                 </div>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Especificaciones Técnicas</label>
-                <textarea
-                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm h-28 resize-none transition-all"
-                  placeholder="Ej: 256GB, Color Titanio, Salud 100%..."
-                  value={newItem.specs}
-                  onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
-                />
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm shadow-sm hover:bg-blue-700 active:scale-[0.98] transition-all mt-2"
+                disabled={isUploadingProduct}
+                className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 hover:bg-blue-700 active:scale-[0.98] transition-all mt-4 disabled:opacity-50 disabled:grayscale"
               >
                 {editingId ? 'Guardar Cambios' : 'Crear Producto'}
               </button>

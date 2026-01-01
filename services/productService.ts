@@ -260,7 +260,6 @@ class ProductService {
       .eq('id', id);
     if (error) throw error;
   }
-
   async uploadBannerImage(file: File) {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Math.random()}.${fileExt}`;
@@ -279,5 +278,23 @@ class ProductService {
     return data.publicUrl;
   }
 
+  async uploadProductImage(file: File) {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `items/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('products')
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from('products')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  }
 }
+
 export const productService = new ProductService();
