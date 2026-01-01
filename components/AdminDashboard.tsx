@@ -136,13 +136,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Vista previa local inmediata
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setNewBanner(prev => ({ ...prev, image_url: reader.result as string }));
+    };
+    reader.readAsDataURL(file);
+
     setIsUploading(true);
+    console.log('Iniciando subida de banner...');
     try {
       const url = await productService.uploadBannerImage(file);
+      console.log('Banner subido con éxito:', url);
       setNewBanner(prev => ({ ...prev, image_url: url }));
     } catch (err: any) {
-      console.error('Upload error:', err);
-      alert(`Error al subir la imagen: ${err.message || 'Error desconocido'}`);
+      console.error('Error de subida detallado:', err);
+      alert(`Error crítico al subir la imagen: ${err.message || 'Error desconocido'}. Revisa que el bucket "banners" exista.`);
     } finally {
       setIsUploading(false);
     }
