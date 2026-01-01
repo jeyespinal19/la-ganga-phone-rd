@@ -12,8 +12,6 @@ export interface Product {
 
 export type Category = 'Todos' | 'Oukitel' | 'Samsung' | 'Xiaomi' | 'Hogar' | 'Hombre' | 'Oficina' | 'Industrial' | 'Deporte' | 'Mascotas';
 
-
-
 export interface User {
   id: string;
   name: string;
@@ -43,4 +41,15 @@ export interface Order {
   created_at: string;
   items: OrderItem[];
   stripe_payment_intent_id?: string;
+}
+
+export interface Banner {
+  id: string;
+  image_url: string;
+  title: string;
+  subtitle: string;
+  badge: string;
+  active: boolean;
+  order: number;
+  created_at?: string;
 }

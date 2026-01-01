@@ -1,6 +1,6 @@
 
 import { supabase } from './supabase';
-import { Product, User, Order } from '../types';
+import { Product, User, Order, Banner } from '../types';
 
 // Mock users for fallback or just general usage
 const MOCK_USERS: User[] = [
@@ -231,6 +231,52 @@ class ProductService {
       .eq('id', orderId);
     if (error) throw error;
     return true;
+  }
+
+  // --- Banners ---
+  async getBanners() {
+    const { data, error } = await supabase
+      .from('banners')
+      .select('*')
+      .order('order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  }
+
+  async addBanner(banner: Omit<Banner, 'id'>) {
+    const { data, error } = await supabase
+      .from('banners')
+      .insert([banner])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  async deleteBanner(id: string) {
+    const { error } = await supabase
+      .from('banners')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async uploadBannerImage(file: File) {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `banners/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('banners')
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from('banners')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
   }
 
 }

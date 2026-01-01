@@ -18,9 +18,11 @@ import {
   AlertCircle,
   Loader2,
   ArrowLeft,
-  MapPin
+  MapPin,
+  Image as ImageIcon,
+  PlusCircle
 } from 'lucide-react';
-import { Product, User, Order } from '../types';
+import { Product, User, Order, Banner } from '../types';
 import { formatCurrency } from '../utils/format';
 import { productService } from '../services/productService';
 import { supabase } from '../services/supabase';
@@ -36,9 +38,7 @@ interface AdminDashboardProps {
   onBack: () => void;
 }
 
-type Tab = 'overview' | 'products' | 'users' | 'orders';
-
-const ROW_HEIGHT = 80;
+type Tab = 'overview' | 'products' | 'users' | 'orders' | 'banners';
 
 interface SidebarButtonProps {
   active: boolean;
@@ -81,48 +81,91 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState<string | null>(null);
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [bannersLoading, setBannersLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const [newBanner, setNewBanner] = useState<Omit<Banner, 'id' | 'created_at'>>({
+    image_url: '',
+    title: '',
+    subtitle: '',
+    badge: 'OFERTA',
+    active: true,
+    order: 0
+  });
 
   useEffect(() => {
     if (activeTab === 'orders') {
       fetchOrders();
-
-      // Subscribe to real-time order updates
-      const channel = supabase
-        .channel('admin_orders_realtime')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'orders' },
-          () => {
-            fetchOrders();
-          }
-        )
-        .subscribe();
-
-      return () => {
-        supabase.removeChannel(channel);
-      };
+    }
+    if (activeTab === 'banners') {
+      fetchBanners();
     }
   }, [activeTab]);
+
+  const fetchBanners = async () => {
+    setBannersLoading(true);
+    try {
+      const data = await productService.getBanners();
+      setBanners(data);
+    } catch (err) {
+      console.error('Error fetching banners:', err);
+    } finally {
+      setBannersLoading(false);
+    }
+  };
 
   const fetchOrders = async () => {
     setOrdersLoading(true);
     setOrdersError(null);
     try {
       const data = await productService.getAllOrders();
-      console.log('Orders data:', data);
-
-      // Map order_items to items for UI consistency
-      const mappedOrders = data.map((order: any) => ({
-        ...order,
-        items: order.order_items || []
-      }));
-      setOrders(mappedOrders);
+      setOrders(data);
     } catch (err: any) {
       console.error('Error fetching orders:', err);
       setOrdersError(err.message || 'Error al cargar los pedidos');
     } finally {
       setOrdersLoading(false);
+    }
+  };
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const url = await productService.uploadBannerImage(file);
+      setNewBanner(prev => ({ ...prev, image_url: url }));
+    } catch (err) {
+      console.error('Upload error:', err);
+    }
+  };
+
+  const handleAddBanner = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newBanner.image_url) return;
+    try {
+      await productService.addBanner(newBanner);
+      setNewBanner({
+        image_url: '',
+        title: '',
+        subtitle: '',
+        badge: 'OFERTA',
+        active: true,
+        order: 0
+      });
+      fetchBanners();
+    } catch (err) {
+      console.error('Error adding banner:', err);
+    }
+  };
+
+  const handleDeleteBanner = async (id: string) => {
+    if (!window.confirm('¿Borrar este banner?')) return;
+    try {
+      await productService.deleteBanner(id);
+      fetchBanners();
+    } catch (err) {
+      console.error('Error deleting banner:', err);
     }
   };
 
@@ -135,7 +178,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
-  // Form State
+  // Form State for Products
   const [newItem, setNewItem] = useState({
     name: '',
     brand: 'Samsung',
@@ -159,7 +202,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const openAddModal = () => {
-    setNewItem({ name: '', brand: 'Samsung', specs: '', price: '', originalPrice: '' });
+    setNewItem({ name: '', brand: 'Samsung', specs: '', price: '', originalPrice: '', stock: '0' });
     setImagePreview(null);
     setEditingId(null);
     setShowAddModal(true);
@@ -181,9 +224,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!newItem.name || !newItem.price) return;
-
     const itemData = {
       name: newItem.name,
       brand: newItem.brand,
@@ -191,21 +232,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       price: Number(newItem.price),
       stock: Number(newItem.stock || 0),
       originalPrice: newItem.originalPrice ? Number(newItem.originalPrice) : undefined,
-      imageDetails: imagePreview || '1' // Fallback
+      imageDetails: imagePreview || '1'
     };
-
     if (editingId) {
       onEditItem(editingId, itemData);
     } else {
       onAddItem(itemData);
     }
-
     setShowAddModal(false);
   };
 
   const renderProducts = () => {
     const filteredItems = items.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
-
     return (
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="flex justify-between items-center bg-white/40 backdrop-blur-xl p-6 rounded-[2rem] border border-white/40 shadow-xl shadow-blue-500/5">
@@ -221,7 +259,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </button>
         </div>
 
-        {/* Toolbar */}
         <div className="flex flex-col sm:flex-row gap-4 bg-white/40 backdrop-blur-xl p-4 rounded-2xl border border-white/40 shadow-lg shadow-blue-500/5">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-400" />
@@ -235,7 +272,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
-        {/* Table Container with Horizontal Scroll */}
         <div className="bg-white/40 backdrop-blur-xl border border-white/40 rounded-[2.5rem] shadow-2xl shadow-blue-500/10 overflow-hidden">
           <div className="overflow-x-auto no-scrollbar">
             <table className="w-full text-left min-w-[800px]">
@@ -252,7 +288,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {filteredItems.map((item) => {
                   const isCustomImage = item.imageDetails.startsWith('data:') || item.imageDetails.startsWith('http');
                   const imgSrc = isCustomImage ? item.imageDetails : `https://picsum.photos/seed/${item.imageDetails}/200/200`;
-
                   return (
                     <tr key={item.id} className="group hover:bg-white/50 transition-all duration-300">
                       <td className="p-6 text-center">
@@ -295,410 +330,262 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </tbody>
             </table>
           </div>
-          {filteredItems.length === 0 && (
-            <div className="p-20 text-center">
-              <Package className="w-16 h-16 text-blue-100 mx-auto mb-4" />
-              <p className="text-gray-400 font-bold text-lg">No se encontraron productos</p>
-            </div>
-          )}
         </div>
       </div>
     );
   };
 
-  return (
-    <div className="flex flex-col lg:flex-row gap-6 min-h-screen bg-[#f8fbff] p-4 lg:p-8 pb-24 lg:pb-8 animate-in fade-in duration-500">
-
-      {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between bg-white/60 backdrop-blur-xl p-6 rounded-[2rem] border border-white shadow-lg">
-        <h1 className="text-xl font-black italic">
-          <span className="text-gray-900">La Ganga</span>
-          <span className="text-blue-600 ml-2">Admin</span>
-        </h1>
-        <button
-          onClick={onBack}
-          className="p-3 bg-blue-50 text-blue-600 rounded-2xl"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
+  const renderBanners = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-700">
+      <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl shadow-blue-500/5 flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-black text-gray-900 tracking-tight">Gestión de Banners</h2>
+          <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">Personaliza el carrusel de inicio</p>
+        </div>
+        <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+          <ImageIcon className="w-7 h-7" />
+        </div>
       </div>
 
-      {/* Futuristic Sidebar - Desktop */}
-      <aside className={`fixed inset-0 z-50 lg:relative lg:z-0 lg:flex w-full lg:w-72 bg-white/60 backdrop-blur-3xl lg:rounded-[3rem] border-r lg:border border-white shadow-2xl lg:shadow-blue-500/10 p-8 flex-col shrink-0 h-full lg:h-[calc(100vh-4rem)] lg:sticky lg:top-8 overflow-hidden transition-all duration-500 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
-        <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
-
-
-        <div className="mb-12 relative">
-          <button onClick={onBack} className="flex items-center gap-2 text-blue-500 hover:text-blue-700 font-black text-xs uppercase tracking-widest mb-6 transition-all group">
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Volver
-          </button>
-          <h1 className="text-3xl font-black italic tracking-tighter leading-none">
-            <span className="text-gray-900 block">La Ganga</span>
-            <span className="text-blue-600 block pl-8 -mt-1 drop-shadow-sm">Admin</span>
-          </h1>
-        </div>
-
-        <nav className="space-y-3 relative flex-1">
-          <SidebarButton active={activeTab === 'products'} icon={<Package className="w-5 h-5" />} label="Inventario" onClick={() => setActiveTab('products')} />
-          <SidebarButton active={activeTab === 'orders'} icon={<ShoppingBag className="w-5 h-5" />} label="Pedidos" onClick={() => setActiveTab('orders')} />
-          <SidebarButton active={activeTab === 'users'} icon={<Users className="w-5 h-5" />} label="Clientes" onClick={() => setActiveTab('users')} />
-        </nav>
-
-        <div className="mt-auto pt-8 border-t border-blue-50 relative">
-          <div className="bg-blue-50/50 rounded-2xl p-4 mb-4 border border-blue-100/50">
-            <p className="text-[10px] uppercase font-black text-blue-400 tracking-widest mb-1">Sesión activa</p>
-            <p className="text-sm font-black text-gray-700">Administrador</p>
+      <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl">
+        <h3 className="text-xl font-black text-gray-900 mb-6">Subir Nuevo Banner (Canva)</h3>
+        <form onSubmit={handleAddBanner} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Imagen del Banner</label>
+              <div className="relative group">
+                <input type="file" onChange={handleBannerUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
+                <div className="w-full h-32 bg-white/60 border-2 border-dashed border-blue-100 rounded-2xl flex flex-col items-center justify-center group-hover:bg-blue-50 transition-colors">
+                  {newBanner.image_url ? (
+                    <img src={newBanner.image_url} className="h-full w-full object-cover rounded-2xl" alt="Preview" />
+                  ) : (
+                    <>
+                      <Upload className="w-8 h-8 text-blue-300 mb-2" />
+                      <span className="text-xs font-bold text-blue-400">Seleccionar imagen o soltar aquí</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Etiqueta (Badge)</label>
+              <input
+                type="text"
+                placeholder="Ej: OFERTA, NUEVO, MÁS VENDIDO"
+                value={newBanner.badge}
+                onChange={(e) => setNewBanner(prev => ({ ...prev, badge: e.target.value }))}
+                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
+              />
+            </div>
           </div>
-          <button
-            onClick={onLogout}
-            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-xs uppercase tracking-widest bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
-          >
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Título</label>
+              <input
+                type="text"
+                placeholder="Ej: iPhone 15 Pro"
+                value={newBanner.title}
+                onChange={(e) => setNewBanner(prev => ({ ...prev, title: e.target.value }))}
+                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Subtítulo</label>
+              <input
+                type="text"
+                placeholder="Ej: El smartphone más potente"
+                value={newBanner.subtitle}
+                onChange={(e) => setNewBanner(prev => ({ ...prev, subtitle: e.target.value }))}
+                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={!newBanner.image_url}
+              className="w-full mt-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+            >
+              Añadir al Carrusel
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {banners.map((banner) => (
+          <div key={banner.id} className="group relative bg-white/40 backdrop-blur-xl rounded-[2.5rem] overflow-hidden border border-white/40 shadow-xl hover:shadow-blue-500/10 transition-all duration-500">
+            <div className="aspect-[21/9] w-full relative">
+              <img src={banner.image_url} className="w-full h-full object-cover" alt={banner.title} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-6">
+                <span className="inline-block px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg mb-2 w-fit">{banner.badge}</span>
+                <p className="text-white font-black text-xl leading-none mb-1">{banner.title}</p>
+                <p className="text-white/80 font-bold text-xs">{banner.subtitle}</p>
+              </div>
+              <button
+                onClick={() => handleDeleteBanner(banner.id)}
+                className="absolute top-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-white hover:bg-red-500 hover:text-white transition-all shadow-xl opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        ))}
+        {banners.length === 0 && !bannersLoading && (
+          <div className="col-span-full py-20 bg-white/40 rounded-[2.5rem] border border-white/40 text-center flex flex-col items-center">
+            <ImageIcon className="w-16 h-16 text-blue-200 mb-4 animate-pulse" />
+            <p className="text-gray-400 font-black uppercase text-xs tracking-widest">No hay banners personalizados</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col lg:flex-row gap-6 min-h-screen bg-[#f8fbff] p-4 lg:p-8 pb-24 lg:pb-8 animate-in fade-in duration-500">
+      {/* Sidebar */}
+      <aside className={`fixed inset-y-0 left-0 z-[60] w-72 bg-white/80 backdrop-blur-2xl border-r border-white/40 p-6 transition-all duration-500 lg:static lg:block ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}`}>
+        <div className="flex flex-col h-full">
+          <div className="mb-10 px-4">
+            <h1 className="text-2xl font-black italic tracking-tighter">
+              <span className="text-gray-900 leading-none">LA GANGA</span><br />
+              <span className="text-blue-600 leading-none text-3xl">ADMIN</span>
+            </h1>
+          </div>
+          <div className="flex-1 space-y-3">
+            <SidebarButton active={activeTab === 'overview'} icon={<LayoutDashboard className="w-6 h-6" />} label="Dashboard" onClick={() => setActiveTab('overview')} />
+            <SidebarButton active={activeTab === 'products'} icon={<Package className="w-6 h-6" />} label="Inventario" onClick={() => setActiveTab('products')} />
+            <SidebarButton active={activeTab === 'orders'} icon={<ShoppingBag className="w-6 h-6" />} label="Ventas" onClick={() => setActiveTab('orders')} />
+            <SidebarButton active={activeTab === 'users'} icon={<Users className="w-6 h-6" />} label="Clientes" onClick={() => setActiveTab('users')} />
+            <SidebarButton active={activeTab === 'banners'} icon={<ImageIcon className="w-6 h-6" />} label="Banners" onClick={() => setActiveTab('banners')} />
+          </div>
+          <button onClick={onLogout} className="mt-8 w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-sm text-red-500 hover:bg-red-50 transition-all">
+            <LayoutDashboard className="w-6 h-6 rotate-180" />
             Cerrar Sesión
           </button>
         </div>
-
-        {/* Mobile Close Sidebar */}
-        <button
-          onClick={() => setIsSidebarOpen(false)}
-          className="lg:hidden absolute top-8 right-8 p-2 bg-gray-50 rounded-full"
-        >
-          <X className="w-6 h-6" />
-        </button>
       </aside>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-6 left-6 right-6 z-[60] bg-white/80 backdrop-blur-2xl rounded-[2.5rem] border border-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-2 flex items-center justify-around">
-        <button onClick={() => setActiveTab('products')} className={`p-4 rounded-[2rem] transition-all ${activeTab === 'products' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110' : 'text-gray-400'}`}>
-          <Package className="w-6 h-6" />
-        </button>
-        <button onClick={() => setActiveTab('orders')} className={`p-4 rounded-[2rem] transition-all ${activeTab === 'orders' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110' : 'text-gray-400'}`}>
-          <ShoppingBag className="w-6 h-6" />
-        </button>
-        <button onClick={() => setActiveTab('users')} className={`p-4 rounded-[2rem] transition-all ${activeTab === 'users' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110' : 'text-gray-400'}`}>
-          <Users className="w-6 h-6" />
-        </button>
-        <div className="w-px h-8 bg-gray-100 mx-2" />
-        <button onClick={openAddModal} className="p-4 bg-blue-50 text-blue-600 rounded-[2rem] hover:bg-blue-100 transition-all">
-          <Plus className="w-6 h-6" />
-        </button>
-      </div>
-
-      {/* Main Content Area */}
+      {/* Main Content */}
       <main className="flex-1 min-w-0">
-        {activeTab === 'products' ? (
-          renderProducts()
-        ) : activeTab === 'orders' ? (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-700">
-            <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl shadow-blue-500/5">
-              <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">Gestión de Pedidos</h2>
-              <div className="flex justify-between items-center">
-                <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">Seguimiento en tiempo real</p>
-                <button
-                  onClick={fetchOrders}
-                  disabled={ordersLoading}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-all font-black text-[10px] uppercase tracking-widest disabled:opacity-50"
-                >
-                  {ordersLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Refrescar'}
-                </button>
+        <div className="lg:hidden flex items-center justify-between bg-white/60 backdrop-blur-xl p-4 rounded-2xl mb-4 border border-white">
+          <h1 className="font-black italic text-gray-900">LA GANGA ADMIN</h1>
+          <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-blue-50 rounded-xl text-blue-600"><LayoutDashboard className="w-6 h-6" /></button>
+        </div>
+
+        {activeTab === 'products' ? renderProducts() :
+          activeTab === 'orders' ? (
+            <div className="space-y-6">
+              <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40">
+                <h2 className="text-3xl font-black text-gray-900">Ventas</h2>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              {ordersError ? (
-                <div className="bg-red-50 text-red-600 p-10 rounded-[2.5rem] border border-red-100 text-center flex flex-col items-center">
-                  <AlertCircle className="w-12 h-12 mb-4 opacity-50" />
-                  <p className="font-black text-sm uppercase tracking-widest mb-4">{ordersError}</p>
-                  <button
-                    onClick={fetchOrders}
-                    className="bg-red-600 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-red-200 active:scale-95 transition-all"
-                  >
-                    Reintentar Conexión
-                  </button>
-                </div>
-              ) : ordersLoading ? (
-                <div className="flex flex-col items-center justify-center p-20 bg-white/40 rounded-[2.5rem] border border-white/40">
-                  <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
-                  <p className="text-blue-500 font-black text-xs uppercase tracking-widest">Sincronizando órdenes...</p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {orders.map((order) => (
-                    <div key={order.id} className="group bg-white/40 backdrop-blur-xl border border-white/40 rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-blue-500/10 transition-all duration-500">
-                      <div className="p-8">
-                        <div className="flex flex-wrap justify-between items-start gap-4 mb-8">
-                          <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                              <ShoppingBag className="w-7 h-7" />
-                            </div>
-                            <div>
-                              <p className="text-[10px] font-black uppercase text-blue-400 tracking-[0.2em] mb-1">ID PEDIDO: #{order.id.slice(0, 8)}</p>
-                              <p className="text-lg font-black text-gray-900 flex items-center gap-2">
-                                <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-lg text-xs tracking-tighter">RD$ {order.total.toLocaleString()}</span>
-                                <span className="text-gray-400 font-bold">•</span>
-                                <span className="text-sm">Por: {order.shipping_address?.name}</span>
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3 bg-white/60 p-2 rounded-2xl border border-white/80 shadow-sm">
-                            {(['pending', 'paid', 'shipped', 'cancelled'] as const).map((status) => (
-                              <button
-                                key={status}
-                                onClick={() => handleUpdateStatus(order.id, status)}
-                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${order.status === status
-                                  ? status === 'shipped' ? 'bg-green-500 text-white shadow-lg shadow-green-200' :
-                                    status === 'cancelled' ? 'bg-red-500 text-white shadow-lg shadow-red-200' :
-                                      'bg-blue-600 text-white shadow-lg shadow-blue-200'
-                                  : 'text-gray-400 hover:bg-white hover:text-blue-500'
-                                  }`}
-                              >
-                                {status === 'pending' ? 'Pendiente' :
-                                  status === 'paid' ? 'Pagado' :
-                                    status === 'shipped' ? 'Enviado' : 'Cancelado'}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="bg-white/40 rounded-3xl p-6 border border-white/40">
-                          <h4 className="text-[10px] font-black uppercase text-blue-400 tracking-[0.2em] mb-4">Artículos del Pedido</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {order.items?.map((item: any) => (
-                              <div key={item.id} className="flex gap-4 p-3 bg-white/60 rounded-2xl border border-white shadow-sm hover:scale-105 transition-transform">
-                                <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
-                                  <img src={`https://picsum.photos/seed/${item.product_id}/100/100`} className="w-full h-full object-cover" />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <p className="font-black text-xs text-gray-900 truncate">ID: {item.product_id.slice(0, 10)}...</p>
-                                  <p className="text-blue-600 font-black text-xs mt-1">
-                                    {item.quantity} x RD$ {item.price.toLocaleString()}
-                                  </p>
-                                  <div className="h-0.5 w-full bg-blue-100/50 mt-1" />
-                                  <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase">Subtotal: RD$ {(item.quantity * item.price).toLocaleString()}</p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="mt-6 flex flex-wrap gap-4 text-xs font-bold text-gray-500">
-                          <div className="flex items-center gap-2 bg-blue-50/50 px-4 py-2 rounded-xl border border-blue-100/50">
-                            <MapPin className="w-4 h-4 text-blue-500" />
-                            <span>{order.shipping_address?.address}, {order.shipping_address?.city}</span>
-                          </div>
-                          <div className="flex items-center gap-2 bg-blue-50/50 px-4 py-2 rounded-xl border border-blue-100/50 ml-auto">
-                            <Clock className="w-4 h-4 text-blue-500" />
-                            <span>{new Date(order.created_at).toLocaleDateString()} {new Date(order.created_at).toLocaleTimeString()}</span>
-                          </div>
-                        </div>
+              {/* Simplified Order View for robustness */}
+              <div className="grid gap-4">
+                {orders.map(o => (
+                  <div key={o.id} className="bg-white/60 p-6 rounded-3xl border border-white shadow-sm">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-black text-blue-600">ORDEN #{o.id.slice(0, 8)}</p>
+                        <p className="text-sm font-bold text-gray-500">{new Date(o.created_at).toLocaleString()}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-black text-xl">RD$ {o.total.toLocaleString()}</p>
+                        <select
+                          value={o.status}
+                          onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
+                          className="mt-1 bg-blue-50 border-none rounded-lg text-[10px] font-black uppercase tracking-widest text-blue-600"
+                        >
+                          <option value="pending">Pendiente</option>
+                          <option value="paid">Pagado</option>
+                          <option value="shipped">Enviado</option>
+                          <option value="delivered">Entregado</option>
+                        </select>
                       </div>
                     </div>
-                  ))}
-                  {orders.length === 0 && (
-                    <div className="bg-white/40 backdrop-blur-xl rounded-[2.5rem] p-20 text-center border border-white/40 shadow-xl flex flex-col items-center animate-in fade-in zoom-in duration-500">
-                      <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-8 border border-blue-100 shadow-inner">
-                        <ShoppingBag className="w-12 h-12 text-blue-200 animate-pulse" />
-                      </div>
-                      <h3 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">Cero Pedidos</h3>
-                      <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-xs">Aún no se han registrado ventas en el sistema</p>
-                      <button
-                        onClick={fetchOrders}
-                        className="mt-8 bg-blue-600 text-white px-10 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-blue-200 hover:scale-105 active:scale-95 transition-all"
-                      >
-                        Sincronizar Ahora
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        ) : activeTab === 'users' ? (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-700">
-            <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl shadow-blue-500/5 flex justify-between items-center">
-              <div>
-                <h2 className="text-3xl font-black text-gray-900 tracking-tight">Clientes</h2>
-                <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">Base de datos de usuarios registrados</p>
-              </div>
-              <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                <Users className="w-7 h-7" />
+                  </div>
+                ))}
               </div>
             </div>
-
-            <div className="bg-white/40 backdrop-blur-xl border border-white/40 rounded-[2.5rem] shadow-2xl shadow-blue-500/10 overflow-hidden">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-white/40 bg-white/20">
-                    <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em]">Perfil</th>
-                    <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em]">Correo Electrónico</th>
-                    <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-center">Privilegios</th>
-                    <th className="p-6 font-black text-blue-600/40 text-[10px] uppercase tracking-[0.2em] text-right">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/20">
-                  {users.map((u) => (
-                    <tr key={u.id} className="group hover:bg-white/50 transition-all duration-300">
-                      <td className="p-6">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            {u.name.charAt(0)}
-                          </div>
-                          <div>
-                            <span className="font-black text-gray-900 block group-hover:text-blue-600 transition-colors">{u.name}</span>
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Registrado</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-6 text-gray-600 font-bold">{u.email}</td>
-                      <td className="p-6 text-center">
-                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${u.role === 'admin' ? 'bg-indigo-50 text-indigo-600 border-indigo-100 shadow-sm shadow-indigo-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
-                          {u.role}
-                        </span>
-                      </td>
-                      <td className="p-6 text-right">
-                        <button onClick={() => onDeleteUser(u.id)} className="p-3 bg-white text-red-500 hover:bg-red-500 hover:text-white rounded-2xl border border-red-50 shadow-sm transition-all scale-90 group-hover:scale-100">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {users.length === 0 && (
-                <div className="p-20 text-center">
-                  <Package className="w-16 h-16 text-blue-100 mx-auto mb-4" />
-                  <p className="text-gray-400 font-bold text-lg uppercase tracking-widest">Sin usuarios en base de datos</p>
+          ) :
+            activeTab === 'users' ? (
+              <div className="space-y-6">
+                <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40">
+                  <h2 className="text-3xl font-black text-gray-900">Clientes</h2>
                 </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="p-20 text-center bg-white/40 backdrop-blur-xl rounded-[3rem] border border-white/40 shadow-xl flex flex-col items-center">
-            <div className="w-24 h-24 bg-blue-50 rounded-[2rem] flex items-center justify-center mb-6 border border-blue-100 shadow-sm">
-              <LayoutDashboard className="w-12 h-12 text-blue-300 opacity-50" />
-            </div>
-            <h3 className="text-2xl font-black text-gray-900 mb-2">Panel Ejecutivo</h3>
-            <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Estadísticas avanzadas próximamente</p>
-          </div>
-        )}
+                <div className="bg-white/40 rounded-[2.5rem] overflow-hidden border border-white">
+                  <table className="w-full text-left">
+                    <tbody className="divide-y divide-white/20">
+                      {users.map(u => (
+                        <tr key={u.id} className="hover:bg-white/50 transition-all">
+                          <td className="p-6 font-black">{u.name}</td>
+                          <td className="p-6 text-gray-500 font-bold">{u.email}</td>
+                          <td className="p-6 text-right">
+                            <button onClick={() => onDeleteUser(u.id)} className="p-3 text-red-500 hover:bg-red-50 rounded-xl"><Trash2 className="w-4 h-4" /></button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) :
+              activeTab === 'banners' ? renderBanners() :
+                <div className="p-20 text-center bg-white/40 rounded-[3rem] border border-white">
+                  <LayoutDashboard className="w-12 h-12 text-blue-200 mx-auto mb-4" />
+                  <h3 className="text-xl font-black">Panel General</h3>
+                </div>
+        }
       </main>
 
-      {/* Glassmorphism Add/Edit Modal */}
+      {/* Product Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-[100] bg-blue-900/10 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-white/90 backdrop-blur-2xl rounded-[3rem] w-full max-w-xl overflow-hidden shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] border border-white animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div className="p-10 border-b border-gray-100/50 flex justify-between items-center bg-white/50">
-              <div>
-                <h3 className="text-2xl font-black text-gray-900 tracking-tight">{editingId ? 'Editar Producto' : 'Nuevo Producto'}</h3>
-                <p className="text-[10px] uppercase font-black text-blue-400 tracking-[0.2em] mt-1 italic">Administración de Catálogo</p>
-              </div>
-              <button onClick={() => setShowAddModal(false)} className="w-12 h-12 flex items-center justify-center hover:bg-red-50 hover:text-red-500 rounded-full transition-all group">
-                <X className="w-6 h-6 group-hover:rotate-90 transition-transform" />
-              </button>
+        <div className="fixed inset-0 z-[100] bg-blue-900/20 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white rounded-[2.5rem] w-full max-w-lg p-8 shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="text-2xl font-black">{editingId ? 'Editar' : 'Nuevo'} Producto</h3>
+              <button onClick={() => setShowAddModal(false)}><X /></button>
             </div>
-
-            <form onSubmit={handleSubmit} className="p-10 space-y-6 max-h-[70vh] overflow-y-auto no-scrollbar">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Nombre del Dispositivo</label>
-                  <input
-                    className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all placeholder-gray-300"
-                    placeholder="Ej: Samsung Galaxy S24 Ultra"
-                    value={newItem.name}
-                    onChange={e => setNewItem({ ...newItem, name: e.target.value })}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Marca</label>
-                    <input
-                      className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all"
-                      value={newItem.brand}
-                      onChange={e => setNewItem({ ...newItem, brand: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Precio (RD$)</label>
-                    <input
-                      type="number"
-                      className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all"
-                      value={newItem.price}
-                      onChange={e => setNewItem({ ...newItem, price: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Stock Disponible</label>
-                    <input
-                      type="number"
-                      className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all"
-                      value={newItem.stock}
-                      onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Precio Original (Opcional)</label>
-                    <input
-                      type="number"
-                      className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all"
-                      value={newItem.originalPrice}
-                      onChange={e => setNewItem({ ...newItem, originalPrice: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Especificaciones Técnicas</label>
-                  <textarea
-                    className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all h-32 resize-none no-scrollbar placeholder-gray-300 text-sm"
-                    placeholder="Describe el procesador, cámara, batería..."
-                    value={newItem.specs}
-                    onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 ml-1">Identidad Visual</label>
-                  <div className="bg-gray-50/50 border border-gray-100 rounded-3xl p-6">
-                    <div className="flex items-center gap-6">
-                      <div className="relative group/img">
-                        <div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-lg opacity-0 group-hover/img:opacity-100 transition-opacity" />
-                        <div className="relative w-24 h-24 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-white shadow-lg">
-                          {imagePreview ? (
-                            <img src={imagePreview} className="w-full h-full object-cover" />
-                          ) : (
-                            <Package className="w-8 h-8 text-gray-100" />
-                          )}
-                        </div>
-                      </div>
-                      <label className="flex-1 cursor-pointer group/upload">
-                        <div className="h-24 bg-white border-2 border-dashed border-gray-100 rounded-2xl flex flex-col items-center justify-center hover:border-blue-400 hover:bg-blue-50/30 transition-all duration-300">
-                          <Upload className="w-6 h-6 text-gray-300 mb-1 group-hover/upload:text-blue-500 group-hover/upload:-translate-y-1 transition-all" />
-                          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover/upload:text-blue-600">Actualizar Media</span>
-                        </div>
-                        <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
-                      </label>
-                    </div>
-                  </div>
-                </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                className="w-full bg-gray-50 p-4 rounded-xl border-none outline-none focus:ring-2 ring-blue-500/20 font-bold"
+                placeholder="Nombre"
+                value={newItem.name}
+                onChange={e => setNewItem({ ...newItem, name: e.target.value })}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  className="w-full bg-gray-50 p-4 rounded-xl border-none outline-none focus:ring-2 ring-blue-500/20 font-bold"
+                  placeholder="Precio"
+                  type="number"
+                  value={newItem.price}
+                  onChange={e => setNewItem({ ...newItem, price: e.target.value })}
+                />
+                <input
+                  className="w-full bg-gray-50 p-4 rounded-xl border-none outline-none focus:ring-2 ring-blue-500/20 font-bold"
+                  placeholder="Stock"
+                  type="number"
+                  value={newItem.stock}
+                  onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
+                />
               </div>
-
-              <div className="pt-6 relative">
-                <div className="absolute inset-x-0 -top-4 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-200 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest text-xs flex items-center justify-center gap-3 group"
-                >
-                  <CheckCircle2 className="w-5 h-5 group-hover:scale-125 transition-transform" />
-                  {editingId ? 'Confirmar Actualización' : 'Publicar Producto'}
-                </button>
-              </div>
+              <textarea
+                className="w-full bg-gray-50 p-4 rounded-xl border-none outline-none focus:ring-2 ring-blue-500/20 font-bold h-32"
+                placeholder="Especificaciones"
+                value={newItem.specs}
+                onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
+              />
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white p-4 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all"
+              >
+                {editingId ? 'Guardar Cambios' : 'Crear Producto'}
+              </button>
             </form>
           </div>
         </div>
+      )}
+
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 bg-blue-900/10 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
       )}
     </div>
   );
