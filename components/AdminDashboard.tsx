@@ -732,18 +732,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Product Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-[100] bg-gray-900/10 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl animate-in zoom-in-95 duration-300">
-            <div className="flex justify-between items-center mb-8">
+          <div className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto no-scrollbar">
+            <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-gray-900">{editingId ? 'Editar' : 'Nuevo'} Producto</h3>
               <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-1.5 text-center">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block text-left ml-1">Foto del Producto</label>
+                <div className="relative group">
+                  <input type="file" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
+                  <div className="w-full h-40 bg-gray-50 border-2 border-dashed border-gray-100 rounded-xl flex flex-col items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-100 transition-all overflow-hidden">
+                    {imagePreview ? (
+                      <img src={imagePreview} className="w-full h-full object-contain p-2" alt="Preview" />
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        <ImageIcon className="w-8 h-8 text-gray-300 mb-2" />
+                        <span className="text-xs font-semibold text-gray-400">Seleccionar Imagen</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre del Dispositivo</label>
                 <input
                   className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
                   placeholder="Ej: iPhone 15 Pro Max"
                   value={newItem.name}
+                  required
                   onChange={e => setNewItem({ ...newItem, name: e.target.value })}
                 />
               </div>
@@ -755,6 +773,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     placeholder="0.00"
                     type="number"
                     value={newItem.price}
+                    required
                     onChange={e => setNewItem({ ...newItem, price: e.target.value })}
                   />
                 </div>
@@ -772,7 +791,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Especificaciones Técnicas</label>
                 <textarea
-                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm h-32 resize-none transition-all"
+                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm h-28 resize-none transition-all"
                   placeholder="Ej: 256GB, Color Titanio, Salud 100%..."
                   value={newItem.specs}
                   onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
@@ -780,7 +799,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm shadow-sm hover:bg-blue-700 active:scale-[0.98] transition-all mt-4"
+                className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm shadow-sm hover:bg-blue-700 active:scale-[0.98] transition-all mt-2"
               >
                 {editingId ? 'Guardar Cambios' : 'Crear Producto'}
               </button>
