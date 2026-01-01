@@ -781,50 +781,79 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre del Dispositivo</label>
                   <input
-                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all placeholder:text-gray-300"
                     placeholder="Ej: iPhone 15 Pro Max"
                     value={newItem.name}
                     required
                     onChange={e => setNewItem({ ...newItem, name: e.target.value })}
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio (DOP)</label>
-                    <input
-                      className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
-                      placeholder="0.00"
-                      type="number"
-                      value={newItem.price}
-                      required
-                      onChange={e => setNewItem({ ...newItem, price: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Stock Inicial</label>
-                    <input
-                      className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
-                      placeholder="0"
-                      type="number"
-                      value={newItem.stock}
-                      onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
-                    />
-                  </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Marca</label>
+                  <select
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
+                    value={newItem.brand}
+                    onChange={e => setNewItem({ ...newItem, brand: e.target.value })}
+                  >
+                    <option value="Samsung">Samsung</option>
+                    <option value="Apple">Apple</option>
+                    <option value="Xiaomi">Xiaomi</option>
+                    <option value="Oukitel">Oukitel</option>
+                    <option value="Google">Google</option>
+                    <option value="Motorola">Motorola</option>
+                    <option value="Hogar">Hogar</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio (DOP)</label>
+                  <input
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    placeholder="0.00"
+                    type="number"
+                    value={newItem.price}
+                    required
+                    onChange={e => setNewItem({ ...newItem, price: e.target.value })}
+                  />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Especificaciones Técnicas</label>
-                  <textarea
-                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm h-28 resize-none transition-all placeholder:text-gray-300"
-                    placeholder="Ej: 256GB, Color Titanio, Salud 100%..."
-                    value={newItem.specs}
-                    onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio Antes</label>
+                  <input
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    placeholder="Opcional"
+                    type="number"
+                    value={newItem.originalPrice}
+                    onChange={e => setNewItem({ ...newItem, originalPrice: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Stock</label>
+                  <input
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    placeholder="0"
+                    type="number"
+                    value={newItem.stock}
+                    onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
                   />
                 </div>
               </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Especificaciones Técnicas</label>
+                <textarea
+                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm h-28 resize-none transition-all placeholder:text-gray-300"
+                  placeholder="Ej: 256GB, Color Titanio, Salud 100%..."
+                  value={newItem.specs}
+                  onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
+                />
+              </div>
+
               <button
                 type="submit"
                 disabled={isUploadingProduct}
@@ -838,9 +867,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       )}
 
       {/* Mobile Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div className="fixed inset-0 bg-blue-900/10 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
-      )}
-    </div>
+      {
+        isSidebarOpen && (
+          <div className="fixed inset-0 bg-blue-900/10 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+        )
+      }
+    </div >
   );
 };
