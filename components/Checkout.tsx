@@ -160,8 +160,50 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, total, onSuccess,
         address: '',
         city: '',
         phone: '',
-        notes: ''
+        notes: '',
+        id: ''
     });
+
+    const [addresses, setAddresses] = useState<any[]>([]);
+    const [loadingAddresses, setLoadingAddresses] = useState(false);
+
+    // Fetch saved addresses when entering shipping step
+    useEffect(() => {
+        if (step === 'shipping' && user) {
+            setLoadingAddresses(true);
+            productService
+                .getAddresses(user.id)
+                .then((data) => setAddresses(data))
+                .catch((err) => console.error('Error fetching addresses', err))
+                .finally(() => setLoadingAddresses(false));
+        }
+    }, [step, user]);
+
+
+
+    // Save a new address to Supabase
+    const handleSaveAddress = async () => {
+        if (!user) return;
+        try {
+            const newAddr = await productService.addAddress({
+                user_id: user.id,
+                name: shipping.name,
+                address: shipping.address,
+                city: shipping.city,
+                phone: shipping.phone,
+                notes: shipping.notes,
+                is_default: addresses.length === 0 // first address becomes default
+            });
+            // Update addresses list and set selected id
+            setAddresses((prev) => [...prev, newAddr]);
+            setShipping((prev) => ({ ...prev, id: newAddr.id }));
+        } catch (e) {
+            console.error('Error saving address', e);
+        }
+    };
+
+
+
 
     if (step === 'confirm') {
         return (
@@ -202,6 +244,58 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, total, onSuccess,
                             <h2 className="text-2xl font-black text-gray-900 mb-1 tracking-tight">Detalles de Envío</h2>
                             <p className="text-gray-400 text-sm font-medium">¿A dónde enviamos tu compra hoy?</p>
                         </div>
+
+                        {/* Direcciones guardadas */}
+                        {loadingAddresses ? (
+                            <p className="text-sm text-gray-500">Cargando direcciones...</p>
+                        ) : (
+                            addresses.length > 0 && (
+                                <div className="mb-4">
+                                    <label className="block text-xs font-black text-gray-400 uppercase mb-1">Dirección guardada</label>
+                                    <select
+                                        value={shipping.id || ''}
+                                        onChange={e => {
+                                            const addr = addresses.find(a => a.id === e.target.value);
+                                            if (addr) {
+                                                setShipping({
+                                                    name: addr.name,
+                                                    address: addr.address,
+                                                    city: addr.city,
+                                                    phone: addr.phone,
+                                                    notes: addr.notes || '',
+                                                    id: addr.id
+                                                });
+                                            }
+                                        }}
+                                        className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-5 py-4"
+                                    >
+                                        <option value="">Selecciona una dirección</option>
+                                        {addresses.map(a => (
+                                            <option key={a.id} value={a.id}>
+                                                {a.name} - {a.address}, {a.city}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShipping({ name: '', address: '', city: '', phone: '', notes: '', id: '' })}
+                                        className="mt-2 text-sm text-blue-600 hover:underline"
+                                    >
+                                        Usar nueva dirección
+                                    </button>
+                                    {/* Guardar nueva dirección */}
+                                    {shipping.id === '' && shipping.name && shipping.address && shipping.city && shipping.phone && (
+                                        <button
+                                            type="button"
+                                            onClick={handleSaveAddress}
+                                            className="mt-2 ml-4 text-sm text-green-600 hover:underline"
+                                        >
+                                            Guardar dirección
+                                        </button>
+                                    )}
+                                </div>
+                            )
+                        )}
 
                         <FormInput label="Nombre Completo" value={shipping.name} onChange={v => setShipping({ ...shipping, name: v })} required />
 
