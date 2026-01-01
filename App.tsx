@@ -291,7 +291,7 @@ const App: React.FC = () => {
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold animate-float">G</div>
                 <h1 className="text-lg font-black italic tracking-tighter leading-none">
                   <span className="text-app-text">La Ganga</span>
-                  <div className="text-[10px] text-blue-600 -mt-1 font-bold tracking-widest uppercase">Phone RD</div>
+                  <div className="text-[10px] text-blue-600 mt-1 font-bold tracking-[0.2em] uppercase">Phone RD</div>
                 </h1>
               </div>
               <div className="flex items-center gap-3">
