@@ -85,6 +85,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [bannersLoading, setBannersLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
   const [newBanner, setNewBanner] = useState<Omit<Banner, 'id' | 'created_at'>>({
     image_url: '',
     title: '',
@@ -132,17 +135,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    setIsUploading(true);
     try {
       const url = await productService.uploadBannerImage(file);
       setNewBanner(prev => ({ ...prev, image_url: url }));
-    } catch (err) {
+    } catch (err: any) {
       console.error('Upload error:', err);
+      alert(`Error al subir la imagen: ${err.message || 'Error desconocido'}`);
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleAddBanner = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newBanner.image_url) return;
+    if (!newBanner.image_url) {
+      alert('Por favor, selecciona una imagen primero.');
+      return;
+    }
+
+    setIsSaving(true);
     try {
       await productService.addBanner(newBanner);
       setNewBanner({
@@ -154,8 +167,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         order: 0
       });
       fetchBanners();
-    } catch (err) {
+      alert('Banner añadido correctamente.');
+    } catch (err: any) {
       console.error('Error adding banner:', err);
+      alert(`Error al añadir el banner: ${err.message || 'Error desconocido'}`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -497,7 +514,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="relative group">
                 <input type="file" onChange={handleBannerUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
                 <div className="w-full h-32 bg-white/60 border-2 border-dashed border-blue-100 rounded-2xl flex flex-col items-center justify-center group-hover:bg-blue-50 transition-colors">
-                  {newBanner.image_url ? (
+                  {isUploading ? (
+                    <div className="flex flex-col items-center">
+                      <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-2" />
+                      <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Subiendo...</span>
+                    </div>
+                  ) : newBanner.image_url ? (
                     <img src={newBanner.image_url} className="h-full w-full object-cover rounded-2xl" alt="Preview" />
                   ) : (
                     <>
@@ -542,10 +564,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
             <button
               type="submit"
-              disabled={!newBanner.image_url}
-              className="w-full mt-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+              disabled={!newBanner.image_url || isUploading || isSaving}
+              className="w-full mt-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              Añadir al Carrusel
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Guardando...
+                </>
+              ) : 'Añadir al Carrusel'}
             </button>
           </div>
         </form>
