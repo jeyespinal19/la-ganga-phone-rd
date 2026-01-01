@@ -335,109 +335,146 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     );
   };
 
-  const renderBanners = () => (
-    <div className="space-y-6 animate-in fade-in slide-in-from-right-8 duration-700">
-      <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl shadow-blue-500/5 flex justify-between items-center">
-        <div>
-          <h2 className="text-3xl font-black text-gray-900 tracking-tight">Gestión de Banners</h2>
-          <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest">Personaliza el carrusel de inicio</p>
-        </div>
-        <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-          <ImageIcon className="w-7 h-7" />
-        </div>
-      </div>
+  const renderOverview = () => {
+    const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+    const pendingOrders = orders.filter(o => o.status === 'pending').length;
+    const lowStockCount = items.filter(i => i.stock <= 3).length;
+    const today = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
 
-      <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40 shadow-xl">
-        <h3 className="text-xl font-black text-gray-900 mb-6">Subir Nuevo Banner (Canva)</h3>
-        <form onSubmit={handleAddBanner} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Imagen del Banner</label>
-              <div className="relative group">
-                <input type="file" onChange={handleBannerUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
-                <div className="w-full h-32 bg-white/60 border-2 border-dashed border-blue-100 rounded-2xl flex flex-col items-center justify-center group-hover:bg-blue-50 transition-colors">
-                  {newBanner.image_url ? (
-                    <img src={newBanner.image_url} className="h-full w-full object-cover rounded-2xl" alt="Preview" />
-                  ) : (
-                    <>
-                      <Upload className="w-8 h-8 text-blue-300 mb-2" />
-                      <span className="text-xs font-bold text-blue-400">Seleccionar imagen o soltar aquí</span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div>
-              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Etiqueta (Badge)</label>
-              <input
-                type="text"
-                placeholder="Ej: OFERTA, NUEVO, MÁS VENDIDO"
-                value={newBanner.badge}
-                onChange={(e) => setNewBanner(prev => ({ ...prev, badge: e.target.value }))}
-                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
-              />
+    return (
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-2">
+              ¡Hola de nuevo, <span className="text-blue-600">Admin</span>! 👋
+            </h2>
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-[0.2em]">{today}</p>
+          </div>
+          <div className="flex gap-3">
+            <div className="px-4 py-2 bg-green-50 rounded-xl border border-green-100 flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Sistema Online</span>
             </div>
           </div>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Título</label>
-              <input
-                type="text"
-                placeholder="Ej: iPhone 15 Pro"
-                value={newBanner.title}
-                onChange={(e) => setNewBanner(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
-              />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { label: 'Ventas Totales', value: formatCurrency(totalRevenue), icon: <DollarSign className="w-6 h-6" />, color: 'from-blue-600 to-indigo-600', shadow: 'shadow-blue-200' },
+            { label: 'Pedidos Hoy', value: orders.length.toString(), icon: <ShoppingBag className="w-6 h-6" />, color: 'from-purple-600 to-pink-600', shadow: 'shadow-purple-200' },
+            { label: 'Clientes', value: users.length.toString(), icon: <Users className="w-6 h-6" />, color: 'from-orange-500 to-amber-500', shadow: 'shadow-orange-200' },
+            { label: 'Stock Crítico', value: lowStockCount.toString(), icon: <AlertCircle className="w-6 h-6" />, color: 'from-red-500 to-rose-600', shadow: 'shadow-red-200' },
+          ].map((stat, i) => (
+            <div key={i} className="group relative overflow-hidden bg-white rounded-[2.5rem] p-6 border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color} opacity-5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700`} />
+              <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg ${stat.shadow}`}>
+                {stat.icon}
+              </div>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">{stat.label}</p>
+              <h3 className="text-2xl font-black text-gray-900">{stat.value}</h3>
             </div>
-            <div>
-              <label className="block text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1.5 ml-1">Subtítulo</label>
-              <input
-                type="text"
-                placeholder="Ej: El smartphone más potente"
-                value={newBanner.subtitle}
-                onChange={(e) => setNewBanner(prev => ({ ...prev, subtitle: e.target.value }))}
-                className="w-full bg-white/60 border-none rounded-xl px-4 py-3 text-sm font-bold placeholder-blue-200 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
-              />
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-white/40 backdrop-blur-xl rounded-[3rem] p-8 border border-white/40 shadow-2xl relative overflow-hidden">
+            <div className="flex justify-between items-center mb-8 relative z-10">
+              <div>
+                <h3 className="text-xl font-black text-gray-900">Tendencia de Ventas</h3>
+                <p className="text-xs font-bold text-blue-500/60 uppercase tracking-widest">Últimos 7 días</p>
+              </div>
+              <div className="flex gap-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full" />
+                <div className="w-3 h-3 bg-blue-200 rounded-full" />
+              </div>
+            </div>
+            <div className="h-48 w-full flex items-end justify-between gap-2 relative">
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
+                <path
+                  d="M0 160 Q 100 140, 200 180 T 400 120 T 600 150 T 800 100"
+                  fill="none"
+                  stroke="url(#gradient-overview)"
+                  strokeWidth="4"
+                  className="animate-[dash_3s_ease-in-out_infinite]"
+                  strokeDasharray="1000"
+                  strokeDashoffset="1000"
+                />
+                <defs>
+                  <linearGradient id="gradient-overview" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#2563eb" />
+                    <stop offset="100%" stopColor="#7c3aed" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              {[40, 65, 45, 90, 55, 75, 85].map((h, i) => (
+                <div key={i} className="flex-1 group relative">
+                  <div
+                    className="w-full bg-blue-500/10 rounded-t-xl group-hover:bg-blue-500/20 transition-all duration-500"
+                    style={{ height: `${h}%` }}
+                  />
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] font-black text-gray-400">D{i + 1}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white/40 backdrop-blur-xl rounded-[3rem] p-8 border border-white/40 shadow-2xl">
+            <h3 className="text-xl font-black text-gray-900 mb-6">Actividad Reciente</h3>
+            <div className="space-y-6">
+              {orders.slice(0, 5).map((order) => (
+                <div key={order.id} className="flex gap-4 group cursor-default">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <ShoppingBag className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-black text-gray-900 truncate">Venta de {order.total.toLocaleString()} DOP</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{new Date(order.created_at).toLocaleTimeString()}</p>
+                  </div>
+                  <div className={`w-2 h-2 rounded-full self-center ${order.status === 'pending' ? 'bg-amber-400' : 'bg-green-400'}`} />
+                </div>
+              ))}
+              {orders.length === 0 && (
+                <div className="py-10 text-center text-gray-400 font-bold text-xs uppercase tracking-widest">Sin ventas recientes</div>
+              )}
             </div>
             <button
-              type="submit"
-              disabled={!newBanner.image_url}
-              className="w-full mt-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+              onClick={() => setActiveTab('orders')}
+              className="w-full mt-8 py-3 bg-white/60 border border-white hover:bg-white rounded-2xl text-[10px] font-black uppercase tracking-widest text-blue-600 transition-all"
             >
-              Añadir al Carrusel
+              Ver todos los pedidos
             </button>
           </div>
-        </form>
-      </div>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {banners.map((banner) => (
-          <div key={banner.id} className="group relative bg-white/40 backdrop-blur-xl rounded-[2.5rem] overflow-hidden border border-white/40 shadow-xl hover:shadow-blue-500/10 transition-all duration-500">
-            <div className="aspect-[21/9] w-full relative">
-              <img src={banner.image_url} className="w-full h-full object-cover" alt={banner.title} />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-6">
-                <span className="inline-block px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg mb-2 w-fit">{banner.badge}</span>
-                <p className="text-white font-black text-xl leading-none mb-1">{banner.title}</p>
-                <p className="text-white/80 font-bold text-xs">{banner.subtitle}</p>
-              </div>
-              <button
-                onClick={() => handleDeleteBanner(banner.id)}
-                className="absolute top-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-white hover:bg-red-500 hover:text-white transition-all shadow-xl opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-[3rem] p-8 text-white shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[100px] -mr-32 -mt-32 rounded-full group-hover:bg-white/20 transition-all duration-700" />
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div>
+              <h3 className="text-2xl font-black mb-2">Acciones Rápidas</h3>
+              <p className="text-blue-100 font-bold opacity-80">Gestiona tu tienda de manera eficiente</p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full md:w-auto">
+              {[
+                { label: 'Producto', icon: <PlusCircle className="w-5 h-5" />, action: openAddModal },
+                { label: 'Banners', icon: <ImageIcon className="w-5 h-5" />, action: () => setActiveTab('banners') },
+                { label: 'Ordenes', icon: <ShoppingBag className="w-5 h-5" />, action: () => setActiveTab('orders') },
+                { label: 'Clientes', icon: <Users className="w-5 h-5" />, action: () => setActiveTab('users') },
+              ].map((act, i) => (
+                <button
+                  key={i}
+                  onClick={act.action}
+                  className="flex flex-col items-center gap-2 p-4 bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-md border border-white/10 transition-all hover:scale-105 active:scale-95"
+                >
+                  {act.icon}
+                  <span className="text-[9px] font-black uppercase tracking-widest">{act.label}</span>
+                </button>
+              ))}
             </div>
           </div>
-        ))}
-        {banners.length === 0 && !bannersLoading && (
-          <div className="col-span-full py-20 bg-white/40 rounded-[2.5rem] border border-white/40 text-center flex flex-col items-center">
-            <ImageIcon className="w-16 h-16 text-blue-200 mb-4 animate-pulse" />
-            <p className="text-gray-400 font-black uppercase text-xs tracking-widest">No hay banners personalizados</p>
-          </div>
-        )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 min-h-screen bg-[#f8fbff] p-4 lg:p-8 pb-24 lg:pb-8 animate-in fade-in duration-500">
@@ -471,67 +508,68 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-blue-50 rounded-xl text-blue-600"><LayoutDashboard className="w-6 h-6" /></button>
         </div>
 
-        {activeTab === 'products' ? renderProducts() :
-          activeTab === 'orders' ? (
-            <div className="space-y-6">
-              <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40">
-                <h2 className="text-3xl font-black text-gray-900">Ventas</h2>
-              </div>
-              {/* Simplified Order View for robustness */}
-              <div className="grid gap-4">
-                {orders.map(o => (
-                  <div key={o.id} className="bg-white/60 p-6 rounded-3xl border border-white shadow-sm">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-black text-blue-600">ORDEN #{o.id.slice(0, 8)}</p>
-                        <p className="text-sm font-bold text-gray-500">{new Date(o.created_at).toLocaleString()}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-black text-xl">RD$ {o.total.toLocaleString()}</p>
-                        <select
-                          value={o.status}
-                          onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
-                          className="mt-1 bg-blue-50 border-none rounded-lg text-[10px] font-black uppercase tracking-widest text-blue-600"
-                        >
-                          <option value="pending">Pendiente</option>
-                          <option value="paid">Pagado</option>
-                          <option value="shipped">Enviado</option>
-                          <option value="delivered">Entregado</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) :
-            activeTab === 'users' ? (
+        {activeTab === 'overview' ? renderOverview() :
+          activeTab === 'products' ? renderProducts() :
+            activeTab === 'orders' ? (
               <div className="space-y-6">
                 <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40">
-                  <h2 className="text-3xl font-black text-gray-900">Clientes</h2>
+                  <h2 className="text-3xl font-black text-gray-900">Ventas</h2>
                 </div>
-                <div className="bg-white/40 rounded-[2.5rem] overflow-hidden border border-white">
-                  <table className="w-full text-left">
-                    <tbody className="divide-y divide-white/20">
-                      {users.map(u => (
-                        <tr key={u.id} className="hover:bg-white/50 transition-all">
-                          <td className="p-6 font-black">{u.name}</td>
-                          <td className="p-6 text-gray-500 font-bold">{u.email}</td>
-                          <td className="p-6 text-right">
-                            <button onClick={() => onDeleteUser(u.id)} className="p-3 text-red-500 hover:bg-red-50 rounded-xl"><Trash2 className="w-4 h-4" /></button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                {/* Simplified Order View for robustness */}
+                <div className="grid gap-4">
+                  {orders.map(o => (
+                    <div key={o.id} className="bg-white/60 p-6 rounded-3xl border border-white shadow-sm">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="font-black text-blue-600">ORDEN #{o.id.slice(0, 8)}</p>
+                          <p className="text-sm font-bold text-gray-500">{new Date(o.created_at).toLocaleString()}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-black text-xl">RD$ {o.total.toLocaleString()}</p>
+                          <select
+                            value={o.status}
+                            onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
+                            className="mt-1 bg-blue-50 border-none rounded-lg text-[10px] font-black uppercase tracking-widest text-blue-600"
+                          >
+                            <option value="pending">Pendiente</option>
+                            <option value="paid">Pagado</option>
+                            <option value="shipped">Enviado</option>
+                            <option value="delivered">Entregado</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ) :
-              activeTab === 'banners' ? renderBanners() :
-                <div className="p-20 text-center bg-white/40 rounded-[3rem] border border-white">
-                  <LayoutDashboard className="w-12 h-12 text-blue-200 mx-auto mb-4" />
-                  <h3 className="text-xl font-black">Panel General</h3>
+              activeTab === 'users' ? (
+                <div className="space-y-6">
+                  <div className="bg-white/40 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/40">
+                    <h2 className="text-3xl font-black text-gray-900">Clientes</h2>
+                  </div>
+                  <div className="bg-white/40 rounded-[2.5rem] overflow-hidden border border-white">
+                    <table className="w-full text-left">
+                      <tbody className="divide-y divide-white/20">
+                        {users.map(u => (
+                          <tr key={u.id} className="hover:bg-white/50 transition-all">
+                            <td className="p-6 font-black">{u.name}</td>
+                            <td className="p-6 text-gray-500 font-bold">{u.email}</td>
+                            <td className="p-6 text-right">
+                              <button onClick={() => onDeleteUser(u.id)} className="p-3 text-red-500 hover:bg-red-50 rounded-xl"><Trash2 className="w-4 h-4" /></button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+              ) :
+                activeTab === 'banners' ? renderBanners() :
+                  <div className="p-20 text-center bg-white/40 rounded-[3rem] border border-white">
+                    <LayoutDashboard className="w-12 h-12 text-blue-200 mx-auto mb-4" />
+                    <h3 className="text-xl font-black">Panel General</h3>
+                  </div>
         }
       </main>
 
