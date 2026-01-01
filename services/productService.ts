@@ -60,18 +60,23 @@ class ProductService {
   // --- CRUD Actions (Admin) ---
 
   async addProduct(item: Omit<Product, 'id'>) {
-    const { error } = await supabase.from('products').insert({
-      name: item.name,
-      brand: item.brand,
-      specs: item.specs,
-      current_bid: item.price, // Saving Price to current_bid column
-      reserve_price: item.originalPrice,
-      stock: item.stock,
-      image_details: item.imageDetails,
-      status: 'active'
-    });
+    try {
+      const { error } = await supabase.from('products').insert({
+        name: item.name,
+        brand: item.brand,
+        specs: item.specs,
+        current_bid: item.price, // Saving Price to current_bid column
+        reserve_price: item.originalPrice,
+        stock: item.stock,
+        image_details: item.imageDetails,
+        status: 'active'
+      });
 
-    if (error) console.error('Add item error:', error);
+      if (error) throw error;
+    } catch (err) {
+      console.error('Add item error:', err);
+      throw err;
+    }
   }
 
   async updateProduct(id: string, updates: Partial<Omit<Product, 'id'>>) {
