@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../services/product_service.dart';
-import '../services/bid_service.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String productId;
@@ -14,33 +16,21 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final ProductService _productService = ProductService();
-  final BidService _bidService = BidService();
-  final TextEditingController _bidController = TextEditingController();
-
-  Future<void> _placeBid(double currentBid) async {
-    final amount = double.tryParse(_bidController.text);
-    if (amount == null || amount <= currentBid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor ingresa un monto válido mayor a la puja actual')),
-      );
-      return;
-    }
-
-    try {
-      await _bidService.placeBid(widget.productId, amount);
-      _bidController.clear();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('¡Puja realizada con éxito!')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al realizar la puja: $e')),
-        );
-      }
-    }
+  // Placeholder for any e-commerce logging or tracking
+  void _addToCart(Product product) {
+    context.read<CartProvider>().addItem(product);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${product.name} añadido al carrito'),
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.blueAccent,
+        action: SnackBarAction(
+          label: 'VER CARRITO',
+          textColor: Colors.white,
+          onPressed: () => context.push('/cart'),
+        ),
+      ),
+    );
   }
 
   @override
@@ -52,12 +42,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('La Ganga - Detalle'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      extendBodyBehindAppBar: true,
+      backgroundColor: const Color(0xFF0F2027),
       body: FutureBuilder<Product>(
         future: _productService.fetchById(widget.productId),
         builder: (context, snapshot) {
@@ -72,145 +57,196 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             return const Center(child: Text('Producto no encontrado', style: TextStyle(color: Colors.white)));
           }
 
-          return Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
-              ),
-            ),
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Product Image Placeholder (Replace with real image later)
-                    Container(
-                      height: 250,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white10,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white24),
-                      ),
-                      child: const Icon(Icons.phone_iphone, size: 100, color: Colors.white54),
-                    ),
-                    const SizedBox(height: 25),
-                    Text(
-                      product.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      product.brand,
-                      style: TextStyle(color: Colors.blueAccent.shade100, fontSize: 18),
-                    ),
-                    const SizedBox(height: 15),
-                    
-                    // Stats Row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _infoCard('Puja Actual', '\$${product.currentBid.toStringAsFixed(2)}', Icons.gavel),
-                        _infoCard('Vence en', _formatDuration(product.endsAt), Icons.timer),
-                      ],
-                    ),
-                    
-                    const SizedBox(height: 25),
-                    const Text(
-                      'Información',
-                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      product.specs ?? 'Sin especificaciones disponibles.',
-                      style: const TextStyle(color: Colors.white70, fontSize: 16),
-                    ),
-                    
-                    const SizedBox(height: 30),
-                    const Text(
-                      'Últimas Pujas',
-                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    
-                    // Real-time Bids Stream
-                    SizedBox(
-                      height: 200,
-                      child: StreamBuilder<List<Bid>>(
-                        stream: _bidService.getBidStream(widget.productId),
-                        builder: (context, bidSnapshot) {
-                          if (!bidSnapshot.hasData) {
-                            return const Center(child: CircularProgressIndicator());
-                          }
-                          final bids = bidSnapshot.data!;
-                          if (bids.isEmpty) {
-                            return const Center(child: Text('Aún no hay pujas', style: TextStyle(color: Colors.white54)));
-                          }
-                          return ListView.builder(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            itemCount: bids.length,
-                            itemBuilder: (context, index) {
-                              final bid = bids[index];
-                              return ListTile(
-                                leading: const CircleAvatar(child: Icon(Icons.person)),
-                                title: Text(bid.userName ?? 'Usuario', style: const TextStyle(color: Colors.white)),
-                                subtitle: Text(bid.createdAt.toLocal().toString(), style: const TextStyle(color: Colors.white54)),
-                                trailing: Text('\$${bid.amount.toStringAsFixed(2)}', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 20),
-                    // Bidding UI
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white12),
-                      ),
-                      child: Column(
+          return CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 350,
+                pinned: true,
+                backgroundColor: const Color(0xFF0F2027),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                actions: [
+                  Consumer<CartProvider>(
+                    builder: (context, cart, child) {
+                      return Stack(
                         children: [
-                          TextField(
-                            controller: _bidController,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              hintText: 'Tu oferta',
-                              hintStyle: const TextStyle(color: Colors.white54),
-                              filled: true,
-                              fillColor: Colors.white10,
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                              prefixIcon: const Icon(Icons.monetization_on, color: Colors.greenAccent),
+                          IconButton(
+                            icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                            onPressed: () => context.push('/cart'),
+                          ),
+                          if (cart.itemCount > 0)
+                            Positioned(
+                              right: 8,
+                              top: 8,
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: Colors.blueAccent,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 16,
+                                  minHeight: 16,
+                                ),
+                                child: Text(
+                                  '${cart.itemCount}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Hero(
+                    tag: 'product-${product.id}',
+                    child: product.imageUrl.startsWith('http')
+                        ? Image.network(product.imageUrl, fit: BoxFit.cover)
+                        : const Center(child: Icon(Icons.phone_iphone, size: 100, color: Colors.white24)),
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.brand.toUpperCase(),
+                                  style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold, letterSpacing: 1.2, fontSize: 13),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  product.name,
+                                  style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 15),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () => _placeBid(product.currentBid),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blueAccent,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: product.stock > 0 ? Colors.greenAccent.withOpacity(0.1) : Colors.redAccent.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              product.stock > 0 ? 'EN STOCK' : 'AGOTADO',
+                              style: TextStyle(
+                                color: product.stock > 0 ? Colors.greenAccent : Colors.redAccent,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
                               ),
-                              child: const Text('Realizar Oferta', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 24),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            '\$${product.price.toStringAsFixed(0)}',
+                            style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.black),
+                          ),
+                          const SizedBox(width: 12),
+                          if (product.originalPrice != null)
+                            Text(
+                              '\$${product.originalPrice!.toStringAsFixed(0)}',
+                              style: const TextStyle(color: Colors.white30, fontSize: 18, decoration: TextDecoration.lineThrough),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
+                      const Text(
+                        'Especificaciones',
+                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        product.specs ?? 'No hay especificaciones disponibles para este producto.',
+                        style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16, height: 1.6),
+                      ),
+                      const SizedBox(height: 32),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.white10),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.local_shipping_outlined, color: Colors.blueAccent),
+                            SizedBox(width: 15),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Envío Gratis', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                  Text('Entrega en 24-48 horas en todo RD', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 120),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Color(0xFF1a1a1a),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 20)],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 60,
+              child: ElevatedButton(
+                onPressed: product.stock > 0 ? () => _addToCart(product) : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                  elevation: 5,
+                  disabledBackgroundColor: Colors.white10,
+                ),
+                child: Text(
+                  product.stock > 0 ? 'AÑADIR AL CARRITO' : 'AGOTADO',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
                 ),
               ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }

@@ -18,4 +18,27 @@ class ProductService {
     final data = response as Map<String, dynamic>;
     return Product.fromJson(data);
   }
+
+  /// Create a new product.
+  Future<void> create(Map<String, dynamic> productData) async {
+    await _client.from('products').insert(productData);
+  }
+
+  /// Update an existing product.
+  Future<void> update(String id, Map<String, dynamic> productData) async {
+    await _client.from('products').update(productData).eq('id', id);
+  }
+
+  /// Delete a product.
+  Future<void> delete(String id) async {
+    await _client.from('products').delete().eq('id', id);
+  }
+
+  /// Upload an image to Supabase Storage.
+  Future<String> uploadImage(String path, List<int> bytes) async {
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    await _client.storage.from('products').uploadBinary(fileName, bytes);
+    final String publicUrl = _client.storage.from('products').getPublicUrl(fileName);
+    return publicUrl;
+  }
 }

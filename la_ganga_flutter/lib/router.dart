@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'auth/auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/admin_dashboard_screen.dart';
+import 'screens/cart_screen.dart';
+import 'screens/profile_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/',
@@ -19,6 +21,14 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/admin',
       builder: (context, state) => const AdminDashboardScreen(),
+    ),
+    GoRoute(
+      path: '/cart',
+      builder: (context, state) => const CartScreen(),
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfileScreen(),
     ),
     GoRoute(
       path: '/product/:id',

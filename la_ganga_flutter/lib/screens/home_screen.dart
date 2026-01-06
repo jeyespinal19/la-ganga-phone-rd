@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/product.dart';
 import '../services/product_service.dart';
+import '../services/banner_service.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -71,8 +74,47 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               actions: [
-                IconButton(icon: const Icon(Icons.person_outline), onPressed: () {}),
-                IconButton(icon: const Icon(Icons.shopping_cart_outlined), onPressed: () {}),
+                IconButton(
+                  icon: const Icon(Icons.person_outline),
+                  onPressed: () => context.push('/profile'),
+                ),
+                Consumer<CartProvider>(
+                  builder: (context, cart, child) {
+                    return Stack(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.shopping_cart_outlined),
+                          onPressed: () => context.push('/cart'),
+                        ),
+                        if (cart.itemCount > 0)
+                          Positioned(
+                            right: 8,
+                            top: 8,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Colors.blueAccent,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                '${cart.itemCount}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
               ],
             ),
             SliverToBoxAdapter(
@@ -103,6 +145,73 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: BannerService().fetchBanners(),
+                builder: (context, snapshot) {
+                  final banners = snapshot.data ?? [];
+                  if (banners.isEmpty) return const SizedBox.shrink();
+                  return Container(
+                    height: 180,
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    child: PageView.builder(
+                      itemCount: banners.length,
+                      itemBuilder: (context, index) {
+                        final b = banners[index];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            image: DecorationImage(
+                              image: NetworkImage(b['image_url']),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [Colors.black.withOpacity(0.8), Colors.transparent],
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (b['badge'] != null)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.yellow,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      b['badge'],
+                                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 10),
+                                    ),
+                                  ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  b['title'] ?? '',
+                                  style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  b['subtitle'] ?? '',
+                                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ),
             SliverToBoxAdapter(
@@ -237,13 +346,25 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                         ],
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Colors.blueAccent.withOpacity(0.1),
-                          shape: BoxShape.circle,
+                      InkWell(
+                        onTap: () {
+                          context.read<CartProvider>().addItem(product);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('${product.name} añadido al carrito'),
+                              duration: const Duration(seconds: 1),
+                              backgroundColor: Colors.blueAccent,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.add_shopping_cart, size: 16, color: Colors.blueAccent),
                         ),
-                        child: const Icon(Icons.shopping_cart_outlined, size: 16, color: Colors.blueAccent),
                       ),
                     ],
                   ),
