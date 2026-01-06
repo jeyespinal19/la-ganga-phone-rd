@@ -65,9 +65,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white)));
           }
-          final product = snapshot.data!;
+          final product = snapshot.data;
+          if (product == null) {
+            return const Center(child: Text('Producto no encontrado', style: TextStyle(color: Colors.white)));
+          }
 
           return Container(
             decoration: const BoxDecoration(
@@ -230,9 +233,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
   }
 
-  String _formatDuration(DateTime endsAt) {
+  String _formatDuration(DateTime? endsAt) {
+    if (endsAt == null) return 'Sin límite';
     final diff = endsAt.difference(DateTime.now());
     if (diff.isNegative) return 'Cerrado';
-    return '${diff.inDays}d ${diff.inHours % 24}h';
+    if (diff.inDays > 0) return '${diff.inDays}d ${diff.inHours % 24}h';
+    return '${diff.inHours}h ${diff.inMinutes % 60}m';
   }
 }

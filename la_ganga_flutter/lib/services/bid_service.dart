@@ -20,11 +20,13 @@ class Bid {
 
   factory Bid.fromJson(Map<String, dynamic> json) {
     return Bid(
-      id: json['id'] as String,
-      productId: json['product_id'] as String,
-      userId: json['user_id'] as String,
-      amount: (json['amount'] as num).toDouble(),
-      createdAt: DateTime.parse(json['created_at'] as String),
+      id: (json['id'] as String?) ?? '',
+      productId: (json['product_id'] as String?) ?? '',
+      userId: (json['user_id'] as String?) ?? '',
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      createdAt: json['created_at'] != null 
+          ? (DateTime.tryParse(json['created_at'] as String) ?? DateTime.now())
+          : DateTime.now(),
       userName: json['user_name'] as String?,
     );
   }
