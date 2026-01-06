@@ -5,6 +5,7 @@ import '../services/product_service.dart';
 import '../services/banner_service.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
+import '../widgets/shimmer_skeletons.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -151,6 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: FutureBuilder<List<Map<String, dynamic>>>(
                 future: BannerService().fetchBanners(),
                 builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) return const BannerSkeleton();
                   final banners = snapshot.data ?? [];
                   if (banners.isEmpty) return const SizedBox.shrink();
                   return Container(
@@ -229,42 +231,53 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SliverPadding(
               padding: const EdgeInsets.all(20),
-              sliver: FutureBuilder<List<Product>>(
-                future: _productService.fetchAll(),
+              sliver: StreamBuilder<List<Map<String, dynamic>>>(
+                stream: SupabaseConfig.client.from('products').stream(primaryKey: ['id']).order('created_at'),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
+                    return SliverGrid(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.7,
+                        crossAxisSpacing: 15,
+                        mainAxisSpacing: 15,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => const ProductSkeleton(),
+                        childCount: 4,
+                      ),
+                    );
                   }
                   if (snapshot.hasError) {
-                    return SliverFillRemaining(child: Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white))));
+                    return SliverToBoxAdapter(child: Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white))));
                   }
                   
-                  var products = snapshot.data ?? [];
+                  final allProducts = (snapshot.data ?? []).map((e) => Product.fromJson(e)).toList();
                   
-                  // Simple Filtering
+                  var products = allProducts;
                   if (_selectedCategory != 'Todos') {
-                    products = products.where((p) => p.brand.toLowerCase() == _selectedCategory.toLowerCase()).toList();
+                    products = allProducts.where((p) => p.brand.toLowerCase() == _selectedCategory.toLowerCase()).toList();
                   }
+
                   if (_searchQuery.isNotEmpty) {
                     products = products.where((p) => p.name.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
                   }
 
                   if (products.isEmpty) {
-                    return const SliverFillRemaining(child: Center(child: Text('No hay productos disponibles', style: TextStyle(color: Colors.white))));
+                    return const SliverToBoxAdapter(
+                      child: Center(child: Text('No hay productos disponibles', style: TextStyle(color: Colors.white70))),
+                    );
                   }
 
                   return SliverGrid(
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
+                      childAspectRatio: 0.7,
                       crossAxisSpacing: 15,
                       mainAxisSpacing: 15,
-                      childAspectRatio: 0.7,
                     ),
                     delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final p = products[index];
-                        return _buildProductCard(context, p);
-                      },
+                      (context, index) => _buildProductCard(context, products[index]),
                       childCount: products.length,
                     ),
                   );

@@ -62,7 +62,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               },
             ),
-            const SizedBox(height: 48),
+            const SizedBox(height: 32),
+            const Text(
+              'Mis Direcciones',
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _profileService.getAddresses(userId!),
+              builder: (context, snapshot) {
+                final addresses = snapshot.data ?? [];
+                return Column(
+                  children: [
+                    ...addresses.map((addr) => Container(
+                      margin: const EdgeInsets.bottom(10),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: ListTile(
+                        leading: const Icon(Icons.location_on_outlined, color: Colors.blueAccent),
+                        title: Text(addr['name'] ?? '', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        subtitle: Text(addr['address'] ?? '', style: const TextStyle(color: Colors.white54)),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
+                          onPressed: () async {
+                            await _profileService.deleteAddress(addr['id']);
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    )),
+                    TextButton.icon(
+                      onPressed: () => _showAddressForm(),
+                      icon: const Icon(Icons.add, size: 18),
+                      label: const Text('Añadir Dirección'),
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 32),
             const Text(
               'Mis Pedidos',
               style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
@@ -170,5 +211,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 'delivered': return Colors.blue;
       default: return Colors.white38;
     }
+  }
+
+  void _showAddressForm() {
+    final nameController = TextEditingController();
+    final addressController = TextEditingController();
+    final cityController = TextEditingController();
+    final phoneController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1a1a1a),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom, left: 24, right: 24, top: 24),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Nueva Dirección', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+              _buildTextField(nameController, 'Nombre (Ej: Casa, Trabajo)'),
+              _buildTextField(addressController, 'Dirección completa'),
+              _buildTextField(cityController, 'Ciudad'),
+              _buildTextField(phoneController, 'Teléfono'),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await _profileService.addAddress({
+                      'user_id': userId,
+                      'name': nameController.text,
+                      'address': addressController.text,
+                      'city': cityController.text,
+                      'phone': phoneController.text,
+                    });
+                    if (mounted) Navigator.pop(ctx);
+                    setState(() {});
+                  },
+                  child: const Text('Guardar Dirección'),
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        controller: controller,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.white38),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.05),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+        ),
+      ),
+    );
   }
 }

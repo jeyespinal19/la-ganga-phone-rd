@@ -133,6 +133,42 @@ class CartScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
+                  const SizedBox(height: 16),
+                  const Text('Dirección de Envío', style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future: ProfileService().getAddresses(SupabaseConfig.client.auth.currentUser?.id ?? ''),
+                    builder: (context, snapshot) {
+                      final addresses = snapshot.data ?? [];
+                      if (addresses.isEmpty) {
+                        return TextButton.icon(
+                          onPressed: () => context.push('/profile'),
+                          icon: const Icon(Icons.add_location_alt_outlined, size: 18),
+                          label: const Text('Configurar dirección en perfil'),
+                        );
+                      }
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          dropdownColor: const Color(0xFF1a1a1a),
+                          value: addresses.first['id'], // Simple: pick first for now
+                          underline: const SizedBox(),
+                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                          items: addresses.map((a) => DropdownMenuItem(
+                            value: a['id'] as String,
+                            child: Text(a['address'], overflow: TextOverflow.ellipsis),
+                          )).toList(),
+                          onChanged: (val) {},
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

@@ -41,4 +41,38 @@ class ProfileService {
 
     await _client.from('order_items').insert(orderItems);
   }
+
+  /// Admin: Get all orders from all users
+  Future<List<Map<String, dynamic>>> getAllOrders() async {
+    final response = await _client
+        .from('orders')
+        .select('*, order_items(*, products(*))')
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response as List);
+  }
+
+  /// Admin: Update order status
+  Future<void> updateOrderStatus(String orderId, String status) async {
+    await _client.from('orders').update({'status': status}).eq('id', orderId);
+  }
+
+  /// User: Get saved addresses
+  Future<List<Map<String, dynamic>>> getAddresses(String userId) async {
+    final response = await _client
+        .from('user_addresses')
+        .select()
+        .eq('user_id', userId)
+        .order('is_default', ascending: false);
+    return List<Map<String, dynamic>>.from(response as List);
+  }
+
+  /// User: Add new address
+  Future<void> addAddress(Map<String, dynamic> data) async {
+    await _client.from('user_addresses').insert(data);
+  }
+
+  /// User: Delete address
+  Future<void> deleteAddress(String id) async {
+    await _client.from('user_addresses').delete().eq('id', id);
+  }
 }
