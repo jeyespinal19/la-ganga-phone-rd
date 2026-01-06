@@ -29,10 +29,10 @@ class Product {
       name: (json['name'] as String?) ?? 'Producto sin nombre',
       brand: (json['brand'] as String?) ?? 'Genérico',
       specs: json['specs'] as String?,
-      currentBid: (json['current_bid'] as num?)?.toDouble() ?? 0.0,
-      reservePrice: json['reserve_price'] != null ? (json['reserve_price'] as num).toDouble() : null,
+      currentBid: double.tryParse(json['current_bid']?.toString() ?? '0') ?? 0.0,
+      reservePrice: double.tryParse(json['reserve_price']?.toString() ?? ''),
       imageDetails: json['image_details'] as String?,
-      stock: (json['stock'] as num?)?.toInt() ?? 0,
+      stock: int.tryParse(json['stock']?.toString() ?? '0') ?? 0,
       endsAt: json['ends_at'] != null ? DateTime.tryParse(json['ends_at'] as String) : null,
       status: (json['status'] as String?) ?? 'active',
     );

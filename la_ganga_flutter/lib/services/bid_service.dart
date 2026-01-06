@@ -23,7 +23,7 @@ class Bid {
       id: (json['id'] as String?) ?? '',
       productId: (json['product_id'] as String?) ?? '',
       userId: (json['user_id'] as String?) ?? '',
-      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      amount: double.tryParse(json['amount']?.toString() ?? '0') ?? 0.0,
       createdAt: json['created_at'] != null 
           ? (DateTime.tryParse(json['created_at'] as String) ?? DateTime.now())
           : DateTime.now(),
