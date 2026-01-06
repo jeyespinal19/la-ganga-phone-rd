@@ -8,11 +8,11 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SupabaseAuth(
-      supabase: SupabaseConfig.client,
-      // After successful sign‑in, go to the home route
-      onSignedIn: (session) {
-        // Replace the current location with /home
+    return SupaEmailAuth(
+      onSignInComplete: (response) {
+        router.go('/home');
+      },
+      onSignUpComplete: (response) {
         router.go('/home');
       },
     );
