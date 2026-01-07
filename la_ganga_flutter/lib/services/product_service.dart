@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/product.dart';
 import '../supabase/config.dart';
+import 'dart:typed_data';
 
 class ProductService {
   final SupabaseClient _client = SupabaseConfig.client;
@@ -35,7 +36,7 @@ class ProductService {
   }
 
   /// Upload an image to Supabase Storage.
-  Future<String> uploadImage(String path, List<int> bytes) async {
+  Future<String> uploadImage(String path, Uint8List bytes) async {
     final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
     await _client.storage.from('products').uploadBinary(fileName, bytes);
     final String publicUrl = _client.storage.from('products').getPublicUrl(fileName);

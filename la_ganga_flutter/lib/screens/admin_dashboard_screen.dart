@@ -101,7 +101,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
   Widget _buildProductItem(Product p) {
     return Container(
-      margin: const EdgeInsets.bottom(12),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(15),
@@ -130,7 +130,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
   Widget _buildOrderItem(Map<String, dynamic> order) {
     return Container(
-      margin: const EdgeInsets.bottom(12),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
