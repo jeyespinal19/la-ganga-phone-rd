@@ -16,7 +16,7 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF0F2027),
       appBar: AppBar(
-        title: const Text('Mi Carrito', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text('Mi Carrito', style: TextStyle(color: Color(0xFF4ADE80), fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -39,7 +39,7 @@ class CartScreen extends StatelessWidget {
                         ElevatedButton(
                           onPressed: () => context.go('/home'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueAccent,
+                            backgroundColor: const Color(0xFF22C55E),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                           ),
@@ -88,7 +88,7 @@ class CartScreen extends StatelessWidget {
                                   const SizedBox(height: 4),
                                   Text(
                                     '\$${item.product.price.toStringAsFixed(2)}',
-                                    style: const TextStyle(color: Colors.blueAccent, fontSize: 14, fontWeight: FontWeight.bold),
+                                    style: const TextStyle(color: Color(0xFF22C55E), fontSize: 14, fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 8),
                                   Row(
@@ -213,7 +213,7 @@ class CartScreen extends StatelessWidget {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: const Color(0xFF22C55E),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         elevation: 0,

@@ -31,13 +31,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     return Scaffold(
       backgroundColor: const Color(0xFF0F2027),
       appBar: AppBar(
-        title: const Text('Panel de Control', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text('Panel de Control', style: TextStyle(color: Color(0xFF4ADE80), fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.blueAccent,
+          indicatorColor: const Color(0xFF22C55E),
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white38,
           tabs: const [
@@ -48,7 +48,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
       ),
       floatingActionButton: _tabController.index == 0 ? FloatingActionButton(
         onPressed: () => _showProductForm(),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: const Color(0xFF22C55E),
         child: const Icon(Icons.add, color: Colors.white),
       ) : null,
       body: TabBarView(
@@ -116,7 +116,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
           ),
         ),
         title: Text(p.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text('\$${p.price}', style: const TextStyle(color: Colors.blueAccent)),
+        subtitle: Text('\$${p.price}', style: const TextStyle(color: Color(0xFF22C55E))),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -144,7 +144,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Pedido #${order['id'].toString().substring(0, 8)}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              Text('\$${order['total']}', style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 18)),
+              Text('\$${order['total']}', style: const TextStyle(color: Color(0xFF22C55E), fontWeight: FontWeight.bold, fontSize: 18)),
             ],
           ),
           const SizedBox(height: 8),
@@ -252,6 +252,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     Navigator.pop(ctx);
                     setState(() {});
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF22C55E),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
                   child: const Text('Guardar'),
                 ),
                 const SizedBox(height: 20),

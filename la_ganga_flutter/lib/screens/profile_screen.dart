@@ -21,7 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF0F2027),
       appBar: AppBar(
-        title: const Text('Mi Perfil', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text('Mi Perfil', style: TextStyle(color: Color(0xFF4ADE80), fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -42,11 +42,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
-                          color: Colors.blueAccent.withOpacity(0.1),
+                          color: const Color(0xFF22C55E).withOpacity(0.1),
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.blueAccent, width: 2),
+                          border: Border.all(color: const Color(0xFF22C55E), width: 2),
                         ),
-                        child: const Icon(Icons.person, color: Colors.blueAccent, size: 50),
+                        child: const Icon(Icons.person, color: Color(0xFF22C55E), size: 50),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -82,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: ListTile(
-                        leading: const Icon(Icons.location_on_outlined, color: Colors.blueAccent),
+                        leading: const Icon(Icons.location_on_outlined, color: Color(0xFF4ADE80)),
                         title: Text(addr['name'] ?? '', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                         subtitle: Text(addr['address'] ?? '', style: const TextStyle(color: Colors.white54)),
                         trailing: IconButton(
@@ -97,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     TextButton.icon(
                       onPressed: () => _showAddressForm(),
                       icon: const Icon(Icons.add, size: 18),
-                      label: const Text('Añadir Dirección'),
+                      label: const Text('Añadir Dirección', style: TextStyle(color: Color(0xFF4ADE80))),
                     ),
                   ],
                 );
@@ -158,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               Text(
                                 '\$${order['total'].toString()}',
-                                style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold),
+                                style: const TextStyle(color: Color(0xFF22C55E), fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 4),
                               Container(

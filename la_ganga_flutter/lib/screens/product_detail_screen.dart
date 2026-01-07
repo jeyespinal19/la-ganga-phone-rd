@@ -23,7 +23,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       SnackBar(
         content: Text('${product.name} añadido al carrito'),
         duration: const Duration(seconds: 2),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: const Color(0xFF22C55E),
         action: SnackBarAction(
           label: 'VER CARRITO',
           textColor: Colors.white,
@@ -84,7 +84,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 child: Container(
                                   padding: const EdgeInsets.all(2),
                                   decoration: BoxDecoration(
-                                    color: Colors.blueAccent,
+                                    color: const Color(0xFF22C55E),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   constraints: const BoxConstraints(
@@ -131,7 +131,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 children: [
                                   Text(
                                     product.brand.toUpperCase(),
-                                    style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold, letterSpacing: 1.2, fontSize: 13),
+                                    style: const TextStyle(color: Color(0xFF4ADE80), fontWeight: FontWeight.bold, letterSpacing: 1.2, fontSize: 13),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
@@ -195,7 +195,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                           child: const Row(
                             children: [
-                              Icon(Icons.local_shipping_outlined, color: Colors.blueAccent),
+                              Icon(Icons.local_shipping_outlined, color: Color(0xFF4ADE80)),
                               SizedBox(width: 15),
                               Expanded(
                                 child: Column(
@@ -232,7 +232,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     child: ElevatedButton(
                       onPressed: product.stock > 0 ? () => _addToCart(product) : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: const Color(0xFF22C55E),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                         elevation: 5,
@@ -262,7 +262,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       ),
       child: Column(
         children: [
-          Icon(icon, color: Colors.blueAccent, size: 24),
+          Icon(icon, color: const Color(0xFF4ADE80), size: 24),
           const SizedBox(height: 5),
           Text(label, style: const TextStyle(color: Colors.white54, fontSize: 12)),
           Text(value, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),

@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
-                                color: Colors.blueAccent,
+                                color: const Color(0xFF22C55E),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               constraints: const BoxConstraints(
@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onSelected: (selected) {
                           if (selected) setState(() => _selectedCategory = cat);
                         },
-                        selectedColor: Colors.blueAccent,
+                        selectedColor: const Color(0xFF22C55E),
                         backgroundColor: Colors.white10,
                         labelStyle: TextStyle(
                           color: isSelected ? Colors.white : Colors.white70,
@@ -367,17 +367,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             SnackBar(
                               content: Text('${product.name} añadido al carrito'),
                               duration: const Duration(seconds: 1),
-                              backgroundColor: Colors.blueAccent,
+                              backgroundColor: const Color(0xFF22C55E),
                             ),
                           );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.blueAccent.withOpacity(0.1),
+                            color: const Color(0xFF22C55E).withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.add_shopping_cart, size: 16, color: Colors.blueAccent),
+                          child: const Icon(Icons.add_shopping_cart, size: 16, color: Color(0xFF22C55E)),
                         ),
                       ),
                     ],
