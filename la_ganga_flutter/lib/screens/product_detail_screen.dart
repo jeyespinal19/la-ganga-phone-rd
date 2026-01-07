@@ -165,7 +165,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           children: [
                             Text(
                               '\$${product.price.toStringAsFixed(0)}',
-                              style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.black),
+                              style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.w900),
                             ),
                             const SizedBox(width: 12),
                             if (product.originalPrice != null)
