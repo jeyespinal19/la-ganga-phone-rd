@@ -24,8 +24,37 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'La Ganga Phone',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF0F2027),
+        primaryColor: const Color(0xFF4ADE80),
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF4ADE80),
+          secondary: Color(0xFF22C55E),
+          surface: Color(0xFF203A43),
+          error: Colors.redAccent,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF0F2027),
+          elevation: 0,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF4ADE80),
+            foregroundColor: Colors.black,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.1),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          hintStyle: const TextStyle(color: Colors.white38),
+        ),
         useMaterial3: true,
       ),
       routerConfig: router,

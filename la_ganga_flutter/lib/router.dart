@@ -8,10 +8,14 @@ import 'screens/cart_screen.dart';
 import 'screens/profile_screen.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/home',
   routes: [
     GoRoute(
       path: '/',
+      builder: (context, state) => const AuthScreen(),
+    ),
+    GoRoute(
+      path: '/login',
       builder: (context, state) => const AuthScreen(),
     ),
     GoRoute(
@@ -38,11 +42,5 @@ final GoRouter router = GoRouter(
       },
     ),
   ],
-  redirect: (context, state) {
-    final loggedIn = SupabaseConfig.client.auth.currentUser != null;
-    final loggingIn = state.matchedLocation == '/';
-    if (!loggedIn && !loggingIn) return '/';
-    if (loggedIn && loggingIn) return '/home';
-    return null;
-  },
+  // No redirect - allow guest browsing
 );

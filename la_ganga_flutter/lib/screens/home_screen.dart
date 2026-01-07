@@ -6,6 +6,7 @@ import '../services/banner_service.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/shimmer_skeletons.dart';
+import '../supabase/config.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: const Color(0xFF0F2027),
               elevation: 0,
               flexibleSpace: FlexibleSpaceBar(
-                title: const Text('La Ganga Phone', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                title: const Text('La Ganga Phone', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF4ADE80))),
                 centerTitle: false,
                 titlePadding: const EdgeInsets.only(left: 20, bottom: 60),
                 background: Column(
