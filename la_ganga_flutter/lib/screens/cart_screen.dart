@@ -54,7 +54,7 @@ class CartScreen extends StatelessWidget {
                     itemBuilder: (ctx, i) {
                       final item = items[i];
                       return Container(
-                        margin: const EdgeInsets.bottom(16),
+                        margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.05),

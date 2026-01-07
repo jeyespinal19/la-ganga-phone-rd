@@ -75,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return Column(
                   children: [
                     ...addresses.map((addr) => Container(
-                      margin: const EdgeInsets.bottom(10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.05),
@@ -129,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   itemBuilder: (context, index) {
                     final order = orders[index];
                     return Container(
-                      margin: const EdgeInsets.bottom(12),
+                      margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.05),
