@@ -44,7 +44,32 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: const Color(0xFF0F2027),
               elevation: 0,
               flexibleSpace: FlexibleSpaceBar(
-                title: const Text('La Ganga Phone', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF4ADE80))),
+                title: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4ADE80),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.phone_android,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      'La Ganga Phone',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Color(0xFF4ADE80),
+                      ),
+                    ),
+                  ],
+                ),
                 centerTitle: false,
                 titlePadding: const EdgeInsets.only(left: 20, bottom: 60),
                 background: Column(
