@@ -133,7 +133,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ item, onBack, onAd
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="bg-blue-50 p-2 rounded-lg text-blue-600">
+                <div className="bg-green-50 p-2 rounded-lg text-green-600">
                   <Shield className="w-5 h-5" />
                 </div>
                 <div>

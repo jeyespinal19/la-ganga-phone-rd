@@ -57,12 +57,12 @@ export const PromoBanner: React.FC = () => {
 
     if (loading) {
         return <div className="w-full h-40 sm:h-52 bg-gray-50 flex items-center justify-center rounded-2xl animate-pulse">
-            <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 border-green-100 border-t-green-500 rounded-full animate-spin"></div>
         </div>;
     }
 
     return (
-        <div className="relative w-full h-40 sm:h-54 overflow-hidden bg-gray-100 mb-4 rounded-2xl shadow-xl shadow-blue-500/5">
+        <div className="relative w-full h-40 sm:h-54 overflow-hidden bg-gray-100 mb-4 rounded-2xl shadow-xl shadow-green-500/5">
             <div
                 className="flex transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) h-full"
                 style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -90,7 +90,7 @@ export const PromoBanner: React.FC = () => {
                             <p className="text-sm font-bold opacity-90 leading-tight drop-shadow-lg mb-4">
                                 {slide.subtitle}
                             </p>
-                            <button className="px-6 py-2 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-blue-50 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/20">
+                            <button className="px-6 py-2 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-green-50 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/20">
                                 Ver detalles
                             </button>
                         </div>

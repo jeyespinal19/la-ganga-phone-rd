@@ -88,12 +88,12 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
          onClick={() => setActiveTab(id)}
          className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 group
         ${activeTab === id
-               ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+               ? 'bg-green-600 text-white shadow-lg shadow-green-200'
                : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'
             }`}
       >
          {React.cloneElement(icon as React.ReactElement, {
-            className: `w-5 h-5 ${activeTab === id ? 'text-white' : 'text-gray-400 group-hover:text-blue-500'}`
+            className: `w-5 h-5 ${activeTab === id ? 'text-white' : 'text-gray-400 group-hover:text-green-500'}`
          })}
          <span className="text-sm font-bold">{label}</span>
       </button>
@@ -103,12 +103,12 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
       <div className="space-y-6 animate-in fade-in duration-500">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden relative">
-               <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-2xl w-fit mb-4">
-                  <ShoppingBag className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+               <div className="p-3 bg-green-50 dark:bg-green-900/30 rounded-2xl w-fit mb-4">
+                  <ShoppingBag className="w-6 h-6 text-green-600 dark:text-green-400" />
                </div>
                <h3 className="text-3xl font-black text-gray-900 dark:text-white">{orders.length}</h3>
                <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">Pedidos Totales</p>
-               <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-2xl" />
+               <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-green-50 dark:bg-green-900/10 rounded-full blur-2xl" />
             </div>
             <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden relative">
                <div className="p-3 bg-green-50 dark:bg-green-900/30 rounded-2xl w-fit mb-4">
@@ -129,7 +129,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
                </div>
                <h3 className="text-xl font-black text-gray-900 dark:text-white">¡No hay pedidos aún!</h3>
                <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-xs mx-auto">Tu historial de compras aparecerá aquí cuando realices tu primer pedido.</p>
-               <button onClick={onBack} className="mt-8 px-8 py-4 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 dark:shadow-none hover:scale-105 active:scale-95">
+               <button onClick={onBack} className="mt-8 px-8 py-4 bg-green-600 text-white rounded-2xl font-black hover:bg-green-700 transition-all shadow-lg shadow-green-200 dark:shadow-none hover:scale-105 active:scale-95">
                   ¡IR A COMPRAR AHORA!
                </button>
             </div>
@@ -142,12 +142,12 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
                         <p className="text-xs text-gray-400 font-bold">{new Date(order.created_at).toLocaleDateString()}</p>
                      </div>
                      <div className="text-right">
-                        <p className="text-sm font-black text-blue-600">{formatCurrency(order.total)}</p>
+                        <p className="text-sm font-black text-green-600">{formatCurrency(order.total)}</p>
                         <span className="text-[10px] font-black uppercase text-orange-500">{order.status}</span>
                      </div>
                   </div>
                ))}
-               <button onClick={() => setActiveTab('orders')} className="w-full py-3 text-sm font-black text-blue-600 hover:underline">VER TODOS LOS PEDIDOS</button>
+               <button onClick={() => setActiveTab('orders')} className="w-full py-3 text-sm font-black text-green-600 hover:underline">VER TODOS LOS PEDIDOS</button>
             </div>
          )}
       </div>
@@ -157,8 +157,8 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
       <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
          <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-8 shadow-sm">
             <h3 className="text-xl font-black mb-6 flex items-center gap-3 text-gray-900 dark:text-white">
-               <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
-                  <User className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+               <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded-xl">
+                  <User className="w-6 h-6 text-green-600 dark:text-green-400" />
                </div>
                Información Personal
             </h3>
@@ -184,14 +184,14 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
                </h3>
                <button
                   onClick={() => setShowAddAddress(true)}
-                  className="text-blue-600 font-black text-xs hover:underline uppercase tracking-wider"
+                  className="text-green-600 font-black text-xs hover:underline uppercase tracking-wider"
                >
                   Añadir Nueva
                </button>
             </div>
 
             {showAddAddress && (
-               <form onSubmit={handleAddAddress} className="mb-6 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-2xl space-y-4 animate-in zoom-in-95 duration-200">
+               <form onSubmit={handleAddAddress} className="mb-6 p-5 bg-green-50 dark:bg-green-900/20 rounded-2xl space-y-4 animate-in zoom-in-95 duration-200">
                   <input
                      placeholder="Nombre de lugar (Ej: Mi Casa, Oficina)"
                      className="w-full bg-white dark:bg-gray-800 border-none rounded-xl px-4 py-3 text-sm font-bold outline-none"
@@ -216,7 +216,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
                      />
                   </div>
                   <div className="flex gap-2">
-                     <button type="submit" className="flex-1 bg-blue-600 text-white font-black py-3 rounded-xl text-xs">GUARDAR DIRECCIÓN</button>
+                     <button type="submit" className="flex-1 bg-green-600 text-white font-black py-3 rounded-xl text-xs">GUARDAR DIRECCIÓN</button>
                      <button type="button" onClick={() => setShowAddAddress(false)} className="px-4 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-black py-3 rounded-xl text-xs">CANCELAR</button>
                   </div>
                </form>
@@ -224,14 +224,14 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
 
             <div className="space-y-3">
                {savedAddresses.map(addr => (
-                  <div key={addr.id} className="flex items-center gap-4 p-5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-2xl group hover:border-blue-200 dark:hover:border-blue-900 transition-all">
-                     <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm text-gray-400 group-hover:text-blue-500">
+                  <div key={addr.id} className="flex items-center gap-4 p-5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-2xl group hover:border-green-200 dark:hover:border-green-900 transition-all">
+                     <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm text-gray-400 group-hover:text-green-500">
                         <MapPin className="w-5 h-5" />
                      </div>
                      <div className="flex-1">
                         <div className="flex items-center gap-2">
                            <span className="font-bold text-gray-900 dark:text-white">{addr.alias}</span>
-                           {addr.is_default && <span className="text-[8px] font-black bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded uppercase">Principal</span>}
+                           {addr.is_default && <span className="text-[8px] font-black bg-green-100 text-green-600 px-1.5 py-0.5 rounded uppercase">Principal</span>}
                         </div>
                         <p className="text-xs text-gray-500 font-medium mt-0.5">{addr.address}, {addr.city}</p>
                      </div>
@@ -265,8 +265,8 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
       <div className="flex flex-col lg:flex-row gap-10 min-h-[600px] py-10 px-4 max-w-6xl mx-auto">
          {/* Sidebar */}
          <aside className="w-full lg:w-72 shrink-0 flex flex-col gap-6">
-            <div className="glass p-6 rounded-[2rem] flex items-center gap-4 bg-white/40 border-white/50 dark:bg-gray-800/40 dark:border-gray-700/50 backdrop-blur-xl shadow-xl shadow-blue-900/5">
-               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg flex items-center justify-center overflow-hidden">
+            <div className="glass p-6 rounded-[2rem] flex items-center gap-4 bg-white/40 border-white/50 dark:bg-gray-800/40 dark:border-gray-700/50 backdrop-blur-xl shadow-xl shadow-green-900/5">
+               <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-indigo-600 rounded-2xl shadow-lg flex items-center justify-center overflow-hidden">
                   <span className="text-2xl font-black text-white">{user?.user_metadata?.name?.charAt(0) || 'U'}</span>
                </div>
                <div className="flex-1 overflow-hidden">
@@ -281,7 +281,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ allItems, onBack }) =>
                {renderSidebarLink('settings', 'Perfil y Seguridad', <Settings />)}
             </nav>
 
-            <div className="mt-10 p-6 bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[2rem] text-white shadow-xl shadow-indigo-200 dark:shadow-none relative overflow-hidden group">
+            <div className="mt-10 p-6 bg-gradient-to-br from-indigo-600 to-green-700 rounded-[2rem] text-white shadow-xl shadow-indigo-200 dark:shadow-none relative overflow-hidden group">
                <div className="relative z-10">
                   <h4 className="font-black text-lg mb-1">Ganga VIP</h4>
                   <p className="text-xs text-indigo-100 font-bold mb-4 opacity-80 leading-relaxed">Disfruta de envíos gratis ilimitados y prioridad en ofertas.</p>

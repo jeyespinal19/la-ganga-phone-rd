@@ -91,20 +91,20 @@ const CheckoutForm: React.FC<{
         <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
             <div className="mb-8">
                 <h2 className="text-2xl font-black text-gray-900 tracking-tight">Confirmar Pedido</h2>
-                <p className="text-sm font-bold text-blue-600/60 uppercase tracking-widest mt-1">Paso final de seguridad</p>
+                <p className="text-sm font-bold text-green-600/60 uppercase tracking-widest mt-1">Paso final de seguridad</p>
             </div>
 
             {paymentMethod === 'stripe' ? (
-                <div className="p-6 border border-blue-100 rounded-[2rem] bg-gradient-to-br from-white to-blue-50/30 shadow-inner">
-                    <div className="flex items-center gap-3 mb-4 text-blue-600">
+                <div className="p-6 border border-green-100 rounded-[2rem] bg-gradient-to-br from-white to-green-50/30 shadow-inner">
+                    <div className="flex items-center gap-3 mb-4 text-green-600">
                         <Lock className="w-4 h-4" />
                         <span className="text-[10px] font-black uppercase tracking-widest">Pago Seguro Encriptado</span>
                     </div>
                     <PaymentElement />
                 </div>
             ) : (
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 p-8 rounded-[2rem] flex items-center gap-6 shadow-sm group">
-                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-xl shadow-blue-500/10 group-hover:scale-110 transition-transform">
+                <div className="bg-gradient-to-br from-green-50 to-indigo-50 border border-green-100 p-8 rounded-[2rem] flex items-center gap-6 shadow-sm group">
+                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-green-600 shadow-xl shadow-green-500/10 group-hover:scale-110 transition-transform">
                         <CreditCard className="w-8 h-8" />
                     </div>
                     <div>
@@ -118,13 +118,13 @@ const CheckoutForm: React.FC<{
                 </div>
             )}
 
-            <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-6 space-y-3 border border-gray-100 shadow-xl shadow-blue-500/5">
+            <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-6 space-y-3 border border-gray-100 shadow-xl shadow-green-500/5">
                 <div className="flex justify-between items-center px-2">
                     <span className="text-gray-400 font-black text-[10px] uppercase tracking-widest">Total del Pedido</span>
                     <span className="font-black text-3xl text-gray-900 tracking-tighter">RD$ {total.toLocaleString()}</span>
                 </div>
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-100 to-transparent" />
-                <div className="flex justify-between text-[10px] text-blue-600 font-black uppercase tracking-[0.2em] px-2 opacity-60">
+                <div className="flex justify-between text-[10px] text-green-600 font-black uppercase tracking-[0.2em] px-2 opacity-60">
                     <span>{cartItems.length} artículos</span>
                     <span>Envío Bonificado</span>
                 </div>
@@ -141,7 +141,7 @@ const CheckoutForm: React.FC<{
                 <button
                     type="submit"
                     disabled={loading || (paymentMethod === 'stripe' && !stripe)}
-                    className="w-full bg-blue-600 text-white py-6 rounded-3xl font-black shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group overflow-hidden relative"
+                    className="w-full bg-green-600 text-white py-6 rounded-3xl font-black shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] hover:bg-green-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group overflow-hidden relative"
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                     {loading ? (
@@ -157,7 +157,7 @@ const CheckoutForm: React.FC<{
                     )}
                 </button>
 
-                <button type="button" onClick={onBackToShipping} className="w-full text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] py-4 hover:text-blue-600 transition-all hover:bg-blue-50/50 rounded-2xl">
+                <button type="button" onClick={onBackToShipping} className="w-full text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] py-4 hover:text-green-600 transition-all hover:bg-green-50/50 rounded-2xl">
                     Modificar Detalles
                 </button>
             </div>
@@ -253,7 +253,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, total, onSuccess,
                 <StepIcon icon={<CreditCard className="w-5 h-5" />} active={step === 'choose_method' || step === 'payment'} label="Pago" />
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-[2.5rem] p-6 md:p-10 shadow-xl shadow-blue-900/5">
+            <div className="bg-white border border-gray-100 rounded-[2.5rem] p-6 md:p-10 shadow-xl shadow-green-900/5">
                 {step === 'shipping' && (
                     <form onSubmit={(e) => { e.preventDefault(); setStep('choose_method'); }} className="space-y-5">
                         <div className="mb-8">
@@ -295,7 +295,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, total, onSuccess,
                                     <button
                                         type="button"
                                         onClick={() => setShipping({ name: '', address: '', city: '', phone: '', notes: '', id: '' })}
-                                        className="mt-2 text-sm text-blue-600 hover:underline"
+                                        className="mt-2 text-sm text-green-600 hover:underline"
                                     >
                                         Usar nueva dirección
                                     </button>
@@ -323,7 +323,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, total, onSuccess,
                         <FormInput label="Dirección / Calle" isTextArea value={shipping.address} onChange={v => setShipping({ ...shipping, address: v })} required />
                         <FormInput label="Notas (Piso, Puerta, etc.)" value={shipping.notes} onChange={v => setShipping({ ...shipping, notes: v })} />
 
-                        <button type="submit" className="w-full bg-blue-600 text-white py-5 rounded-3xl font-black text-lg shadow-xl shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-4">
+                        <button type="submit" className="w-full bg-green-600 text-white py-5 rounded-3xl font-black text-lg shadow-xl shadow-green-200 hover:bg-green-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-4">
                             Siguiente: Método de Pago
                         </button>
                     </form>
@@ -355,7 +355,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, total, onSuccess,
 
                         <button
                             onClick={() => setStep('payment')}
-                            className="w-full bg-blue-600 text-white py-5 rounded-3xl font-black text-lg shadow-xl shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-6"
+                            className="w-full bg-green-600 text-white py-5 rounded-3xl font-black text-lg shadow-xl shadow-green-200 hover:bg-green-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-6"
                         >
                             Continuar con {paymentMethod === 'stripe' ? 'Tarjeta' : 'Efectivo'}
                         </button>
@@ -389,27 +389,27 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, total, onSuccess,
 // UI Helpers
 const StepIcon = ({ icon, active, label }: { icon: React.ReactNode, active: boolean, label: string }) => (
     <div className={`flex flex-col items-center gap-2 group`}>
-        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 ${active ? 'bg-blue-600 text-white shadow-xl shadow-blue-200 scale-110' : 'bg-gray-50 text-gray-300 border border-gray-100'}`}>
+        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 ${active ? 'bg-green-600 text-white shadow-xl shadow-green-200 scale-110' : 'bg-gray-50 text-gray-300 border border-gray-100'}`}>
             {icon}
         </div>
-        <span className={`text-xs font-black uppercase tracking-widest ${active ? 'text-blue-600' : 'text-gray-400'}`}>{label}</span>
+        <span className={`text-xs font-black uppercase tracking-widest ${active ? 'text-green-600' : 'text-gray-400'}`}>{label}</span>
     </div>
 );
 
 const FormInput = ({ label, value, onChange, required, isTextArea }: any) => (
     <div className="group">
-        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1 transition-colors group-focus-within:text-blue-500">{label}</label>
+        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1 transition-colors group-focus-within:text-green-500">{label}</label>
         {isTextArea ? (
             <textarea
                 required={required}
-                className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-5 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 focus:bg-white outline-none transition-all resize-none h-32"
+                className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-5 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-green-500/5 focus:border-green-500 focus:bg-white outline-none transition-all resize-none h-32"
                 value={value}
                 onChange={e => onChange(e.target.value)}
             />
         ) : (
             <input
                 required={required}
-                className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-5 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 focus:bg-white outline-none transition-all h-[60px]"
+                className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-5 py-4 font-bold text-gray-700 focus:ring-4 focus:ring-green-500/5 focus:border-green-500 focus:bg-white outline-none transition-all h-[60px]"
                 value={value}
                 onChange={e => onChange(e.target.value)}
             />
@@ -420,17 +420,17 @@ const FormInput = ({ label, value, onChange, required, isTextArea }: any) => (
 const PaymentOption = ({ selected, onClick, icon, title, desc }: any) => (
     <button
         onClick={onClick}
-        className={`w-full text-left p-5 rounded-2xl border-2 transition-all flex items-center gap-4 ${selected ? 'border-blue-600 bg-blue-50/20' : 'border-gray-100 items-center bg-gray-50/50 hover:bg-gray-100/50'}`}
+        className={`w-full text-left p-5 rounded-2xl border-2 transition-all flex items-center gap-4 ${selected ? 'border-green-600 bg-green-50/20' : 'border-gray-100 items-center bg-gray-50/50 hover:bg-gray-100/50'}`}
     >
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${selected ? 'bg-blue-600 text-white' : 'bg-white text-gray-400 shadow-sm border border-gray-100'}`}>
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${selected ? 'bg-green-600 text-white' : 'bg-white text-gray-400 shadow-sm border border-gray-100'}`}>
             {icon}
         </div>
         <div className="flex-1">
-            <h3 className={`font-black text-lg leading-tight ${selected ? 'text-blue-600' : 'text-gray-900'}`}>{title}</h3>
+            <h3 className={`font-black text-lg leading-tight ${selected ? 'text-green-600' : 'text-gray-900'}`}>{title}</h3>
             <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{desc}</p>
         </div>
-        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selected ? 'border-blue-600 bg-white' : 'border-gray-200 bg-white'}`}>
-            {selected && <div className="w-3 h-3 bg-blue-600 rounded-full" />}
+        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selected ? 'border-green-600 bg-white' : 'border-gray-200 bg-white'}`}>
+            {selected && <div className="w-3 h-3 bg-green-600 rounded-full" />}
         </div>
     </button>
 );

@@ -82,7 +82,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, onNavigate,
                                 <li>
                                     <button
                                         onClick={() => { onNavigate('admin'); onClose(); }}
-                                        className="w-full flex items-center gap-3 px-6 py-3 hover:bg-gray-50 text-blue-600 font-medium transition-colors bg-blue-50/50"
+                                        className="w-full flex items-center gap-3 px-6 py-3 hover:bg-gray-50 text-green-600 font-medium transition-colors bg-green-50/50"
                                     >
                                         <LayoutDashboard className="w-5 h-5" />
                                         <span>Panel de Admin</span>

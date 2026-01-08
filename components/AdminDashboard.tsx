@@ -51,8 +51,8 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({ active, icon, label, onCl
   <button
     onClick={onClick}
     className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 relative group ${active
-      ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
-      : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50'
+      ? 'bg-green-600 text-white shadow-lg shadow-green-500/30'
+      : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
       }`}
   >
     <div className={`transition-transform duration-200 ${active ? 'scale-100' : 'group-hover:scale-110'}`}>
@@ -293,7 +293,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
           <button
             onClick={openAddModal}
-            className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-blue-700 transition-all active:scale-95"
+            className="flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-green-700 transition-all active:scale-95"
           >
             <Plus className="w-4 h-4" /> Nuevo Producto
           </button>
@@ -307,7 +307,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               placeholder="Buscar por nombre o marca..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white border border-gray-100 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all placeholder-gray-300 shadow-sm"
+              className="w-full bg-white border border-gray-100 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-green-500/10 focus:border-green-500 outline-none transition-all placeholder-gray-300 shadow-sm"
             />
           </div>
         </div>
@@ -338,7 +338,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <td className="px-6 py-4">
                         <p className="font-bold text-gray-900 text-sm">{item.name}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">{item.brand}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-green-600 bg-green-50 px-2 py-0.5 rounded-md border border-green-100">{item.brand}</span>
                           <span className="text-[10px] text-gray-400 font-medium truncate max-w-[200px]">{item.specs}</span>
                         </div>
                       </td>
@@ -353,7 +353,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => handleEditClick(item)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all border border-transparent hover:border-blue-100">
+                          <button onClick={() => handleEditClick(item)} className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all border border-transparent hover:border-green-100">
                             <Edit className="w-4 h-4" />
                           </button>
                           <button onClick={() => onDeleteItem(item.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all border border-transparent hover:border-red-100">
@@ -397,7 +397,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { label: 'Ventas Totales', value: formatCurrency(totalRevenue), icon: <DollarSign className="w-5 h-5" />, color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'Ventas Totales', value: formatCurrency(totalRevenue), icon: <DollarSign className="w-5 h-5" />, color: 'text-green-600', bg: 'bg-green-50' },
             { label: 'Pedidos Hoy', value: orders.length.toString(), icon: <ShoppingBag className="w-5 h-5" />, color: 'text-purple-600', bg: 'bg-purple-50' },
             { label: 'Clientes', value: users.length.toString(), icon: <Users className="w-5 h-5" />, color: 'text-orange-600', bg: 'bg-orange-50' },
             { label: 'Stock Crítico', value: lowStockCount.toString(), icon: <AlertCircle className="w-5 h-5" />, color: 'text-red-600', bg: 'bg-red-50' },
@@ -424,8 +424,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Últimos 7 días</p>
               </div>
               <div className="flex gap-2">
-                <div className="w-2.5 h-2.5 bg-blue-500 rounded-full" />
-                <div className="w-2.5 h-2.5 bg-blue-100 rounded-full" />
+                <div className="w-2.5 h-2.5 bg-green-500 rounded-full" />
+                <div className="w-2.5 h-2.5 bg-green-100 rounded-full" />
               </div>
             </div>
             <div className="h-48 w-full flex items-end justify-between gap-3 relative">
@@ -443,7 +443,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               {[40, 65, 45, 90, 55, 75, 85].map((h, i) => (
                 <div key={i} className="flex-1 group relative">
                   <div
-                    className="w-full bg-blue-50 rounded-t-lg group-hover:bg-blue-100 transition-colors"
+                    className="w-full bg-green-50 rounded-t-lg group-hover:bg-green-100 transition-colors"
                     style={{ height: `${h}%` }}
                   />
                   <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-gray-400">D{i + 1}</div>
@@ -457,7 +457,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="space-y-6 flex-1 text-sm">
               {orders.slice(0, 5).map((order) => (
                 <div key={order.id} className="flex gap-4 group">
-                  <div className="w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                  <div className="w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 group-hover:bg-green-50 group-hover:text-green-600 transition-colors">
                     <ShoppingBag className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -473,7 +473,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
             <button
               onClick={() => setActiveTab('orders')}
-              className="w-full mt-8 py-3 bg-gray-50 border border-gray-100 hover:bg-gray-100 rounded-xl text-xs font-bold text-blue-600 transition-all"
+              className="w-full mt-8 py-3 bg-gray-50 border border-gray-100 hover:bg-gray-100 rounded-xl text-xs font-bold text-green-600 transition-all"
             >
               Ver todos los pedidos
             </button>
@@ -496,9 +496,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <button
                   key={i}
                   onClick={act.action}
-                  className="flex items-center gap-3 px-5 py-3.5 bg-gray-50 hover:bg-white hover:shadow-md hover:ring-1 hover:ring-blue-100 rounded-xl transition-all border border-transparent"
+                  className="flex items-center gap-3 px-5 py-3.5 bg-gray-50 hover:bg-white hover:shadow-md hover:ring-1 hover:ring-green-100 rounded-xl transition-all border border-transparent"
                 >
-                  <span className="text-blue-600">{act.icon}</span>
+                  <span className="text-green-600">{act.icon}</span>
                   <span className="text-xs font-bold text-gray-700">{act.label}</span>
                 </button>
               ))}
@@ -516,7 +516,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">Gestión de Banners</h2>
           <p className="text-sm font-medium text-gray-400">Personaliza el carrusel de inicio</p>
         </div>
-        <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+        <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
           <ImageIcon className="w-5 h-5" />
         </div>
       </div>
@@ -529,11 +529,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Imagen del Banner</label>
               <div className="relative group">
                 <input type="file" onChange={handleBannerUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
-                <div className="w-full h-40 bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-200 transition-all">
+                <div className="w-full h-40 bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center group-hover:bg-green-50 group-hover:border-green-200 transition-all">
                   {isUploading ? (
                     <div className="flex flex-col items-center">
-                      <Loader2 className="w-6 h-6 text-blue-500 animate-spin mb-2" />
-                      <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Subiendo...</span>
+                      <Loader2 className="w-6 h-6 text-green-500 animate-spin mb-2" />
+                      <span className="text-[10px] font-bold text-green-600 uppercase tracking-wider">Subiendo...</span>
                     </div>
                   ) : newBanner.image_url ? (
                     <img src={newBanner.image_url} className="h-full w-full object-cover rounded-lg" alt="Preview" />
@@ -553,7 +553,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 placeholder="Ej: OFERTA, NUEVO, MÁS VENDIDO"
                 value={newBanner.badge}
                 onChange={(e) => setNewBanner(prev => ({ ...prev, badge: e.target.value }))}
-                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-green-500/10 focus:border-green-500 transition-all"
               />
             </div>
           </div>
@@ -565,7 +565,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 placeholder="Ej: iPhone 15 Pro"
                 value={newBanner.title}
                 onChange={(e) => setNewBanner(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-green-500/10 focus:border-green-500 transition-all"
               />
             </div>
             <div>
@@ -575,13 +575,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 placeholder="Ej: El smartphone más potente"
                 value={newBanner.subtitle}
                 onChange={(e) => setNewBanner(prev => ({ ...prev, subtitle: e.target.value }))}
-                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-green-500/10 focus:border-green-500 transition-all"
               />
             </div>
             <button
               type="submit"
               disabled={!newBanner.image_url || isUploading || isSaving}
-              className="w-full mt-2 bg-blue-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-sm hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full mt-2 bg-green-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-sm hover:bg-green-700 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isSaving ? (
                 <>
@@ -630,7 +630,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="flex flex-col h-full">
           <button onClick={onBack} className="mb-10 px-2 text-left hover:opacity-80 transition-opacity">
             <h1 className="text-xl font-bold tracking-tight">
-              <span className="text-blue-600">LA GANGA</span>
+              <span className="text-green-600">LA GANGA</span>
               <span className="text-gray-900 ml-1">ADMIN</span>
             </h1>
           </button>
@@ -653,9 +653,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="lg:hidden flex items-center justify-between bg-white/60 backdrop-blur-xl p-4 rounded-2xl mb-4 border border-white">
           <button onClick={onBack} className="font-black italic text-gray-900 hover:opacity-70 transition-opacity active:scale-95 duration-200 flex items-center gap-1.5">
             <span>LA GANGA</span>
-            <span className="text-blue-600">ADMIN</span>
+            <span className="text-green-600">ADMIN</span>
           </button>
-          <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-blue-50 rounded-xl text-blue-600"><LayoutDashboard className="w-6 h-6" /></button>
+          <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-green-50 rounded-xl text-green-600"><LayoutDashboard className="w-6 h-6" /></button>
         </div>
 
         {activeTab === 'overview' ? renderOverview() :
@@ -676,7 +676,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <div key={o.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                          <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">ORDEN #{o.id.slice(0, 8)}</p>
+                          <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-1">ORDEN #{o.id.slice(0, 8)}</p>
                           <div className="flex items-center gap-2 text-gray-400">
                             <Clock className="w-3.5 h-3.5" />
                             <p className="text-xs font-medium">{new Date(o.created_at).toLocaleString('es-ES')}</p>
@@ -687,7 +687,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           <select
                             value={o.status}
                             onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
-                            className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
+                            className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-700 outline-none focus:ring-2 focus:ring-green-500/10 transition-all"
                           >
                             <option value="pending">Pendiente</option>
                             <option value="paid">Pagado</option>
@@ -740,7 +740,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               ) :
                 activeTab === 'banners' ? renderBanners() :
                   <div className="p-20 text-center bg-white/40 rounded-[3rem] border border-white">
-                    <LayoutDashboard className="w-12 h-12 text-blue-200 mx-auto mb-4" />
+                    <LayoutDashboard className="w-12 h-12 text-green-200 mx-auto mb-4" />
                     <h3 className="text-xl font-black">Panel General</h3>
                   </div>
         }
@@ -759,20 +759,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block ml-1 text-center">Foto del Producto</label>
                 <div className="relative group mx-auto w-48 h-48">
                   <input type="file" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
-                  <div className={`w-full h-full bg-gray-50 border-2 border-dashed ${isUploadingProduct ? 'border-blue-400' : 'border-gray-200'} rounded-2xl flex flex-col items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-200 transition-all overflow-hidden relative shadow-inner`}>
+                  <div className={`w-full h-full bg-gray-50 border-2 border-dashed ${isUploadingProduct ? 'border-green-400' : 'border-gray-200'} rounded-2xl flex flex-col items-center justify-center group-hover:bg-green-50 group-hover:border-green-200 transition-all overflow-hidden relative shadow-inner`}>
                     {isUploadingProduct ? (
                       <div className="flex flex-col items-center animate-in fade-in">
-                        <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-2" />
-                        <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Subiendo...</span>
+                        <Loader2 className="w-8 h-8 text-green-500 animate-spin mb-2" />
+                        <span className="text-[10px] font-bold text-green-600 uppercase tracking-widest">Subiendo...</span>
                       </div>
                     ) : imagePreview ? (
                       <img src={imagePreview} className="w-full h-full object-cover rounded-xl" alt="Preview" />
                     ) : (
                       <div className="flex flex-col items-center px-4 text-center">
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 text-gray-400 group-hover:text-blue-500 transition-colors">
+                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 text-gray-400 group-hover:text-green-500 transition-colors">
                           <ImageIcon className="w-6 h-6" />
                         </div>
-                        <p className="text-[10px] font-bold text-gray-400 group-hover:text-blue-600 transition-colors uppercase tracking-wider leading-tight">Haz clic para<br />añadir foto</p>
+                        <p className="text-[10px] font-bold text-gray-400 group-hover:text-green-600 transition-colors uppercase tracking-wider leading-tight">Haz clic para<br />añadir foto</p>
                       </div>
                     )}
                     {imagePreview && !isUploadingProduct && (
@@ -788,7 +788,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre del Dispositivo</label>
                   <input
-                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
                     placeholder="Ej: iPhone 15 Pro Max"
                     value={newItem.name}
                     required
@@ -798,7 +798,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Marca</label>
                   <select
-                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all"
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all"
                     value={newItem.brand}
                     onChange={e => setNewItem({ ...newItem, brand: e.target.value })}
                   >
@@ -818,7 +818,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio (DOP)</label>
                   <input
-                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
                     placeholder="0.00"
                     type="number"
                     value={newItem.price}
@@ -829,7 +829,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio Antes</label>
                   <input
-                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
                     placeholder="Opcional"
                     type="number"
                     value={newItem.originalPrice}
@@ -839,7 +839,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Stock</label>
                   <input
-                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
                     placeholder="0"
                     type="number"
                     value={newItem.stock}
@@ -850,7 +850,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Especificaciones Técnicas</label>
                 <textarea
-                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-blue-500/10 focus:border-blue-500 font-semibold text-sm h-28 resize-none transition-all placeholder:text-gray-300"
+                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm h-28 resize-none transition-all placeholder:text-gray-300"
                   placeholder="Ej: 256GB, Color Titanio, Salud 100%..."
                   value={newItem.specs}
                   onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
@@ -860,7 +860,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <button
                 type="submit"
                 disabled={isUploadingProduct}
-                className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 hover:bg-blue-700 active:scale-[0.98] transition-all mt-4 disabled:opacity-50 disabled:grayscale"
+                className="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-green-500/20 hover:bg-green-700 active:scale-[0.98] transition-all mt-4 disabled:opacity-50 disabled:grayscale"
               >
                 {editingId ? 'Guardar Cambios' : 'Crear Producto'}
               </button>
@@ -872,7 +872,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Mobile Sidebar Overlay */}
       {
         isSidebarOpen && (
-          <div className="fixed inset-0 bg-blue-900/10 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+          <div className="fixed inset-0 bg-green-900/10 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
         )
       }
     </div >
