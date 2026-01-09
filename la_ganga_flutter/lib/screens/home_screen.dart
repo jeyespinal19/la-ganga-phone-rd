@@ -36,45 +36,44 @@ class _HomeScreenState extends State<HomeScreen> {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 160,
+              expandedHeight: 130, // Reduced height since logo is in top bar
               floating: true,
               pinned: true,
               backgroundColor: const Color(0xFF0F2027),
               elevation: 0,
+              centerTitle: false,
+              title: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4ADE80),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.phone_android,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'La Ganga Phone',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Color(0xFF4ADE80),
+                    ),
+                  ),
+                ],
+              ),
               flexibleSpace: FlexibleSpaceBar(
-                title: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF4ADE80),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.phone_android,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      'La Ganga Phone',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFF4ADE80),
-                      ),
-                    ),
-                  ],
-                ),
-                centerTitle: false,
-                titlePadding: const EdgeInsets.only(left: 20, bottom: 60),
                 background: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 12),
                       child: Container(
                         height: 45,
                         decoration: BoxDecoration(
@@ -94,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 50),
                   ],
                 ),
               ),
