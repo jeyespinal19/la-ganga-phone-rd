@@ -37,7 +37,7 @@ class AuthScreen extends StatelessWidget {
                     'Inicia sesión para continuar',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -45,7 +45,7 @@ class AuthScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: Colors.white12),
                     ),
@@ -65,7 +65,7 @@ class AuthScreen extends StatelessWidget {
                     child: Text(
                       'Continuar sin cuenta →',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                         fontSize: 14,
                       ),
                     ),

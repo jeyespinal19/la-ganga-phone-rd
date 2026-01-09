@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../supabase/config.dart';
 
@@ -51,7 +52,7 @@ class ProfileService {
           'quantity': item['quantity'],
         });
       } catch (e) {
-        print('Error decrementing stock for ${item['product_id']}: $e');
+        debugPrint('Error decrementing stock for ${item['product_id']}: $e');
       }
     }
   }

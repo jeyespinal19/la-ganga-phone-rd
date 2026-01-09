@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.white.withOpacity(0.1),
+          fillColor: Colors.white.withValues(alpha: 0.1),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -95,10 +95,6 @@ class MyApp extends StatelessWidget {
         };
         return widget!;
       },
-    );
-  }
-}
-
     );
   }
 }

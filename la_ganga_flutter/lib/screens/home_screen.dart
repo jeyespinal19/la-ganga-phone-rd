@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Container(
                         height: 45,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: TextField(
@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               gradient: LinearGradient(
                                 begin: Alignment.bottomCenter,
                                 end: Alignment.topCenter,
-                                colors: [Colors.black.withOpacity(0.8), Colors.transparent],
+                                colors: [Colors.black.withValues(alpha: 0.8), Colors.transparent],
                               ),
                             ),
                             padding: const EdgeInsets.all(20),
@@ -248,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const Text('Productos Destacados', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 5),
-                    Text('Encuentra las mejores ofertas en $_selectedCategory', style: TextStyle(color: Colors.white.withOpacity(0.6))),
+                    Text('Encuentra las mejores ofertas en $_selectedCategory', style: TextStyle(color: Colors.white.withValues(alpha: 0.6))),
                   ],
                 ),
               ),
@@ -320,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white12),
         ),
@@ -363,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 2),
                   Text(
                     product.brand,
-                    style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 11),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -397,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF22C55E).withOpacity(0.1),
+                            color: const Color(0xFF22C55E).withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(Icons.add_shopping_cart, size: 16, color: Color(0xFF22C55E)),

@@ -35,6 +35,7 @@ class BannerSkeleton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
       ),
+    );
   }
 }
 

@@ -42,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF22C55E).withOpacity(0.1),
+                          color: const Color(0xFF22C55E).withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                           border: Border.all(color: const Color(0xFF22C55E), width: 2),
                         ),
@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         margin: const EdgeInsets.only(bottom: 10),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
+                          color: Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: ListTile(
@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(color: Colors.white10),
                       ),
@@ -170,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: _getStatusColor(order['status']).withOpacity(0.1),
+                                  color: _getStatusColor(order['status']).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -280,7 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           labelText: label,
           labelStyle: const TextStyle(color: Colors.white38),
           filled: true,
-          fillColor: Colors.white.withOpacity(0.05),
+          fillColor: Colors.white.withValues(alpha: 0.05),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
         ),
       ),
