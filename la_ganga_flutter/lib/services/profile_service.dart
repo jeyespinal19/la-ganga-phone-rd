@@ -59,20 +59,21 @@ class ProfileService {
   /// User: Get saved addresses
   Future<List<Map<String, dynamic>>> getAddresses(String userId) async {
     final response = await _client
-        .from('user_addresses')
+        .from('addresses')
         .select()
         .eq('user_id', userId)
-        .order('is_default', ascending: false);
+        .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response as List);
   }
 
   /// User: Add new address
   Future<void> addAddress(Map<String, dynamic> data) async {
-    await _client.from('user_addresses').insert(data);
+    // Expected fields: label (String), address (JSON), user_id (String)
+    await _client.from('addresses').insert(data);
   }
 
   /// User: Delete address
   Future<void> deleteAddress(String id) async {
-    await _client.from('user_addresses').delete().eq('id', id);
+    await _client.from('addresses').delete().eq('id', id);
   }
 }
