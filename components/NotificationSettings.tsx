@@ -113,11 +113,11 @@ export const NotificationSettings: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Outbid Notifications */}
+                {/* Outbid Notifications -> Order Updates */}
                 <div className="flex items-center justify-between p-4 bg-app-bg rounded-xl">
                     <div>
-                        <p className="font-medium text-app-text">Cuando me superen en una puja</p>
-                        <p className="text-sm text-app-muted">Te avisaremos inmediatamente</p>
+                        <p className="font-medium text-app-text">Actualizaciones de pedido</p>
+                        <p className="text-sm text-app-muted">Cambios en el estado de envío</p>
                     </div>
                     <button
                         onClick={() => handleToggle('outbid_notifications')}
@@ -132,11 +132,11 @@ export const NotificationSettings: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Auction Ending */}
+                {/* Auction Ending -> Delivery Status */}
                 <div className="flex items-center justify-between p-4 bg-app-bg rounded-xl">
                     <div>
-                        <p className="font-medium text-app-text">Subastas por terminar</p>
-                        <p className="text-sm text-app-muted">Alertas 1 hora antes</p>
+                        <p className="font-medium text-app-text">Estado de entrega</p>
+                        <p className="text-sm text-app-muted">Alertas de llegada de paquetes</p>
                     </div>
                     <button
                         onClick={() => handleToggle('auction_ending_notifications')}
@@ -151,11 +151,11 @@ export const NotificationSettings: React.FC = () => {
                     </button>
                 </div>
 
-                {/* New Products */}
+                {/* New Products -> Promotions */}
                 <div className="flex items-center justify-between p-4 bg-app-bg rounded-xl">
                     <div>
-                        <p className="font-medium text-app-text">Nuevos productos</p>
-                        <p className="text-sm text-app-muted">Cuando se agreguen subastas</p>
+                        <p className="font-medium text-app-text">Nuevas ofertas y productos</p>
+                        <p className="text-sm text-app-muted">Cuando agreguemos stock o rebajas</p>
                     </div>
                     <button
                         onClick={() => handleToggle('new_product_notifications')}

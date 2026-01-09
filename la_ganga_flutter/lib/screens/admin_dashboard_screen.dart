@@ -18,7 +18,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   final ImagePicker _picker = ImagePicker();
   
   late TabController _tabController;
-  final bool _isLoading = false;
 
   @override
   void initState() {
@@ -215,6 +214,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     final specsController = TextEditingController(text: product?.specs ?? '');
     String currentImageUrl = product?.imageDetails ?? '';
     Uint8List? selectedImageBytes;
+    
+    Future<void> pickImage(void Function(void Function()) setModalState) async {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        final bytes = await image.readAsBytes();
+        setModalState(() {
+          selectedImageBytes = bytes;
+        });
+      }
+    }
 
     showModalBottomSheet(
       context: context,
@@ -233,17 +242,52 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 _buildTextField(priceController, 'Precio', isNumber: true),
                 _buildTextField(stockController, 'Stock', isNumber: true),
                 _buildTextField(specsController, 'Specs', maxLines: 3),
+                const SizedBox(height: 10),
+                InkWell(
+                  onTap: () => pickImage(setModalState),
+                  child: Container(
+                    height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white10),
+                    ),
+                    child: selectedImageBytes != null 
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.memory(selectedImageBytes!, fit: BoxFit.cover),
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_a_photo_outlined, color: Colors.white54, size: 40),
+                            const SizedBox(height: 8),
+                            Text('Seleccionar Imagen', style: TextStyle(color: Colors.white54)),
+                          ],
+                        ),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () async {
-                    String imageUrl = currentImageUrl;
-                    final data = {
-                      'name': nameController.text,
-                      'brand': brandController.text,
-                      'price': double.tryParse(priceController.text) ?? 0,
-                      'stock': int.tryParse(stockController.text) ?? 0,
-                      'specs': specsController.text,
-                      'image_details': imageUrl,
-                    };
+                    onPressed: () async {
+                      String imageUrl = currentImageUrl;
+                      if (selectedImageBytes != null) {
+                        try {
+                          imageUrl = await _productService.uploadImage('products', selectedImageBytes!);
+                        } catch (e) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Error al subir imagen: $e')));
+                        }
+                      }
+
+                      final data = {
+                        'name': nameController.text,
+                        'brand': brandController.text,
+                        'price': double.tryParse(priceController.text) ?? 0,
+                        'stock': int.tryParse(stockController.text) ?? 0,
+                        'specs': specsController.text,
+                        'image_url': imageUrl, // Fixed column name if it was image_details
+                      };
                     if (product == null) {
                       await _productService.create(data);
                     } else {

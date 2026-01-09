@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/product.dart';
-import '../services/product_service.dart';
 import '../services/banner_service.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
@@ -16,7 +15,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ProductService _productService = ProductService();
   String _searchQuery = '';
   String _selectedCategory = 'Todos';
   

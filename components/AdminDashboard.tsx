@@ -664,40 +664,137 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">Historial de Ventas</h2>
-                    <p className="text-sm font-medium text-gray-400">{orders.length} pedidos registrados</p>
+                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">Gestión de Pedidos</h2>
+                    <p className="text-sm font-medium text-gray-400">{orders.length} pedidos totales</p>
                   </div>
-                  <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
+                  <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
                     <ShoppingBag className="w-5 h-5" />
                   </div>
                 </div>
-                <div className="grid gap-4">
+
+                <div className="grid gap-6">
                   {orders.map(o => (
-                    <div key={o.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                          <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-1">ORDEN #{o.id.slice(0, 8)}</p>
-                          <div className="flex items-center gap-2 text-gray-400">
-                            <Clock className="w-3.5 h-3.5" />
-                            <p className="text-xs font-medium">{new Date(o.created_at).toLocaleString('es-ES')}</p>
+                    <div key={o.id} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden relative group">
+                      <div className="absolute top-0 left-0 w-1.5 h-full bg-green-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                      <div className="flex flex-col lg:flex-row justify-between gap-8">
+                        {/* Order Header Info */}
+                        <div className="flex-1 space-y-6">
+                          <div className="flex flex-wrap items-center gap-4">
+                            <span className="text-[10px] font-black bg-gray-900 text-white px-3 py-1 rounded-full tracking-widest uppercase">
+                              #{o.id.slice(0, 8)}
+                            </span>
+                            <div className="flex items-center gap-2 text-gray-400">
+                              <Clock className="w-3.5 h-3.5" />
+                              <span className="text-xs font-bold">{new Date(o.created_at).toLocaleString('es-ES')}</span>
+                            </div>
+                            {/* @ts-ignore */}
+                            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${o.status === 'paid' ? 'bg-green-100 text-green-700' :
+                                o.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                                  o.status === 'delivered' ? 'bg-purple-100 text-purple-700' :
+                                    'bg-amber-100 text-amber-700'
+                              }`}>
+                              {o.status === 'pending' ? 'Pendiente' :
+                                o.status === 'paid' ? 'Pagado' :
+                                  o.status === 'shipped' ? 'Enviado' : 'Entregado'}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            {/* Customer Info */}
+                            <div className="space-y-3">
+                              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                <Users size={12} className="text-green-500" /> Cliente
+                              </p>
+                              <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-50">
+                                {/* @ts-ignore */}
+                                <p className="font-bold text-gray-900 text-sm">{o.profiles?.name || 'Usuario'}</p>
+                                {/* @ts-ignore */}
+                                <p className="text-xs text-gray-500 font-medium mt-0.5">{o.profiles?.email || 'N/A'}</p>
+                              </div>
+                            </div>
+
+                            {/* Shipping info */}
+                            <div className="space-y-3">
+                              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                <MapPin size={12} className="text-green-500" /> Entrega
+                              </p>
+                              <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-50">
+                                <p className="text-xs text-gray-600 font-bold leading-relaxed italic">
+                                  {typeof o.shipping_address === 'string'
+                                    ? o.shipping_address
+                                    : `${o.shipping_address?.street || ''}, ${o.shipping_address?.city || ''}`}
+                                </p>
+                                {o.shipping_address?.phone && (
+                                  <p className="text-[10px] text-green-600 font-bold mt-2">TEL: {o.shipping_address.phone}</p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Order Items */}
+                          <div className="space-y-4">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Resumen de Productos</p>
+                            <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
+                              {/* @ts-ignore */}
+                              {o.order_items?.map((item: any) => (
+                                <div key={item.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                  <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 text-gray-400">
+                                      <Package size={20} />
+                                    </div>
+                                    <div>
+                                      <p className="text-xs font-bold text-gray-900 line-clamp-1">{item.name || 'Producto'}</p>
+                                      <p className="text-[10px] text-gray-400 font-black tracking-widest mt-0.5">{item.quantity} x {formatCurrency(item.price)}</p>
+                                    </div>
+                                  </div>
+                                  <p className="text-xs font-black text-gray-900">{formatCurrency(item.price * item.quantity)}</p>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                        <div className="flex flex-col sm:items-end gap-2">
-                          <p className="font-bold text-lg text-gray-900">{formatCurrency(o.total)}</p>
-                          <select
-                            value={o.status}
-                            onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
-                            className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-700 outline-none focus:ring-2 focus:ring-green-500/10 transition-all"
-                          >
-                            <option value="pending">Pendiente</option>
-                            <option value="paid">Pagado</option>
-                            <option value="shipped">Enviado</option>
-                            <option value="delivered">Entregado</option>
-                          </select>
+
+                        {/* Order Actions & Total */}
+                        <div className="lg:w-64 flex flex-col justify-between items-end gap-6 text-right">
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total del Pedido</p>
+                            <p className="text-3xl font-black text-green-600">{formatCurrency(o.total)}</p>
+                            <div className="flex items-center justify-end gap-1.5 text-green-600/60">
+                              <CheckCircle2 size={12} />
+                              <span className="text-[10px] font-black uppercase tracking-tighter">Impuestos Incluidos</span>
+                            </div>
+                          </div>
+
+                          <div className="w-full space-y-3">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest block text-center lg:text-right">Cambiar Estado</p>
+                            <div className="relative">
+                              <select
+                                value={o.status}
+                                onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
+                                className="w-full bg-gray-900 text-white text-[11px] font-black uppercase tracking-widest px-5 py-4 rounded-xl outline-none hover:bg-black transition-all appearance-none cursor-pointer shadow-xl shadow-gray-200/50"
+                              >
+                                <option value="pending">🕒 Pendiente</option>
+                                <option value="paid">💰 Pagado</option>
+                                <option value="shipped">🚚 Enviado</option>
+                                <option value="delivered">✅ Entregado</option>
+                              </select>
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
+                                <ArrowLeft size={16} className="-rotate-90" />
+                              </div>
+                            </div>
+                            <p className="text-center lg:text-right text-[10px] text-gray-400 font-medium italic">Actualización instantánea</p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   ))}
+                  {orders.length === 0 && (
+                    <div className="text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-gray-100">
+                      <ShoppingBag className="w-16 h-16 text-gray-100 mx-auto mb-4" />
+                      <p className="text-gray-400 font-bold uppercase tracking-widest text-[11px]">No hay pedidos registrados en el sistema</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ) :

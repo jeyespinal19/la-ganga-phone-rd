@@ -12,6 +12,7 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
     final items = cart.items.values.toList();
+    final profileService = ProfileService();
 
     return Scaffold(
       backgroundColor: const Color(0xFF0F2027),
@@ -137,7 +138,7 @@ class CartScreen extends StatelessWidget {
                   const Text('Dirección de Envío', style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   FutureBuilder<List<Map<String, dynamic>>>(
-                    future: ProfileService().getAddresses(SupabaseConfig.client.auth.currentUser?.id ?? ''),
+                    future: profileService.getAddresses(SupabaseConfig.client.auth.currentUser?.id ?? ''),
                     builder: (context, snapshot) {
                       final addresses = snapshot.data ?? [];
                       if (addresses.isEmpty) {
@@ -159,10 +160,13 @@ class CartScreen extends StatelessWidget {
                           value: addresses.first['id'], // Simple: pick first for now
                           underline: const SizedBox(),
                           style: const TextStyle(color: Colors.white, fontSize: 13),
-                          items: addresses.map((a) => DropdownMenuItem(
-                            value: a['id'] as String,
-                            child: Text(a['address'], overflow: TextOverflow.ellipsis),
-                          )).toList(),
+                          items: addresses.map((a) {
+                            final addrData = a['address'] as Map<String, dynamic>? ?? {};
+                            return DropdownMenuItem(
+                              value: a['id'] as String,
+                              child: Text('${a['label']}: ${addrData['street'] ?? ''}', overflow: TextOverflow.ellipsis),
+                            );
+                          }).toList(),
                           onChanged: (val) {},
                         ),
                       );
@@ -195,7 +199,7 @@ class CartScreen extends StatelessWidget {
                             'price': i.product.price,
                           }).toList();
                           
-                          await ProfileService().createOrder(userId, cart.totalAmount, orderItems);
+                          await profileService.createOrder(userId, cart.totalAmount, orderItems);
                           
                           if (context.mounted) {
                             cart.clear();

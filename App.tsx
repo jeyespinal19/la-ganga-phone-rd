@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { supabase } from './services/supabase';
 import { Search, ShoppingCart, Home, Tag, User as UserIcon } from 'lucide-react';
 import { Navbar } from './components/Navbar';
 import { ProductCard } from './components/ProductCard';
@@ -12,6 +13,7 @@ import { SplashScreen } from './components/SplashScreen';
 import { Cart } from './components/Cart';
 import { Checkout } from './components/Checkout';
 import { OrderHistory } from './components/OrderHistory';
+import { Skeleton, ProductSkeleton, BannerSkeleton } from './components/Skeleton';
 import { Category, Product, User, CartItem } from './types';
 import { productService } from './services/productService';
 import { PromoBanner } from './components/PromoBanner';
@@ -67,9 +69,53 @@ const App: React.FC = () => {
     };
     fetchData();
 
+    // 2. Real-time Product Subscription
+    const channel = supabase
+      .channel('products-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products' },
+        (payload) => {
+          console.log('Real-time product change:', payload);
+          if (payload.eventType === 'INSERT') {
+            const newItem = payload.new as any;
+            const formattedItem: Product = {
+              id: newItem.id,
+              name: newItem.name,
+              brand: newItem.brand,
+              specs: newItem.specs || '',
+              price: Number(newItem.current_bid),
+              stock: newItem.stock || 0,
+              imageDetails: newItem.image_details,
+              originalPrice: newItem.reserve_price ? Number(newItem.reserve_price) : undefined
+            };
+            setItems(prev => [formattedItem, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedItem = payload.new as any;
+            setItems(prev => prev.map(item => item.id === updatedItem.id ? {
+              ...item,
+              name: updatedItem.name,
+              brand: updatedItem.brand,
+              specs: updatedItem.specs || '',
+              price: Number(updatedItem.current_bid),
+              stock: updatedItem.stock || 0,
+              imageDetails: updatedItem.image_details,
+              originalPrice: updatedItem.reserve_price ? Number(updatedItem.reserve_price) : undefined
+            } : item));
+          } else if (payload.eventType === 'DELETE') {
+            setItems(prev => prev.filter(item => item.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
     // Load Cart
     const savedCart = localStorage.getItem('cart');
     if (savedCart) setCart(JSON.parse(savedCart));
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // 2. Detect login and show splash screen
@@ -288,10 +334,10 @@ const App: React.FC = () => {
                 className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity active:scale-95 duration-200"
                 onClick={() => setCurrentView('home')}
               >
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold animate-float">G</div>
+                <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center text-white font-bold animate-float">G</div>
                 <h1 className="text-lg font-black italic tracking-tighter">
                   <span className="text-app-text">La Ganga</span>
-                  <div className="text-[10px] text-blue-600 mt-2 font-bold tracking-[0.3em] uppercase">Phone RD</div>
+                  <div className="text-[10px] text-green-600 mt-2 font-bold tracking-[0.3em] uppercase">Phone RD</div>
                 </h1>
               </div>
               <div className="flex items-center gap-3">
@@ -332,12 +378,12 @@ const App: React.FC = () => {
           {/* Search */}
           <div className="px-4 py-3 bg-app-bg border-b border-app-border">
             <div className="relative group">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-app-muted transition-colors group-focus-within:text-blue-500">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-app-muted transition-colors group-focus-within:text-green-500">
                 <Search className="w-5 h-5" />
               </div>
               <input
                 type="text"
-                className="w-full bg-app-card border border-app-border rounded-2xl py-3 pl-12 pr-10 text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 text-app-text placeholder-app-muted transition-all shadow-sm"
+                className="w-full bg-app-card border border-app-border rounded-2xl py-3 pl-12 pr-10 text-sm focus:ring-4 focus:ring-green-500/10 focus:border-green-500 text-app-text placeholder-app-muted transition-all shadow-sm"
                 placeholder="Buscar productos y marcas..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -364,11 +410,13 @@ const App: React.FC = () => {
             ))}
           </div>
 
-          <PromoBanner />
+          {isLoading ? <BannerSkeleton /> : <PromoBanner />}
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 bg-white">
-          {filteredItems.length > 0 ? (
+          {isLoading ? (
+            Array(8).fill(0).map((_, i) => <ProductSkeleton key={i} />)
+          ) : filteredItems.length > 0 ? (
             filteredItems.map((item) => (
               <ProductCard
                 key={item.id}

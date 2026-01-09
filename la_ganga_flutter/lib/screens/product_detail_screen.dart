@@ -16,7 +16,7 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final ProductService _productService = ProductService();
-  // Placeholder for any e-commerce logging or tracking
+  
   void _addToCart(Product product) {
     context.read<CartProvider>().addItem(product);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -31,11 +31,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -251,31 +246,5 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         },
       ),
     );
-  }
-
-  Widget _infoCard(String label, String value, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: const Color(0xFF4ADE80), size: 24),
-          const SizedBox(height: 5),
-          Text(label, style: const TextStyle(color: Colors.white54, fontSize: 12)),
-          Text(value, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
-  }
-
-  String _formatDuration(DateTime? endsAt) {
-    if (endsAt == null) return 'Sin límite';
-    final diff = endsAt.difference(DateTime.now());
-    if (diff.isNegative) return 'Cerrado';
-    if (diff.inDays > 0) return '${diff.inDays}d ${diff.inHours % 24}h';
-    return '${diff.inHours}h ${diff.inMinutes % 60}m';
   }
 }

@@ -74,26 +74,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 final addresses = snapshot.data ?? [];
                 return Column(
                   children: [
-                    ...addresses.map((addr) => Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: ListTile(
-                        leading: const Icon(Icons.location_on_outlined, color: Color(0xFF4ADE80)),
-                        title: Text(addr['name'] ?? '', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                        subtitle: Text(addr['address'] ?? '', style: const TextStyle(color: Colors.white54)),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
-                          onPressed: () async {
-                            await _profileService.deleteAddress(addr['id']);
-                            setState(() {});
-                          },
+                    ...addresses.map((addr) {
+                      final addressData = addr['address'] as Map<String, dynamic>? ?? {};
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                      ),
-                    )),
+                        child: ListTile(
+                          leading: const Icon(Icons.location_on_outlined, color: Color(0xFF4ADE80)),
+                          title: Text(addr['label'] ?? '', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          subtitle: Text(
+                            '${addressData['street'] ?? ''}, ${addressData['city'] ?? ''} - ${addressData['phone'] ?? ''}',
+                            style: const TextStyle(color: Colors.white54, fontSize: 13),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
+                            onPressed: () async {
+                              await _profileService.deleteAddress(addr['id']);
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      );
+                    }),
                     TextButton.icon(
                       onPressed: () => _showAddressForm(),
                       icon: const Icon(Icons.add, size: 18),
@@ -243,10 +249,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onPressed: () async {
                     await _profileService.addAddress({
                       'user_id': userId,
-                      'name': nameController.text,
-                      'address': addressController.text,
-                      'city': cityController.text,
-                      'phone': phoneController.text,
+                      'label': nameController.text, // mapped from label
+                      'address': {
+                        'street': addressController.text,
+                        'city': cityController.text,
+                        'phone': phoneController.text,
+                      },
                     });
                     if (mounted) Navigator.pop(ctx);
                     setState(() {});
