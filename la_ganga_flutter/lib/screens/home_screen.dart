@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedCategory = 'Todos';
   
   final List<String> _categories = [
-    'Todos', 'Oukitel', 'Samsung', 'Xiaomi', 'Hogar', 'Mascotas'
+    'Todos', 'Samsung', 'Xiaomi', 'Oukitel', 'Accesorios'
   ];
 
   @override
