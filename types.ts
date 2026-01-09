@@ -64,3 +64,14 @@ export interface Banner {
   order: number;
   created_at?: string;
 }
+
+export interface Notification {
+  id: string;
+  user_id: string | null;
+  type: 'new_order' | 'order_update';
+  title: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+  metadata?: any;
+}

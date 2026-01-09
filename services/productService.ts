@@ -315,6 +315,34 @@ class ProductService {
 
     return data.publicUrl;
   }
+
+  // --- Notifications ---
+
+  async getNotifications(userId?: string) {
+    let query = supabase
+      .from('notifications')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (userId) {
+      query = query.eq('user_id', userId);
+    } else {
+      query = query.is('user_id', null);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  }
+
+  async markNotificationRead(id: string) {
+    const { error } = await supabase
+      .from('notifications')
+      .update({ is_read: true })
+      .eq('id', id);
+    if (error) throw error;
+  }
 }
 
 export const productService = new ProductService();

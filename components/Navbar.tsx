@@ -1,18 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Smartphone, Moon, Sun, ChevronDown, User, LayoutDashboard, LogOut } from 'lucide-react';
+import { NotificationBell } from './NotificationBell';
 
 interface NavbarProps {
   currentView: 'home' | 'profile' | 'admin' | 'product-detail';
   onNavigate: (view: 'home' | 'profile' | 'admin') => void;
   isDarkMode: boolean;
+  isDarkMode: boolean;
   toggleTheme: () => void;
+  userId?: string;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentView,
   onNavigate,
   isDarkMode,
-  toggleTheme
+
+  toggleTheme,
+  userId
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -62,6 +67,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             <span className="hidden md:inline">{isDarkMode ? 'Claro' : 'Oscuro'}</span>
           </button>
+
+          {/* Notifications */}
+          <div className="flex items-center">
+            <NotificationBell userId={userId} />
+          </div>
 
           {/* User Profile Dropdown */}
           <div className="relative" ref={menuRef}>
