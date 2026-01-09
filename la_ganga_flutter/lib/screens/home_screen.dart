@@ -36,12 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 130, // Reduced height since logo is in top bar
+              expandedHeight: 140, 
               floating: true,
               pinned: true,
               backgroundColor: const Color(0xFF0F2027),
               elevation: 0,
               centerTitle: false,
+              // Keep title in the pinned area
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -69,31 +70,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               flexibleSpace: FlexibleSpaceBar(
-                background: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 12),
-                      child: Container(
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: TextField(
-                          onChanged: (val) => setState(() => _searchQuery = val),
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: Icon(Icons.search, color: Colors.white54),
-                            hintText: 'Buscar productos...',
-                            hintStyle: TextStyle(color: Colors.white38),
-                            contentPadding: EdgeInsets.symmetric(vertical: 10),
+                background: Padding(
+                  padding: const EdgeInsets.only(top: 80), // Push below the pinned title height
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: TextField(
+                            onChanged: (val) => setState(() => _searchQuery = val),
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              prefixIcon: Icon(Icons.search, color: Colors.white54),
+                              hintText: 'Buscar productos...',
+                              hintStyle: TextStyle(color: Colors.white38),
+                              contentPadding: EdgeInsets.symmetric(vertical: 10),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               actions: [
