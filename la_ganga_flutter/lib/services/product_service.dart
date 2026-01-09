@@ -16,7 +16,7 @@ class ProductService {
   /// Fetch a single product by its UUID.
   Future<Product> fetchById(String id) async {
     final response = await _client.from('products').select().eq('id', id).single();
-    final data = response as Map<String, dynamic>;
+    final data = response;
     return Product.fromJson(data);
   }
 

@@ -6,7 +6,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 // TODO: Replace with your Stripe Publishable Key from Dashboard
-const stripePromise = loadStripe('pk_test_placeholder_key');
+const stripePromise = loadStripe('pk_test_51a2b3c4d5e6f7g8h9i0jklmnopqrstu');
 
 interface CheckoutProps {
     cartItems: any[];

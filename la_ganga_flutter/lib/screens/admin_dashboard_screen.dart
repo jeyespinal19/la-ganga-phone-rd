@@ -18,7 +18,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   final ImagePicker _picker = ImagePicker();
   
   late TabController _tabController;
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   void initState() {
@@ -236,9 +236,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 ElevatedButton(
                   onPressed: () async {
                     String imageUrl = currentImageUrl;
-                    if (selectedImageBytes != null) {
-                      imageUrl = await _productService.uploadImage('admin', selectedImageBytes!);
-                    }
                     final data = {
                       'name': nameController.text,
                       'brand': brandController.text,
@@ -247,8 +244,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       'specs': specsController.text,
                       'image_details': imageUrl,
                     };
-                    if (product == null) await _productService.create(data);
-                    else await _productService.update(product.id, data);
+                    if (product == null) {
+                      await _productService.create(data);
+                    } else {
+                      await _productService.update(product.id, data);
+                    }
                     Navigator.pop(ctx);
                     setState(() {});
                   },

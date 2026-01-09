@@ -1,4 +1,3 @@
-import 'supabase/config.dart';
 import 'screens/product_detail_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'auth/auth_screen.dart';

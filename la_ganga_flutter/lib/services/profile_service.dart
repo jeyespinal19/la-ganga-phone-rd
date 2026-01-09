@@ -6,7 +6,7 @@ class ProfileService {
 
   Future<Map<String, dynamic>?> getProfile(String userId) async {
     final response = await _client.from('profiles').select().eq('id', userId).maybeSingle();
-    return response as Map<String, dynamic>?;
+    return response;
   }
 
   Future<void> updateProfile(String userId, Map<String, dynamic> data) async {
