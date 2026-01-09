@@ -101,6 +101,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   useEffect(() => {
     if (activeTab === 'orders') {
       fetchOrders();
+      // Subscribe to real-time changes on orders table
+      const subscription = supabase
+        .channel('admin-orders-channel')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+          fetchOrders();
+        })
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(subscription);
+      };
     }
     if (activeTab === 'banners') {
       fetchBanners();
@@ -688,11 +699,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                               <Clock className="w-3.5 h-3.5" />
                               <span className="text-xs font-bold">{new Date(o.created_at).toLocaleString('es-ES')}</span>
                             </div>
-                            {/* @ts-ignore */}
                             <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${o.status === 'paid' ? 'bg-green-100 text-green-700' :
-                                o.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
-                                  o.status === 'delivered' ? 'bg-purple-100 text-purple-700' :
-                                    'bg-amber-100 text-amber-700'
+                              o.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                                o.status === 'delivered' ? 'bg-purple-100 text-purple-700' :
+                                  'bg-amber-100 text-amber-700'
                               }`}>
                               {o.status === 'pending' ? 'Pendiente' :
                                 o.status === 'paid' ? 'Pagado' :
@@ -707,9 +717,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 <Users size={12} className="text-green-500" /> Cliente
                               </p>
                               <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-50">
-                                {/* @ts-ignore */}
                                 <p className="font-bold text-gray-900 text-sm">{o.profiles?.name || 'Usuario'}</p>
-                                {/* @ts-ignore */}
                                 <p className="text-xs text-gray-500 font-medium mt-0.5">{o.profiles?.email || 'N/A'}</p>
                               </div>
                             </div>
@@ -736,7 +744,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           <div className="space-y-4">
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Resumen de Productos</p>
                             <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
-                              {/* @ts-ignore */}
                               {o.order_items?.map((item: any) => (
                                 <div key={item.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
                                   <div className="flex items-center gap-4">
@@ -805,7 +812,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <h2 className="text-xl font-bold text-gray-900 tracking-tight">Base de Clientes</h2>
                       <p className="text-sm font-medium text-gray-400">{users.length} usuarios registrados</p>
                     </div>
-                    <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
+                    <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
                       <Users className="w-5 h-5" />
                     </div>
                   </div>

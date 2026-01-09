@@ -6,8 +6,9 @@ export interface Product {
   specs: string;
   price: number;
   imageDetails: string;
+  image_url?: string; // Alias for Supabase
   stock: number;
-  originalPrice?: number; // Optional: for showing "scratch" price
+  originalPrice?: number;
 }
 
 export type Category = 'Todos' | 'Oukitel' | 'Samsung' | 'Xiaomi' | 'Hogar' | 'Hombre' | 'Oficina' | 'Industrial' | 'Deporte' | 'Mascotas';
@@ -36,10 +37,15 @@ export interface Order {
   id: string;
   user_id: string;
   total: number;
-  status: 'pending' | 'paid' | 'shipped' | 'cancelled';
+  status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
   shipping_address: any;
   created_at: string;
-  items: OrderItem[];
+  items?: OrderItem[];
+  order_items?: OrderItem[];
+  profiles?: {
+    name: string;
+    email: string;
+  };
   stripe_payment_intent_id?: string;
 }
 

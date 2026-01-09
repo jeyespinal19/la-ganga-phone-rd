@@ -8,4 +8,8 @@ class BannerService {
     final response = await _client.from('banners').select().order('order');
     return List<Map<String, dynamic>>.from(response as List);
   }
+
+  Stream<List<Map<String, dynamic>>> streamBanners() {
+    return _client.from('banners').stream(primaryKey: ['id']).order('order');
+  }
 }

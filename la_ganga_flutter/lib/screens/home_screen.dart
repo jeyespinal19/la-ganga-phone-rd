@@ -173,8 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SliverToBoxAdapter(
-              child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: BannerService().fetchBanners(),
+              child: StreamBuilder<List<Map<String, dynamic>>>(
+                stream: BannerService().streamBanners(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) return const BannerSkeleton();
                   final banners = snapshot.data ?? [];

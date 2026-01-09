@@ -77,7 +77,7 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({ item, onAddToCart, o
         <div className="flex justify-between items-center mt-2">
           <div className="flex flex-col">
             <div className="flex items-baseline gap-1">
-              <span className="text-xs font-bold text-orange-600">RD$</span>
+              <span className="text-xs font-bold text-green-600">RD$</span>
               <span className="text-lg font-black text-gray-900 tracking-tight">
                 {item.price.toLocaleString('es-ES')}
               </span>
