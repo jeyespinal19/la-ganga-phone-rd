@@ -32,6 +32,11 @@ export interface OrderItem {
   product_id: string;
   quantity: number;
   price: number;
+  products?: {
+    name: string;
+    image_details: string;
+    brand: string;
+  };
 }
 export interface Order {
   id: string;

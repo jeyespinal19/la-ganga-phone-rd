@@ -751,20 +751,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           <div className="space-y-4">
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Resumen de Productos</p>
                             <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
-                              {o.order_items?.map((item: any) => (
-                                <div key={item.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                                  <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 text-gray-400">
-                                      <Package size={20} />
+                              {o.order_items?.map((item: any) => {
+                                const prod = item.products;
+                                const hasImage = prod?.image_details;
+                                const isUrl = hasImage && (hasImage.startsWith('http') || hasImage.startsWith('data:'));
+                                const imgSrc = hasImage ? (isUrl ? hasImage : `https://picsum.photos/seed/${hasImage}/200/200`) : null;
+
+                                return (
+                                  <div key={item.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                      <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 text-gray-400 overflow-hidden shrink-0">
+                                        {imgSrc ? (
+                                          <img src={imgSrc} alt={prod?.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                          <Package size={20} />
+                                        )}
+                                      </div>
+                                      <div>
+                                        <p className="text-xs font-bold text-gray-900 line-clamp-1">{prod?.name || 'Producto eliminado'}</p>
+                                        <div className="flex items-center gap-2 mt-0.5">
+                                          {prod?.brand && (
+                                            <span className="text-[9px] font-black uppercase tracking-wider text-green-600 bg-green-50 px-1.5 py-0.5 rounded-md">{prod.brand}</span>
+                                          )}
+                                          <p className="text-[10px] text-gray-400 font-bold">{item.quantity} x {formatCurrency(item.price)}</p>
+                                        </div>
+                                      </div>
                                     </div>
-                                    <div>
-                                      <p className="text-xs font-bold text-gray-900 line-clamp-1">{item.name || 'Producto'}</p>
-                                      <p className="text-[10px] text-gray-400 font-black tracking-widest mt-0.5">{item.quantity} x {formatCurrency(item.price)}</p>
-                                    </div>
+                                    <p className="text-xs font-black text-gray-900 whitespace-nowrap ml-2">{formatCurrency(item.price * item.quantity)}</p>
                                   </div>
-                                  <p className="text-xs font-black text-gray-900">{formatCurrency(item.price * item.quantity)}</p>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                           </div>
                         </div>
@@ -1003,5 +1019,5 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     </div >
   );
 };
- 
+
 // Force update 

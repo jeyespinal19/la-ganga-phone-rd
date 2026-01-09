@@ -229,7 +229,14 @@ class ProductService {
       .from('orders')
       .select(`
         *,
-        order_items (*),
+        order_items (
+          *,
+          products (
+            name,
+            image_details,
+            brand
+          )
+        ),
         profiles:user_id (name, email)
       `)
       .order('created_at', { ascending: false });
