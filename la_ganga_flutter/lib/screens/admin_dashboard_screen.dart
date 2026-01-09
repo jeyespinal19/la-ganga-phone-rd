@@ -4,6 +4,8 @@ import '../models/product.dart';
 import '../services/product_service.dart';
 import '../services/profile_service.dart';
 import 'dart:typed_data';
+import '../services/notification_service.dart';
+import '../widgets/notification_bell.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -34,6 +36,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          NotificationBell(),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: const Color(0xFF22C55E),

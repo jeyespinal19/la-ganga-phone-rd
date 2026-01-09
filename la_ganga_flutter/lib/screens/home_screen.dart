@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/shimmer_skeletons.dart';
 import '../supabase/config.dart';
+import '../widgets/notification_bell.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -104,6 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: const Icon(Icons.person_outline),
                   onPressed: () => context.push('/profile'),
                 ),
+                NotificationBell(userId: SupabaseConfig.client.auth.currentUser?.id),
                 Consumer<CartProvider>(
                   builder: (context, cart, child) {
                     return Stack(
