@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
         manifest: {
           name: 'La Ganga Phone RD',
           short_name: 'La Ganga',
-          description: 'Subastas en vivo de teléfonos móviles',
+          description: 'Tienda de teléfonos móviles de alta gama',
           theme_color: '#0ea5e9',
           background_color: '#050b14',
           display: 'standalone',

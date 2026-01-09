@@ -86,7 +86,7 @@ export const Login: React.FC<LoginProps> = ({ onBack }) => {
                         <p className="text-gray-400 font-medium">
                             {isLogin
                                 ? 'Accede a tu cuenta de La Ganga Phone RD'
-                                : 'Regístrate para participar en las subastas'}
+                                : 'Regístrate para acceder a ofertas exclusivas'}
                         </p>
                     </div>
 

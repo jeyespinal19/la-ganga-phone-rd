@@ -75,7 +75,7 @@ class NotificationService {
     // Notify when new product is added
     notifyNewProduct(productName: string) {
         this.showNotification('Nuevo producto', {
-            body: `${productName} está disponible para pujar`,
+            body: `${productName} está disponible para comprar`,
             tag: 'new-product',
             requireInteraction: false,
         });

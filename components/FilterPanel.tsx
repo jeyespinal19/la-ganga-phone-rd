@@ -111,7 +111,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ onApply, onReset, isOp
                                     min="1"
                                     placeholder="999"
                                 />
-                                <p className="text-xs text-app-muted mt-1">Mostrar subastas que terminan en menos de X horas</p>
+                                <p className="text-xs text-app-muted mt-1">Mostrar ofertas que terminan en menos de X horas</p>
                             </div>
                         </div>
 
@@ -120,7 +120,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ onApply, onReset, isOp
                             <label className="text-sm font-semibold text-app-text mb-3 block">Estado</label>
                             <div className="space-y-2">
                                 {[
-                                    { value: 'all', label: 'Todas las Subastas' },
+                                    { value: 'all', label: 'Todos los Productos' },
                                     { value: 'ending-soon', label: 'Terminan Pronto (< 1h)' },
                                     { value: 'new', label: 'Nuevas (> 24h)' }
                                 ].map((option) => (

@@ -91,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="absolute right-0 top-full mt-4 w-64 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] py-2 animate-in fade-in zoom-in-95 duration-200 z-50">
                 <div className="px-5 py-4 border-b border-white/10 mb-2">
                   <p className="text-xs font-black uppercase tracking-[0.2em] text-app-neon-cyan mb-1">Administrador</p>
-                  <p className="text-sm font-bold text-white truncate">admin@lagransubasta.com</p>
+                  <p className="text-sm font-bold text-white truncate">admin@lagangaphonerd.com</p>
                 </div>
 
                 <div className="px-2 space-y-1">

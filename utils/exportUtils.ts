@@ -4,7 +4,7 @@ import { AuctionItem, User } from '../types';
  * Export auction items to CSV format
  */
 export const exportItemsToCSV = (items: AuctionItem[]): void => {
-    const headers = ['ID', 'Nombre', 'Marca', 'Especificaciones', 'Puja Actual (DOP)', 'Precio Reserva (DOP)', 'Tiempo Restante'];
+    const headers = ['ID', 'Nombre', 'Marca', 'Especificaciones', 'Precio (DOP)', 'Precio Original (DOP)', 'Tiempo Restante'];
 
     const csvContent = [
         headers.join(','),
@@ -19,7 +19,7 @@ export const exportItemsToCSV = (items: AuctionItem[]): void => {
         ].join(','))
     ].join('\n');
 
-    downloadFile(csvContent, `subastas_${getDateString()}.csv`, 'text/csv');
+    downloadFile(csvContent, `inventario_${getDateString()}.csv`, 'text/csv');
 };
 
 /**
@@ -77,19 +77,19 @@ export const generateTextReport = (items: AuctionItem[]): string => {
     report += `     ${new Date().toLocaleDateString('es-DO')}\n`;
     report += '═════════════════════════════════════════\n\n';
 
-    report += `Total de Subastas Activas: ${items.length}\n`;
-    report += `Valor Total en Subastas: DOP ${totalValue.toLocaleString()}\n`;
-    report += `Puja Promedio: DOP ${avgBid.toLocaleString()}\n\n`;
+    report += `Total de Productos: ${items.length}\n`;
+    report += `Valor Total del Inventario: DOP ${totalValue.toLocaleString()}\n`;
+    report += `Precio Promedio: DOP ${avgBid.toLocaleString()}\n\n`;
 
-    report += 'DETALLE DE SUBASTAS:\n';
+    report += 'DETALLE DE INVENTARIO:\n';
     report += '─────────────────────────────────────────\n\n';
 
     items.forEach((item, index) => {
         report += `${index + 1}. ${item.name}\n`;
         report += `   Marca: ${item.brand}\n`;
-        report += `   Puja Actual: DOP ${item.currentBid.toLocaleString()}\n`;
+        report += `   Precio: DOP ${item.currentBid.toLocaleString()}\n`;
         if (item.reservePrice) {
-            report += `   Precio Reserva: DOP ${item.reservePrice.toLocaleString()}\n`;
+            report += `   Precio Original: DOP ${item.reservePrice.toLocaleString()}\n`;
         }
         report += `   Tiempo Restante: ${item.timeLeft}\n\n`;
     });
