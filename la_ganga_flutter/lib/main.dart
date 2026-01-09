@@ -98,3 +98,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+ 
+// Fixed syntax 
