@@ -148,17 +148,19 @@ class ProductService {
 
   // --- Orders ---
 
-  async createOrder(userId: string, total: number, shippingAddress: any, items: { id: string, price: number, quantity: number }[]) {
+  async createOrder(userId: string, total: number, shippingAddress: any, items: { id: string, price: number, quantity: number }[], paymentMethod: string, stripePaymentIntentId?: string) {
     try {
-      // 1. Create Order
+      // 2. Insert Order
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
-        .insert({
+        .insert([{
           user_id: userId,
-          total: total,
+          total,
+          shipping_address: shippingAddress,
           status: 'pending',
-          shipping_address: shippingAddress
-        })
+          payment_method: paymentMethod,
+          stripe_payment_intent_id: stripePaymentIntentId
+        }])
         .select()
         .single();
 
@@ -190,6 +192,17 @@ class ProductService {
       console.error('Create order error:', err);
       throw err;
     }
+  }
+
+  async updateOrder(orderId: string, updates: Partial<Order>) {
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', orderId)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   }
   async getOrders(userId: string) {
     const { data, error } = await supabase

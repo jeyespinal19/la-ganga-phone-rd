@@ -37,19 +37,23 @@ const CheckoutForm: React.FC<{
         setError(null);
 
         try {
-            // 1. Create the Order in Supabase
-            const orderId = await productService.createOrder(
-                user.id,
-                total,
-                shipping,
-                cartItems
-            );
-
             if (paymentMethod === 'stripe') {
                 if (!stripe || !elements) return;
 
+                // 1. Create the Order in Supabase first (status: pending)
+                const orderId = await productService.createOrder(
+                    user.id,
+                    total,
+                    shipping,
+                    cartItems,
+                    'stripe'
+                );
+
                 // 2. Create PaymentIntent via Edge Function
-                const { clientSecret } = await productService.createPaymentIntent(orderId, total * 100); // Stripe expects cents
+                const { clientSecret, id: piId } = await productService.createPaymentIntent(orderId, total * 100);
+
+                // Update order with payment intent ID for webhook tracking
+                await productService.updateOrder(orderId, { stripe_payment_intent_id: piId });
 
                 // 3. Confirm Payment
                 const { error: stripeError } = await stripe.confirmPayment({
@@ -78,6 +82,13 @@ const CheckoutForm: React.FC<{
                 }
             } else {
                 // Cash on Delivery
+                await productService.createOrder(
+                    user.id,
+                    total,
+                    shipping,
+                    cartItems,
+                    'cod'
+                );
                 onSuccess();
             }
         } catch (err: any) {

@@ -199,7 +199,7 @@ class CartScreen extends StatelessWidget {
                             'price': i.product.price,
                           }).toList();
                           
-                          await profileService.createOrder(userId, cart.totalAmount, orderItems);
+                          await profileService.createOrder(userId, cart.totalAmount, orderItems, paymentMethod: 'cod');
                           
                           if (context.mounted) {
                             cart.clear();

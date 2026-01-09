@@ -4,6 +4,7 @@ import '../services/product_service.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/shimmer_skeletons.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String productId;
@@ -41,7 +42,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         future: _productService.fetchById(widget.productId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const ProductDetailSkeleton();
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white)));

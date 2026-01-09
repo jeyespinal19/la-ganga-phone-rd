@@ -22,12 +22,14 @@ class ProfileService {
     return List<Map<String, dynamic>>.from(response as List);
   }
 
-  Future<void> createOrder(String userId, double total, List<Map<String, dynamic>> items) async {
+  Future<void> createOrder(String userId, double total, List<Map<String, dynamic>> items, {String status = 'pending', String? stripeId, String? paymentMethod}) async {
     // Basic order creation
     final orderResponse = await _client.from('orders').insert({
       'user_id': userId,
       'total': total,
-      'status': 'pending',
+      'status': status,
+      'stripe_payment_intent_id': stripeId,
+      'payment_method': paymentMethod,
     }).select().single();
 
     final orderId = orderResponse['id'];
@@ -40,6 +42,18 @@ class ProfileService {
     }).toList();
 
     await _client.from('order_items').insert(orderItems);
+
+    // Decrement stock for each item using RPC
+    for (var item in items) {
+      try {
+        await _client.rpc('decrement_stock', params: {
+          'row_id': item['product_id'],
+          'quantity': item['quantity'],
+        });
+      } catch (e) {
+        print('Error decrementing stock for ${item['product_id']}: $e');
+      }
+    }
   }
 
   /// Admin: Get all orders from all users
