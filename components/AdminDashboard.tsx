@@ -27,6 +27,8 @@ import { formatCurrency } from '../utils/format';
 import { productService } from '../services/productService';
 import { supabase } from '../services/supabase';
 
+const STANDARD_BRANDS = ['Samsung', 'Apple', 'Xiaomi', 'Oukitel', 'Google', 'Motorola', 'Hogar'];
+
 interface AdminDashboardProps {
   items: Product[];
   users: User[];
@@ -226,7 +228,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     stock: '0',
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isCustomBrand, setIsCustomBrand] = useState(false);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -256,6 +260,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setNewItem({ name: '', brand: 'Samsung', specs: '', price: '', originalPrice: '', stock: '0' });
     setImagePreview(null);
     setEditingId(null);
+    setIsCustomBrand(false);
     setShowAddModal(true);
   };
 
@@ -268,8 +273,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       stock: item.stock ? item.stock.toString() : '0',
       originalPrice: item.originalPrice ? item.originalPrice.toString() : ''
     });
+
     setImagePreview(item.imageDetails);
     setEditingId(item.id);
+    setIsCustomBrand(!STANDARD_BRANDS.includes(item.brand));
     setShowAddModal(true);
   };
 
@@ -903,18 +910,32 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Marca</label>
                   <select
                     className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all"
-                    value={newItem.brand}
-                    onChange={e => setNewItem({ ...newItem, brand: e.target.value })}
+                    value={isCustomBrand ? 'Otro' : newItem.brand}
+                    onChange={e => {
+                      if (e.target.value === 'Otro') {
+                        setIsCustomBrand(true);
+                        setNewItem({ ...newItem, brand: '' });
+                      } else {
+                        setIsCustomBrand(false);
+                        setNewItem({ ...newItem, brand: e.target.value });
+                      }
+                    }}
                   >
-                    <option value="Samsung">Samsung</option>
-                    <option value="Apple">Apple</option>
-                    <option value="Xiaomi">Xiaomi</option>
-                    <option value="Oukitel">Oukitel</option>
-                    <option value="Google">Google</option>
-                    <option value="Motorola">Motorola</option>
-                    <option value="Hogar">Hogar</option>
-                    <option value="Otro">Otro</option>
+                    {STANDARD_BRANDS.map(brand => (
+                      <option key={brand} value={brand}>{brand}</option>
+                    ))}
+                    <option value="Otro">Otro (Escribir marca)</option>
                   </select>
+                  {isCustomBrand && (
+                    <input
+                      type="text"
+                      className="w-full mt-2 bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all animate-in fade-in slide-in-from-top-1"
+                      placeholder="Escribe la marca del producto..."
+                      value={newItem.brand}
+                      onChange={e => setNewItem({ ...newItem, brand: e.target.value })}
+                      autoFocus
+                    />
+                  )}
                 </div>
               </div>
 
