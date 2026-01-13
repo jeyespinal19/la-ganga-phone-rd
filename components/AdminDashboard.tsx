@@ -420,7 +420,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
             <NotificationBell />
           </div>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -533,504 +532,504 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </div>
         </div>
-      </div >
+      </div>
     );
   };
 
-const renderBanners = () => (
-  <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
-    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 tracking-tight">Gestión de Banners</h2>
-        <p className="text-sm font-medium text-gray-400">Personaliza el carrusel de inicio</p>
+  const renderBanners = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
+      <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Gestión de Banners</h2>
+          <p className="text-sm font-medium text-gray-400">Personaliza el carrusel de inicio</p>
+        </div>
+        <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
+          <ImageIcon className="w-5 h-5" />
+        </div>
       </div>
-      <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
-        <ImageIcon className="w-5 h-5" />
-      </div>
-    </div>
 
-    <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-      <h3 className="text-lg font-bold text-gray-900 mb-6">Subir Nuevo Banner</h3>
-      <form onSubmit={handleAddBanner} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-5">
-          <div>
-            <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Imagen del Banner</label>
-            <div className="relative group">
-              <input type="file" onChange={handleBannerUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
-              <div className="w-full h-40 bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center group-hover:bg-green-50 group-hover:border-green-200 transition-all">
-                {isUploading ? (
-                  <div className="flex flex-col items-center">
-                    <Loader2 className="w-6 h-6 text-green-500 animate-spin mb-2" />
-                    <span className="text-[10px] font-bold text-green-600 uppercase tracking-wider">Subiendo...</span>
-                  </div>
-                ) : newBanner.image_url ? (
-                  <img src={newBanner.image_url} className="h-full w-full object-cover rounded-lg" alt="Preview" />
-                ) : (
-                  <>
-                    <Upload className="w-6 h-6 text-gray-300 mb-2" />
-                    <span className="text-xs font-medium text-gray-400">Clic para subir imagen</span>
-                  </>
-                )}
+      <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+        <h3 className="text-lg font-bold text-gray-900 mb-6">Subir Nuevo Banner</h3>
+        <form onSubmit={handleAddBanner} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-5">
+            <div>
+              <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Imagen del Banner</label>
+              <div className="relative group">
+                <input type="file" onChange={handleBannerUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
+                <div className="w-full h-40 bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center group-hover:bg-green-50 group-hover:border-green-200 transition-all">
+                  {isUploading ? (
+                    <div className="flex flex-col items-center">
+                      <Loader2 className="w-6 h-6 text-green-500 animate-spin mb-2" />
+                      <span className="text-[10px] font-bold text-green-600 uppercase tracking-wider">Subiendo...</span>
+                    </div>
+                  ) : newBanner.image_url ? (
+                    <img src={newBanner.image_url} className="h-full w-full object-cover rounded-lg" alt="Preview" />
+                  ) : (
+                    <>
+                      <Upload className="w-6 h-6 text-gray-300 mb-2" />
+                      <span className="text-xs font-medium text-gray-400">Clic para subir imagen</span>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
+            <div>
+              <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Etiqueta (Badge)</label>
+              <input
+                type="text"
+                placeholder="Ej: OFERTA, NUEVO, MÁS VENDIDO"
+                value={newBanner.badge}
+                onChange={(e) => setNewBanner(prev => ({ ...prev, badge: e.target.value }))}
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-green-500/10 focus:border-green-500 transition-all"
+              />
+            </div>
           </div>
-          <div>
-            <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Etiqueta (Badge)</label>
-            <input
-              type="text"
-              placeholder="Ej: OFERTA, NUEVO, MÁS VENDIDO"
-              value={newBanner.badge}
-              onChange={(e) => setNewBanner(prev => ({ ...prev, badge: e.target.value }))}
-              className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-green-500/10 focus:border-green-500 transition-all"
-            />
-          </div>
-        </div>
-        <div className="space-y-5">
-          <div>
-            <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Título</label>
-            <input
-              type="text"
-              placeholder="Ej: iPhone 15 Pro"
-              value={newBanner.title}
-              onChange={(e) => setNewBanner(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-green-500/10 focus:border-green-500 transition-all"
-            />
-          </div>
-          <div>
-            <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Subtítulo</label>
-            <input
-              type="text"
-              placeholder="Ej: El smartphone más potente"
-              value={newBanner.subtitle}
-              onChange={(e) => setNewBanner(prev => ({ ...prev, subtitle: e.target.value }))}
-              className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-green-500/10 focus:border-green-500 transition-all"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={!newBanner.image_url || isUploading || isSaving}
-            className="w-full mt-2 bg-green-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-sm hover:bg-green-700 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Guardando...
-              </>
-            ) : 'Añadir al Carrusel'}
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {banners.map((banner) => (
-        <div key={banner.id} className="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="aspect-[21/9] w-full relative">
-            <img src={banner.image_url} className="w-full h-full object-cover" alt={banner.title} />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-6">
-              <span className="inline-block px-2.5 py-1 bg-yellow-400 text-black text-[10px] font-bold rounded-md mb-2 w-fit">{banner.badge}</span>
-              <p className="text-white font-bold text-lg leading-none mb-1">{banner.title}</p>
-              <p className="text-white/80 font-medium text-xs">{banner.subtitle}</p>
+          <div className="space-y-5">
+            <div>
+              <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Título</label>
+              <input
+                type="text"
+                placeholder="Ej: iPhone 15 Pro"
+                value={newBanner.title}
+                onChange={(e) => setNewBanner(prev => ({ ...prev, title: e.target.value }))}
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-green-500/10 focus:border-green-500 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold uppercase text-gray-400 tracking-wider mb-2 ml-1">Subtítulo</label>
+              <input
+                type="text"
+                placeholder="Ej: El smartphone más potente"
+                value={newBanner.subtitle}
+                onChange={(e) => setNewBanner(prev => ({ ...prev, subtitle: e.target.value }))}
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold placeholder-gray-300 outline-none focus:ring-2 focus:ring-green-500/10 focus:border-green-500 transition-all"
+              />
             </div>
             <button
-              onClick={() => handleDeleteBanner(banner.id)}
-              className="absolute top-4 right-4 w-9 h-9 bg-black/20 backdrop-blur-md rounded-lg flex items-center justify-center text-white hover:bg-red-600 transition-all shadow-xl opacity-0 group-hover:opacity-100"
+              type="submit"
+              disabled={!newBanner.image_url || isUploading || isSaving}
+              className="w-full mt-2 bg-green-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-sm hover:bg-green-700 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              <Trash2 className="w-4 h-4" />
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Guardando...
+                </>
+              ) : 'Añadir al Carrusel'}
             </button>
           </div>
-        </div>
-      ))}
-      {banners.length === 0 && !bannersLoading && (
-        <div className="col-span-full py-16 bg-white rounded-2xl border border-gray-100 text-center flex flex-col items-center">
-          <ImageIcon className="w-12 h-12 text-gray-200 mb-4" />
-          <p className="text-gray-400 font-bold uppercase text-[11px] tracking-wider">No hay banners personalizados</p>
-        </div>
-      )}
-    </div>
-  </div>
-);
-
-return (
-  <div className="flex flex-col lg:flex-row gap-8 min-h-screen bg-[#fcfdfe] p-4 lg:p-8 pb-24 lg:pb-8 animate-in fade-in duration-500">
-    {/* Sidebar */}
-    <aside className={`fixed inset-y-0 left-0 z-[60] w-64 bg-white border-r border-gray-100 p-6 transition-all duration-300 lg:static lg:block ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}`}>
-      <div className="flex flex-col h-full">
-        <button onClick={onBack} className="mb-10 px-2 text-left hover:opacity-80 transition-opacity">
-          <h1 className="text-xl font-bold tracking-tight">
-            <span className="text-green-600">LA GANGA</span>
-            <span className="text-gray-900 ml-1">ADMIN</span>
-          </h1>
-        </button>
-        <div className="flex-1 space-y-3">
-          <SidebarButton active={activeTab === 'overview'} icon={<LayoutDashboard />} label="Dashboard" onClick={() => setActiveTab('overview')} />
-          <SidebarButton active={activeTab === 'products'} icon={<Package />} label="Inventario" onClick={() => setActiveTab('products')} />
-          <SidebarButton active={activeTab === 'orders'} icon={<ShoppingBag />} label="Ventas" onClick={() => setActiveTab('orders')} />
-          <SidebarButton active={activeTab === 'users'} icon={<Users />} label="Clientes" onClick={() => setActiveTab('users')} />
-          <SidebarButton active={activeTab === 'banners'} icon={<ImageIcon />} label="Banners" onClick={() => setActiveTab('banners')} />
-        </div>
-        <button onClick={onLogout} className="mt-8 w-full flex items-center gap-3 px-5 py-4 rounded-xl font-semibold text-sm text-red-500 hover:bg-red-50 transition-all">
-          <LayoutDashboard className="w-5 h-5 rotate-180" />
-          Cerrar Sesión
-        </button>
-      </div>
-    </aside>
-
-    {/* Main Content */}
-    <main className="flex-1 min-w-0">
-      <div className="lg:hidden flex items-center justify-between bg-white/60 backdrop-blur-xl p-4 rounded-2xl mb-4 border border-white">
-        <button onClick={onBack} className="font-black italic text-gray-900 hover:opacity-70 transition-opacity active:scale-95 duration-200 flex items-center gap-1.5">
-          <span>LA GANGA</span>
-          <span className="text-green-600">ADMIN</span>
-        </button>
-        <div className="flex items-center gap-2">
-          <NotificationBell />
-          <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-green-50 rounded-xl text-green-600"><LayoutDashboard className="w-6 h-6" /></button>
-        </div>
+        </form>
       </div>
 
-      {activeTab === 'overview' ? renderOverview() :
-        activeTab === 'products' ? renderProducts() :
-          activeTab === 'orders' ? (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
-              <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 tracking-tight">Gestión de Pedidos</h2>
-                  <p className="text-sm font-medium text-gray-400">{orders.length} pedidos totales</p>
-                </div>
-                <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
-                  <ShoppingBag className="w-5 h-5" />
-                </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {banners.map((banner) => (
+          <div key={banner.id} className="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="aspect-[21/9] w-full relative">
+              <img src={banner.image_url} className="w-full h-full object-cover" alt={banner.title} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-6">
+                <span className="inline-block px-2.5 py-1 bg-yellow-400 text-black text-[10px] font-bold rounded-md mb-2 w-fit">{banner.badge}</span>
+                <p className="text-white font-bold text-lg leading-none mb-1">{banner.title}</p>
+                <p className="text-white/80 font-medium text-xs">{banner.subtitle}</p>
               </div>
-
-              <div className="grid gap-6">
-                {orders.map(o => (
-                  <div key={o.id} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden relative group">
-                    <div className="absolute top-0 left-0 w-1.5 h-full bg-green-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                    <div className="flex flex-col lg:flex-row justify-between gap-8">
-                      {/* Order Header Info */}
-                      <div className="flex-1 space-y-6">
-                        <div className="flex flex-wrap items-center gap-4">
-                          <span className="text-[10px] font-black bg-gray-900 text-white px-3 py-1 rounded-full tracking-widest uppercase">
-                            #{o.id.slice(0, 8)}
-                          </span>
-                          <div className="flex items-center gap-2 text-gray-400">
-                            <Clock className="w-3.5 h-3.5" />
-                            <span className="text-xs font-bold">{new Date(o.created_at).toLocaleString('es-ES')}</span>
-                          </div>
-                          <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${o.status === 'paid' ? 'bg-green-100 text-green-700' :
-                            o.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
-                              o.status === 'delivered' ? 'bg-purple-100 text-purple-700' :
-                                'bg-amber-100 text-amber-700'
-                            }`}>
-                            {o.status === 'pending' ? 'Pendiente' :
-                              o.status === 'paid' ? 'Pagado' :
-                                o.status === 'shipped' ? 'Enviado' : 'Entregado'}
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                          {/* Customer Info */}
-                          <div className="space-y-3">
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                              <Users size={12} className="text-green-500" /> Cliente
-                            </p>
-                            <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-50">
-                              <p className="font-bold text-gray-900 text-sm">{o.profiles?.name || 'Usuario'}</p>
-                              <p className="text-xs text-gray-500 font-medium mt-0.5">{o.profiles?.email || 'N/A'}</p>
-                            </div>
-                          </div>
-
-                          {/* Shipping info */}
-                          <div className="space-y-3">
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                              <MapPin size={12} className="text-green-500" /> Entrega
-                            </p>
-                            <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-50">
-                              <p className="text-xs text-gray-600 font-bold leading-relaxed italic">
-                                {typeof o.shipping_address === 'string'
-                                  ? o.shipping_address
-                                  : `${o.shipping_address?.street || ''}, ${o.shipping_address?.city || ''}`}
-                              </p>
-                              {o.shipping_address?.phone && (
-                                <p className="text-[10px] text-green-600 font-bold mt-2">TEL: {o.shipping_address.phone}</p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Order Items */}
-                        <div className="space-y-4">
-                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Resumen de Productos</p>
-                          <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
-                            {o.order_items?.map((item: any) => {
-                              const prod = item.products;
-                              const hasImage = prod?.image_details;
-                              const isUrl = hasImage && (hasImage.startsWith('http') || hasImage.startsWith('data:'));
-                              const imgSrc = hasImage ? (isUrl ? hasImage : `https://picsum.photos/seed/${hasImage}/200/200`) : null;
-
-                              return (
-                                <div key={item.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                                  <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 text-gray-400 overflow-hidden shrink-0">
-                                      {imgSrc ? (
-                                        <img src={imgSrc} alt={prod?.name} className="w-full h-full object-cover" />
-                                      ) : (
-                                        <Package size={20} />
-                                      )}
-                                    </div>
-                                    <div>
-                                      <p className="text-xs font-bold text-gray-900 line-clamp-1">{prod?.name || 'Producto eliminado'}</p>
-                                      <div className="flex items-center gap-2 mt-0.5">
-                                        {prod?.brand && (
-                                          <span className="text-[9px] font-black uppercase tracking-wider text-green-600 bg-green-50 px-1.5 py-0.5 rounded-md">{prod.brand}</span>
-                                        )}
-                                        <p className="text-[10px] text-gray-400 font-bold">{item.quantity} x {formatCurrency(item.price)}</p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <p className="text-xs font-black text-gray-900 whitespace-nowrap ml-2">{formatCurrency(item.price * item.quantity)}</p>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Order Actions & Total */}
-                      <div className="lg:w-64 flex flex-col justify-between items-end gap-6 text-right">
-                        <div className="space-y-1">
-                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total del Pedido</p>
-                          <p className="text-3xl font-black text-green-600">{formatCurrency(o.total)}</p>
-                          <div className="flex items-center justify-end gap-1.5 text-green-600/60">
-                            <CheckCircle2 size={12} />
-                            <span className="text-[10px] font-black uppercase tracking-tighter">Impuestos Incluidos</span>
-                          </div>
-                        </div>
-
-                        <div className="w-full space-y-3">
-                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest block text-center lg:text-right">Cambiar Estado</p>
-                          <div className="relative">
-                            <select
-                              value={o.status}
-                              onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
-                              className="w-full bg-gray-900 text-white text-[11px] font-black uppercase tracking-widest px-5 py-4 rounded-xl outline-none hover:bg-black transition-all appearance-none cursor-pointer shadow-xl shadow-gray-200/50"
-                            >
-                              <option value="pending">🕒 Pendiente</option>
-                              <option value="paid">💰 Pagado</option>
-                              <option value="shipped">🚚 Enviado</option>
-                              <option value="delivered">✅ Entregado</option>
-                            </select>
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
-                              <ArrowLeft size={16} className="-rotate-90" />
-                            </div>
-                          </div>
-                          <p className="text-center lg:text-right text-[10px] text-gray-400 font-medium italic">Actualización instantánea</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {orders.length === 0 && (
-                  <div className="text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-gray-100">
-                    <ShoppingBag className="w-16 h-16 text-gray-100 mx-auto mb-4" />
-                    <p className="text-gray-400 font-bold uppercase tracking-widest text-[11px]">No hay pedidos registrados en el sistema</p>
-                  </div>
-                )}
-              </div>
+              <button
+                onClick={() => handleDeleteBanner(banner.id)}
+                className="absolute top-4 right-4 w-9 h-9 bg-black/20 backdrop-blur-md rounded-lg flex items-center justify-center text-white hover:bg-red-600 transition-all shadow-xl opacity-0 group-hover:opacity-100"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
-          ) :
-            activeTab === 'users' ? (
+          </div>
+        ))}
+        {banners.length === 0 && !bannersLoading && (
+          <div className="col-span-full py-16 bg-white rounded-2xl border border-gray-100 text-center flex flex-col items-center">
+            <ImageIcon className="w-12 h-12 text-gray-200 mb-4" />
+            <p className="text-gray-400 font-bold uppercase text-[11px] tracking-wider">No hay banners personalizados</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col lg:flex-row gap-8 min-h-screen bg-[#fcfdfe] p-4 lg:p-8 pb-24 lg:pb-8 animate-in fade-in duration-500">
+      {/* Sidebar */}
+      <aside className={`fixed inset-y-0 left-0 z-[60] w-64 bg-white border-r border-gray-100 p-6 transition-all duration-300 lg:static lg:block ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}`}>
+        <div className="flex flex-col h-full">
+          <button onClick={onBack} className="mb-10 px-2 text-left hover:opacity-80 transition-opacity">
+            <h1 className="text-xl font-bold tracking-tight">
+              <span className="text-green-600">LA GANGA</span>
+              <span className="text-gray-900 ml-1">ADMIN</span>
+            </h1>
+          </button>
+          <div className="flex-1 space-y-3">
+            <SidebarButton active={activeTab === 'overview'} icon={<LayoutDashboard />} label="Dashboard" onClick={() => setActiveTab('overview')} />
+            <SidebarButton active={activeTab === 'products'} icon={<Package />} label="Inventario" onClick={() => setActiveTab('products')} />
+            <SidebarButton active={activeTab === 'orders'} icon={<ShoppingBag />} label="Ventas" onClick={() => setActiveTab('orders')} />
+            <SidebarButton active={activeTab === 'users'} icon={<Users />} label="Clientes" onClick={() => setActiveTab('users')} />
+            <SidebarButton active={activeTab === 'banners'} icon={<ImageIcon />} label="Banners" onClick={() => setActiveTab('banners')} />
+          </div>
+          <button onClick={onLogout} className="mt-8 w-full flex items-center gap-3 px-5 py-4 rounded-xl font-semibold text-sm text-red-500 hover:bg-red-50 transition-all">
+            <LayoutDashboard className="w-5 h-5 rotate-180" />
+            Cerrar Sesión
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 min-w-0">
+        <div className="lg:hidden flex items-center justify-between bg-white/60 backdrop-blur-xl p-4 rounded-2xl mb-4 border border-white">
+          <button onClick={onBack} className="font-black italic text-gray-900 hover:opacity-70 transition-opacity active:scale-95 duration-200 flex items-center gap-1.5">
+            <span>LA GANGA</span>
+            <span className="text-green-600">ADMIN</span>
+          </button>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-green-50 rounded-xl text-green-600"><LayoutDashboard className="w-6 h-6" /></button>
+          </div>
+        </div>
+
+        {activeTab === 'overview' ? renderOverview() :
+          activeTab === 'products' ? renderProducts() :
+            activeTab === 'orders' ? (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">Base de Clientes</h2>
-                    <p className="text-sm font-medium text-gray-400">{users.length} usuarios registrados</p>
+                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">Gestión de Pedidos</h2>
+                    <p className="text-sm font-medium text-gray-400">{orders.length} pedidos totales</p>
                   </div>
                   <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
-                    <Users className="w-5 h-5" />
+                    <ShoppingBag className="w-5 h-5" />
                   </div>
                 </div>
-                <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="border-b border-gray-50 bg-gray-50/50 text-[11px] uppercase tracking-wider font-bold text-gray-500">
-                        <th className="px-6 py-4">Nombre de Usuario</th>
-                        <th className="px-6 py-4">Correo Electrónico</th>
-                        <th className="px-6 py-4 text-right">Gestión</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {users.map(u => (
-                        <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
-                          <td className="px-6 py-4 font-bold text-gray-900 text-sm">{u.name}</td>
-                          <td className="px-6 py-4 text-gray-500 font-medium text-sm">{u.email}</td>
-                          <td className="px-6 py-4 text-right">
-                            <button onClick={() => onDeleteUser(u.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+
+                <div className="grid gap-6">
+                  {orders.map(o => (
+                    <div key={o.id} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden relative group">
+                      <div className="absolute top-0 left-0 w-1.5 h-full bg-green-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                      <div className="flex flex-col lg:flex-row justify-between gap-8">
+                        {/* Order Header Info */}
+                        <div className="flex-1 space-y-6">
+                          <div className="flex flex-wrap items-center gap-4">
+                            <span className="text-[10px] font-black bg-gray-900 text-white px-3 py-1 rounded-full tracking-widest uppercase">
+                              #{o.id.slice(0, 8)}
+                            </span>
+                            <div className="flex items-center gap-2 text-gray-400">
+                              <Clock className="w-3.5 h-3.5" />
+                              <span className="text-xs font-bold">{new Date(o.created_at).toLocaleString('es-ES')}</span>
+                            </div>
+                            <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${o.status === 'paid' ? 'bg-green-100 text-green-700' :
+                              o.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                                o.status === 'delivered' ? 'bg-purple-100 text-purple-700' :
+                                  'bg-amber-100 text-amber-700'
+                              }`}>
+                              {o.status === 'pending' ? 'Pendiente' :
+                                o.status === 'paid' ? 'Pagado' :
+                                  o.status === 'shipped' ? 'Enviado' : 'Entregado'}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            {/* Customer Info */}
+                            <div className="space-y-3">
+                              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                <Users size={12} className="text-green-500" /> Cliente
+                              </p>
+                              <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-50">
+                                <p className="font-bold text-gray-900 text-sm">{o.profiles?.name || 'Usuario'}</p>
+                                <p className="text-xs text-gray-500 font-medium mt-0.5">{o.profiles?.email || 'N/A'}</p>
+                              </div>
+                            </div>
+
+                            {/* Shipping info */}
+                            <div className="space-y-3">
+                              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                <MapPin size={12} className="text-green-500" /> Entrega
+                              </p>
+                              <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-50">
+                                <p className="text-xs text-gray-600 font-bold leading-relaxed italic">
+                                  {typeof o.shipping_address === 'string'
+                                    ? o.shipping_address
+                                    : `${o.shipping_address?.street || ''}, ${o.shipping_address?.city || ''}`}
+                                </p>
+                                {o.shipping_address?.phone && (
+                                  <p className="text-[10px] text-green-600 font-bold mt-2">TEL: {o.shipping_address.phone}</p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Order Items */}
+                          <div className="space-y-4">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Resumen de Productos</p>
+                            <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
+                              {o.order_items?.map((item: any) => {
+                                const prod = item.products;
+                                const hasImage = prod?.image_details;
+                                const isUrl = hasImage && (hasImage.startsWith('http') || hasImage.startsWith('data:'));
+                                const imgSrc = hasImage ? (isUrl ? hasImage : `https://picsum.photos/seed/${hasImage}/200/200`) : null;
+
+                                return (
+                                  <div key={item.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                      <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 text-gray-400 overflow-hidden shrink-0">
+                                        {imgSrc ? (
+                                          <img src={imgSrc} alt={prod?.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                          <Package size={20} />
+                                        )}
+                                      </div>
+                                      <div>
+                                        <p className="text-xs font-bold text-gray-900 line-clamp-1">{prod?.name || 'Producto eliminado'}</p>
+                                        <div className="flex items-center gap-2 mt-0.5">
+                                          {prod?.brand && (
+                                            <span className="text-[9px] font-black uppercase tracking-wider text-green-600 bg-green-50 px-1.5 py-0.5 rounded-md">{prod.brand}</span>
+                                          )}
+                                          <p className="text-[10px] text-gray-400 font-bold">{item.quantity} x {formatCurrency(item.price)}</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <p className="text-xs font-black text-gray-900 whitespace-nowrap ml-2">{formatCurrency(item.price * item.quantity)}</p>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Order Actions & Total */}
+                        <div className="lg:w-64 flex flex-col justify-between items-end gap-6 text-right">
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total del Pedido</p>
+                            <p className="text-3xl font-black text-green-600">{formatCurrency(o.total)}</p>
+                            <div className="flex items-center justify-end gap-1.5 text-green-600/60">
+                              <CheckCircle2 size={12} />
+                              <span className="text-[10px] font-black uppercase tracking-tighter">Impuestos Incluidos</span>
+                            </div>
+                          </div>
+
+                          <div className="w-full space-y-3">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest block text-center lg:text-right">Cambiar Estado</p>
+                            <div className="relative">
+                              <select
+                                value={o.status}
+                                onChange={(e) => handleUpdateStatus(o.id, e.target.value)}
+                                className="w-full bg-gray-900 text-white text-[11px] font-black uppercase tracking-widest px-5 py-4 rounded-xl outline-none hover:bg-black transition-all appearance-none cursor-pointer shadow-xl shadow-gray-200/50"
+                              >
+                                <option value="pending">🕒 Pendiente</option>
+                                <option value="paid">💰 Pagado</option>
+                                <option value="shipped">🚚 Enviado</option>
+                                <option value="delivered">✅ Entregado</option>
+                              </select>
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
+                                <ArrowLeft size={16} className="-rotate-90" />
+                              </div>
+                            </div>
+                            <p className="text-center lg:text-right text-[10px] text-gray-400 font-medium italic">Actualización instantánea</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {orders.length === 0 && (
+                    <div className="text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-gray-100">
+                      <ShoppingBag className="w-16 h-16 text-gray-100 mx-auto mb-4" />
+                      <p className="text-gray-400 font-bold uppercase tracking-widest text-[11px]">No hay pedidos registrados en el sistema</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ) :
-              activeTab === 'banners' ? renderBanners() :
-                <div className="p-20 text-center bg-white/40 rounded-[3rem] border border-white">
-                  <LayoutDashboard className="w-12 h-12 text-green-200 mx-auto mb-4" />
-                  <h3 className="text-xl font-black">Panel General</h3>
-                </div>
-      }
-    </main>
-
-    {/* Product Modal */}
-    {showAddModal && (
-      <div className="fixed inset-0 z-[100] bg-gray-900/10 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto no-scrollbar">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-bold text-gray-900">{editingId ? 'Editar' : 'Nuevo'} Producto</h3>
-            <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors"><X className="w-5 h-5" /></button>
-          </div>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block ml-1 text-center">Foto del Producto</label>
-              <div className="relative group mx-auto w-48 h-48">
-                <input type="file" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
-                <div className={`w-full h-full bg-gray-50 border-2 border-dashed ${isUploadingProduct ? 'border-green-400' : 'border-gray-200'} rounded-2xl flex flex-col items-center justify-center group-hover:bg-green-50 group-hover:border-green-200 transition-all overflow-hidden relative shadow-inner`}>
-                  {isUploadingProduct ? (
-                    <div className="flex flex-col items-center animate-in fade-in">
-                      <Loader2 className="w-8 h-8 text-green-500 animate-spin mb-2" />
-                      <span className="text-[10px] font-bold text-green-600 uppercase tracking-widest">Subiendo...</span>
+              activeTab === 'users' ? (
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
+                  <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900 tracking-tight">Base de Clientes</h2>
+                      <p className="text-sm font-medium text-gray-400">{users.length} usuarios registrados</p>
                     </div>
-                  ) : imagePreview ? (
-                    <img src={imagePreview} className="w-full h-full object-cover rounded-xl" alt="Preview" />
-                  ) : (
-                    <div className="flex flex-col items-center px-4 text-center">
-                      <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 text-gray-400 group-hover:text-green-500 transition-colors">
-                        <ImageIcon className="w-6 h-6" />
+                    <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
+                      <Users className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="border-b border-gray-50 bg-gray-50/50 text-[11px] uppercase tracking-wider font-bold text-gray-500">
+                          <th className="px-6 py-4">Nombre de Usuario</th>
+                          <th className="px-6 py-4">Correo Electrónico</th>
+                          <th className="px-6 py-4 text-right">Gestión</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {users.map(u => (
+                          <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
+                            <td className="px-6 py-4 font-bold text-gray-900 text-sm">{u.name}</td>
+                            <td className="px-6 py-4 text-gray-500 font-medium text-sm">{u.email}</td>
+                            <td className="px-6 py-4 text-right">
+                              <button onClick={() => onDeleteUser(u.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) :
+                activeTab === 'banners' ? renderBanners() :
+                  <div className="p-20 text-center bg-white/40 rounded-[3rem] border border-white">
+                    <LayoutDashboard className="w-12 h-12 text-green-200 mx-auto mb-4" />
+                    <h3 className="text-xl font-black">Panel General</h3>
+                  </div>
+        }
+      </main>
+
+      {/* Product Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-[100] bg-gray-900/10 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto no-scrollbar">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-gray-900">{editingId ? 'Editar' : 'Nuevo'} Producto</h3>
+              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors"><X className="w-5 h-5" /></button>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block ml-1 text-center">Foto del Producto</label>
+                <div className="relative group mx-auto w-48 h-48">
+                  <input type="file" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" />
+                  <div className={`w-full h-full bg-gray-50 border-2 border-dashed ${isUploadingProduct ? 'border-green-400' : 'border-gray-200'} rounded-2xl flex flex-col items-center justify-center group-hover:bg-green-50 group-hover:border-green-200 transition-all overflow-hidden relative shadow-inner`}>
+                    {isUploadingProduct ? (
+                      <div className="flex flex-col items-center animate-in fade-in">
+                        <Loader2 className="w-8 h-8 text-green-500 animate-spin mb-2" />
+                        <span className="text-[10px] font-bold text-green-600 uppercase tracking-widest">Subiendo...</span>
                       </div>
-                      <p className="text-[10px] font-bold text-gray-400 group-hover:text-green-600 transition-colors uppercase tracking-wider leading-tight">Haz clic para<br />añadir foto</p>
-                    </div>
-                  )}
-                  {imagePreview && !isUploadingProduct && (
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                      <p className="text-white text-[10px] font-bold uppercase tracking-wider">Cambiar Foto</p>
-                    </div>
+                    ) : imagePreview ? (
+                      <img src={imagePreview} className="w-full h-full object-cover rounded-xl" alt="Preview" />
+                    ) : (
+                      <div className="flex flex-col items-center px-4 text-center">
+                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 text-gray-400 group-hover:text-green-500 transition-colors">
+                          <ImageIcon className="w-6 h-6" />
+                        </div>
+                        <p className="text-[10px] font-bold text-gray-400 group-hover:text-green-600 transition-colors uppercase tracking-wider leading-tight">Haz clic para<br />añadir foto</p>
+                      </div>
+                    )}
+                    {imagePreview && !isUploadingProduct && (
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                        <p className="text-white text-[10px] font-bold uppercase tracking-wider">Cambiar Foto</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre del Dispositivo</label>
+                  <input
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    placeholder="Ej: iPhone 15 Pro Max"
+                    value={newItem.name}
+                    required
+                    onChange={e => setNewItem({ ...newItem, name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Marca</label>
+                  <select
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all"
+                    value={isCustomBrand ? 'Otro' : newItem.brand}
+                    onChange={e => {
+                      if (e.target.value === 'Otro') {
+                        setIsCustomBrand(true);
+                        setNewItem({ ...newItem, brand: '' });
+                      } else {
+                        setIsCustomBrand(false);
+                        setNewItem({ ...newItem, brand: e.target.value });
+                      }
+                    }}
+                  >
+                    {STANDARD_BRANDS.map(brand => (
+                      <option key={brand} value={brand}>{brand}</option>
+                    ))}
+                    <option value="Otro">Otro (Escribir marca)</option>
+                  </select>
+                  {isCustomBrand && (
+                    <input
+                      type="text"
+                      className="w-full mt-2 bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all animate-in fade-in slide-in-from-top-1"
+                      placeholder="Escribe la marca del producto..."
+                      value={newItem.brand}
+                      onChange={e => setNewItem({ ...newItem, brand: e.target.value })}
+                      autoFocus
+                    />
                   )}
                 </div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Nombre del Dispositivo</label>
-                <input
-                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
-                  placeholder="Ej: iPhone 15 Pro Max"
-                  value={newItem.name}
-                  required
-                  onChange={e => setNewItem({ ...newItem, name: e.target.value })}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Marca</label>
-                <select
-                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all"
-                  value={isCustomBrand ? 'Otro' : newItem.brand}
-                  onChange={e => {
-                    if (e.target.value === 'Otro') {
-                      setIsCustomBrand(true);
-                      setNewItem({ ...newItem, brand: '' });
-                    } else {
-                      setIsCustomBrand(false);
-                      setNewItem({ ...newItem, brand: e.target.value });
-                    }
-                  }}
-                >
-                  {STANDARD_BRANDS.map(brand => (
-                    <option key={brand} value={brand}>{brand}</option>
-                  ))}
-                  <option value="Otro">Otro (Escribir marca)</option>
-                </select>
-                {isCustomBrand && (
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio (DOP)</label>
                   <input
-                    type="text"
-                    className="w-full mt-2 bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all animate-in fade-in slide-in-from-top-1"
-                    placeholder="Escribe la marca del producto..."
-                    value={newItem.brand}
-                    onChange={e => setNewItem({ ...newItem, brand: e.target.value })}
-                    autoFocus
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    placeholder="0.00"
+                    type="number"
+                    value={newItem.price}
+                    required
+                    onChange={e => setNewItem({ ...newItem, price: e.target.value })}
                   />
-                )}
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio Antes</label>
+                  <input
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    placeholder="Opcional"
+                    type="number"
+                    value={newItem.originalPrice}
+                    onChange={e => setNewItem({ ...newItem, originalPrice: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Stock</label>
+                  <input
+                    className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
+                    placeholder="0"
+                    type="number"
+                    value={newItem.stock}
+                    onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
+                  />
+                </div>
               </div>
-            </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Especificaciones Técnicas</label>
+                <textarea
+                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm h-28 resize-none transition-all placeholder:text-gray-300"
+                  placeholder="Ej: 256GB, Color Titanio, Salud 100%..."
+                  value={newItem.specs}
+                  onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
+                />
+              </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio (DOP)</label>
-                <input
-                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
-                  placeholder="0.00"
-                  type="number"
-                  value={newItem.price}
-                  required
-                  onChange={e => setNewItem({ ...newItem, price: e.target.value })}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Precio Antes</label>
-                <input
-                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
-                  placeholder="Opcional"
-                  type="number"
-                  value={newItem.originalPrice}
-                  onChange={e => setNewItem({ ...newItem, originalPrice: e.target.value })}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Stock</label>
-                <input
-                  className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm transition-all placeholder:text-gray-300"
-                  placeholder="0"
-                  type="number"
-                  value={newItem.stock}
-                  onChange={e => setNewItem({ ...newItem, stock: e.target.value })}
-                />
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Especificaciones Técnicas</label>
-              <textarea
-                className="w-full bg-gray-50 p-3.5 rounded-xl border border-gray-100 outline-none focus:ring-2 ring-green-500/10 focus:border-green-500 font-semibold text-sm h-28 resize-none transition-all placeholder:text-gray-300"
-                placeholder="Ej: 256GB, Color Titanio, Salud 100%..."
-                value={newItem.specs}
-                onChange={e => setNewItem({ ...newItem, specs: e.target.value })}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isUploadingProduct}
-              className="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-green-500/20 hover:bg-green-700 active:scale-[0.98] transition-all mt-4 disabled:opacity-50 disabled:grayscale"
-            >
-              {editingId ? 'Guardar Cambios' : 'Crear Producto'}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={isUploadingProduct}
+                className="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-green-500/20 hover:bg-green-700 active:scale-[0.98] transition-all mt-4 disabled:opacity-50 disabled:grayscale"
+              >
+                {editingId ? 'Guardar Cambios' : 'Crear Producto'}
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
-    {/* Mobile Sidebar Overlay */}
-    {
-      isSidebarOpen && (
-        <div className="fixed inset-0 bg-green-900/10 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
-      )
-    }
-  </div >
-);
+      {/* Mobile Sidebar Overlay */}
+      {
+        isSidebarOpen && (
+          <div className="fixed inset-0 bg-green-900/10 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+        )
+      }
+    </div>
+  );
 };
 
 // Force update 
