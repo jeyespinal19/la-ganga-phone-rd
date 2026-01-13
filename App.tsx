@@ -16,6 +16,7 @@ import { OrderHistory } from './components/OrderHistory';
 import { Skeleton, ProductSkeleton, BannerSkeleton } from './components/Skeleton';
 import { Category, Product, User, CartItem } from './types';
 import { productService } from './services/productService';
+import { brandService } from './services/brandService';
 import { PromoBanner } from './components/PromoBanner';
 import { SideMenu } from './components/SideMenu';
 import { useAuth } from './contexts/AuthContext';
@@ -38,6 +39,7 @@ const App: React.FC = () => {
   const [items, setItems] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -45,6 +47,7 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : false;
   });
   const [toast, setToast] = useState<{ visible: boolean; message: string; type?: 'success' | 'error' }>({ visible: false, message: '', type: 'success' });
+
 
   // Handle Dark Mode Class & Persistence
   useEffect(() => {
@@ -65,6 +68,8 @@ const App: React.FC = () => {
       setItems(dbItems);
       const dbUsers = await productService.getUsers();
       setUsers(dbUsers);
+      const dbBrands = await brandService.getBrands();
+      setBrands(dbBrands);
       setIsLoading(false);
     };
     fetchData();
@@ -393,7 +398,7 @@ const App: React.FC = () => {
 
           {/* Categories */}
           <div className="flex overflow-x-auto no-scrollbar px-4 py-2 border-b border-gray-100 gap-6 bg-white">
-            {['Inicio', 'Samsung', 'Xiaomi', 'Oukitel', 'Accesorios'].map((cat, i) => (
+            {['Inicio', ...brands].map((cat, i) => (
               <button
                 key={cat}
                 className={`whitespace-nowrap pb-1 text-base font-bold transition-all relative ${(selectedCategory === cat || (cat === 'Inicio' && selectedCategory === 'Todos'))

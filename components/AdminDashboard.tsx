@@ -25,6 +25,7 @@ import {
 import { Product, User, Order, Banner } from '../types';
 import { formatCurrency } from '../utils/format';
 import { productService } from '../services/productService';
+import { brandService } from '../services/brandService';
 import { supabase } from '../services/supabase';
 import { NotificationBell } from './NotificationBell';
 
@@ -281,9 +282,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setShowAddModal(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newItem.name || !newItem.price) return;
+
+    // Save brand if it doesn't exist yet
+    if (newItem.brand.trim()) {
+      await brandService.addBrand(newItem.brand.trim());
+    }
+
     const itemData = {
       name: newItem.name,
       brand: newItem.brand,

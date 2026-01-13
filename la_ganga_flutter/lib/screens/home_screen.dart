@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/product.dart';
 import '../services/banner_service.dart';
+import '../services/brand_service.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/shimmer_skeletons.dart';
@@ -19,9 +20,22 @@ class _HomeScreenState extends State<HomeScreen> {
   String _searchQuery = '';
   String _selectedCategory = 'Todos';
   
-  final List<String> _categories = [
-    'Todos', 'Samsung', 'Xiaomi', 'Oukitel', 'Accesorios'
-  ];
+  List<String> _categories = ['Todos'];
+  bool _loadingBrands = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBrands();
+  }
+
+  Future<void> _loadBrands() async {
+    final brands = await BrandService().fetchBrands();
+    setState(() {
+      _categories = ['Todos', ...brands];
+      _loadingBrands = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

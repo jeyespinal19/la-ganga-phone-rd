@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import '../models/product.dart';
 import '../services/product_service.dart';
 import '../services/profile_service.dart';
+import '../services/brand_service.dart';
 import 'dart:typed_data';
 import '../services/notification_service.dart';
 import '../widgets/notification_bell.dart';
@@ -17,9 +18,11 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> with SingleTickerProviderStateMixin {
   final ProductService _productService = ProductService();
   final ProfileService _profileService = ProfileService();
+  final BrandService _brandService = BrandService();
   final ImagePicker _picker = ImagePicker();
   
   late TabController _tabController;
+  List<Product> _reorderedProducts = [];
 
   @override
   void initState() {
@@ -70,16 +73,76 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
       future: _productService.fetchAll(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
-        final products = snapshot.data ?? [];
-        return ListView.builder(
+        if (_reorderedProducts.isEmpty && snapshot.data != null) {
+          _reorderedProducts = List.from(snapshot.data!);
+        }
+        if (_reorderedProducts.isEmpty) return const Center(child: Text('Sin productos', style: TextStyle(color: Colors.white38)));
+
+        return ReorderableListView.builder(
           padding: const EdgeInsets.all(16),
-          itemCount: products.length,
+          itemCount: _reorderedProducts.length,
+          onReorder: (oldIndex, newIndex) {
+            setState(() {
+              if (newIndex > oldIndex) newIndex--;
+              final item = _reorderedProducts.removeAt(oldIndex);
+              _reorderedProducts.insert(newIndex, item);
+            });
+            _checkBrandAdjacency();
+          },
           itemBuilder: (context, index) {
-            final p = products[index];
-            return _buildProductItem(p);
+            final p = _reorderedProducts[index];
+            return _buildReorderableProductItem(p, index);
           },
         );
       },
+    );
+  }
+
+  void _checkBrandAdjacency() {
+    for (int i = 0; i < _reorderedProducts.length - 1; i++) {
+      if (_reorderedProducts[i].brand.toLowerCase() == _reorderedProducts[i + 1].brand.toLowerCase()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('⚠️ Dos productos de la misma marca están juntos'), backgroundColor: Colors.orange),
+        );
+        return;
+      }
+    }
+  }
+
+  Widget _buildReorderableProductItem(Product p, int index) {
+    return Container(
+      key: ValueKey(p.id),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            width: 50, height: 50, color: Colors.white10,
+            child: p.imageUrl.startsWith('http') ? Image.network(p.imageUrl, fit: BoxFit.cover) : const Icon(Icons.image, color: Colors.white24),
+          ),
+        ),
+        title: Text(p.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(p.brand, style: const TextStyle(color: Color(0xFF4ADE80), fontSize: 12)),
+            Text('Stock: ${p.stock} • \$${p.price}', style: const TextStyle(color: Colors.white54, fontSize: 11)),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(icon: const Icon(Icons.edit_outlined, color: Colors.white70), onPressed: () => _showProductForm(product: p)),
+            IconButton(icon: const Icon(Icons.delete_outline, color: Colors.redAccent), onPressed: () => _confirmDelete(p)),
+            const Icon(Icons.drag_handle, color: Colors.white38),
+          ],
+        ),
+      ),
     );
   }
 
@@ -285,13 +348,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                         }
                       }
 
+                      // Save brand to brands table if new
+                      final brandName = brandController.text.trim();
+                      if (brandName.isNotEmpty) {
+                        await _brandService.addBrand(brandName);
+                      }
+
                       final data = {
                         'name': nameController.text,
-                        'brand': brandController.text,
+                        'brand': brandName,
                         'price': double.tryParse(priceController.text) ?? 0,
                         'stock': int.tryParse(stockController.text) ?? 0,
                         'specs': specsController.text,
-                        'image_url': imageUrl, // Fixed column name if it was image_details
+                        'image_url': imageUrl,
                       };
                     if (product == null) {
                       await _productService.create(data);
@@ -299,7 +368,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       await _productService.update(product.id, data);
                     }
                     Navigator.pop(ctx);
-                    setState(() {});
+                    setState(() {
+                      _reorderedProducts = []; // force reload
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF22C55E),
